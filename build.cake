@@ -93,7 +93,7 @@ Task("test")
 
 Task("pack")
     .Description("Pack package")
-    .IsDependentOn("test")
+    .IsDependentOn("build")
     .Does(() =>
     {
       var settings = new DotNetCorePackSettings
