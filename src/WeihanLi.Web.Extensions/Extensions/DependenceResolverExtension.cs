@@ -7,7 +7,13 @@ namespace WeihanLi.Web.Extensions
 {
     public static class DependenceResolverExtension
     {
-        public static TService ResolveCustomService<TService>([NotNull]this IDependencyResolver dependencyResolver)
+        /// <summary>
+        /// try get service from HttpContext.RequestionServices
+        /// </summary>
+        /// <typeparam name="TService">TService</typeparam>
+        /// <param name="dependencyResolver">dependencyResolver</param>
+        /// <returns></returns>
+        public static TService ResolveCurrentService<TService>([NotNull]this IDependencyResolver dependencyResolver)
         {
             var contextAccessor = dependencyResolver.GetService<IHttpContextAccessor>();
             if (contextAccessor != null)
