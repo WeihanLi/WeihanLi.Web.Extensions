@@ -8,9 +8,17 @@ namespace WeihanLi.Web.Middlewares
     public class CustomExceptionHandlerOptions
     {
         public Func<HttpContext, ILogger, Exception, Task> OnException { get; set; } =
-            async (context, logger, exception) => logger.LogError(exception, $"Request exception, requestId: {context.TraceIdentifier}");
+             (context, logger, exception) =>
+            {
+                logger.LogError(exception, $"Request exception, requestId: {context.TraceIdentifier}");
+                return Task.CompletedTask;
+            };
 
         public Func<HttpContext, ILogger, Task> OnRequestAborted { get; set; } =
-            async (context, logger) => logger.LogInformation($"Request aborted, requestId: {context.TraceIdentifier}");
+             (context, logger) =>
+             {
+                 logger.LogInformation($"Request aborted, requestId: {context.TraceIdentifier}");
+                 return Task.CompletedTask;
+             };
     }
 }

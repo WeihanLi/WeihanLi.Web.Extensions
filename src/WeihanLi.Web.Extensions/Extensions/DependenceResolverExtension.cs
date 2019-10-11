@@ -8,7 +8,7 @@ namespace WeihanLi.Web.Extensions
     public static class DependenceResolverExtension
     {
         /// <summary>
-        /// try get service from HttpContext.RequestionServices
+        /// try get service from HttpContext.RequestServices
         /// </summary>
         /// <typeparam name="TService">TService</typeparam>
         /// <param name="dependencyResolver">dependencyResolver</param>
