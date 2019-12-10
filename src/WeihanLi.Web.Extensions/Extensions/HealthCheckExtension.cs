@@ -76,7 +76,7 @@ namespace WeihanLi.Web.Extensions
                     catch (Exception ex)
                     {
                         context.RequestServices.GetService<ILoggerFactory>()
-                        .CreateLogger("HealthCheck").LogError(ex, "HealthCheck Exception");
+                        .CreateLogger(typeof(HealthCheckExtensions)).LogError(ex, "HealthCheck Exception");
                         context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
                         await context.Response.WriteAsync("unhealthy");
                     }

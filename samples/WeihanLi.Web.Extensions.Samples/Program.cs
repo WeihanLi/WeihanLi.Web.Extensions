@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
 namespace WeihanLi.Web.Extensions.Samples
@@ -9,8 +9,18 @@ namespace WeihanLi.Web.Extensions.Samples
         public static void Main(string[] args)
         {
             var host = WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(services=> { })
-                .Build() ;
+                .ConfigureServices(services =>
+                {
+                })
+                .Configure(app =>
+                {
+                    app.UseCustomExceptionHandler();
+                    app.UseHealthCheck();
+
+                    app.UseAuthentication();
+                    app.UseMvc();
+                })
+                .Build();
             host.Run();
         }
     }
