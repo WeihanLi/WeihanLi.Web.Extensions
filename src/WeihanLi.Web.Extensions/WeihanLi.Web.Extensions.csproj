@@ -4,7 +4,7 @@
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WeihanLi.Common" Version="1.0.28" />
+    <PackageReference Include="WeihanLi.Common" Version="1.0.38-preview-20200520-154642" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="[2.0.0, 3.0.0)" />
