@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace WeihanLi.Web.Middlewares
+namespace WeihanLi.Web.Middleware
 {
     public class CustomExceptionHandlerOptions
     {

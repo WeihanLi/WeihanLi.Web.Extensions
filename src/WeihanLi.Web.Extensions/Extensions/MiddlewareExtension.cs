@@ -11,7 +11,7 @@ namespace WeihanLi.Web.Extensions
         /// <returns></returns>
         public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder applicationBuilder)
         {
-            applicationBuilder.UseMiddleware<Middlewares.CustomExceptionHandlerMiddleware>();
+            applicationBuilder.UseMiddleware<Middleware.CustomExceptionHandlerMiddleware>();
             return applicationBuilder;
         }
     }
