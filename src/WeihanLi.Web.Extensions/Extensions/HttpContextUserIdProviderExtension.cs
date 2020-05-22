@@ -31,6 +31,7 @@ namespace WeihanLi.Web.Extensions
                 throw new ArgumentNullException(nameof(optionsAction));
             }
 
+            serviceCollection.Configure(optionsAction);
             return serviceCollection.AddHttpContextUserIdProvider();
         }
     }

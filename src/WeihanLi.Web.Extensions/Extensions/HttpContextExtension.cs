@@ -56,6 +56,9 @@ namespace WeihanLi.Web.Extensions
         /// <returns></returns>
         public static T GetUserId<T>(this ClaimsPrincipal principal, bool preferShortName = false)
         {
+            if (typeof(T) == typeof(string))
+                return (T)(object)principal.GetUserId(preferShortName);
+
             return principal.GetUserId(preferShortName).ToOrDefault<T>();
         }
 

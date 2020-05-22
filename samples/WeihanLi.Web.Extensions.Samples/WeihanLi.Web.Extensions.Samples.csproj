@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="WeihanLi.Common.Logging.Log4Net" Version="1.0.26" />
+    <PackageReference Include="WeihanLi.Common.Logging.Log4Net" Version="1.0.38" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\WeihanLi.Web.Extensions\WeihanLi.Web.Extensions.csproj" />
