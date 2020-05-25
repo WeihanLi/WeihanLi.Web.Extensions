@@ -14,6 +14,9 @@ namespace WeihanLi.Web.Extensions
             if (resultModel.Status == ResultStatus.RequestError)
                 return new BadRequestObjectResult(resultModel);
 
+            if (resultModel.Status == ResultStatus.ResourceNotFound)
+                return new NotFoundObjectResult(resultModel);
+
             if (resultModel.Status == ResultStatus.MethodNotAllowed)
                 return new ObjectResult(resultModel)
                 {
@@ -27,7 +30,6 @@ namespace WeihanLi.Web.Extensions
                 };
 
             if (resultModel.Status == ResultStatus.NoPermission)
-
                 return new ObjectResult(resultModel)
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
