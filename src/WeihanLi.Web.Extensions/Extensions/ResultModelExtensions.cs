@@ -21,9 +21,13 @@ namespace WeihanLi.Web.Extensions
                 };
 
             if (resultModel.Status == ResultStatus.Unauthorized)
-                return new UnauthorizedObjectResult(resultModel);
+                return new ObjectResult(resultModel)
+                {
+                    StatusCode = (int)HttpStatusCode.Unauthorized
+                };
 
             if (resultModel.Status == ResultStatus.NoPermission)
+
                 return new ObjectResult(resultModel)
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
