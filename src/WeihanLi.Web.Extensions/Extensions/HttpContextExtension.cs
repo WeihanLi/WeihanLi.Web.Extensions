@@ -14,6 +14,11 @@ namespace WeihanLi.Web.Extensions
         /// <returns>user ip</returns>
         public static string GetUserIP(this HttpContext httpContext, string realIPHeader = "X-Forwarded-For")
         {
+            if(httpContext is null)
+            {
+                return null;
+            }
+
             return httpContext.Request.Headers.TryGetValue(realIPHeader, out var ip)
                 ? ip.ToString()
                 : httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -57,9 +62,9 @@ namespace WeihanLi.Web.Extensions
         public static T GetUserId<T>(this ClaimsPrincipal principal, bool preferShortName = false)
         {
             if (typeof(T) == typeof(string))
-                return (T)(object)principal.GetUserId(preferShortName);
+                return (T)(object)principal?.GetUserId(preferShortName);
 
-            return principal.GetUserId(preferShortName).ToOrDefault<T>();
+            return (principal?.GetUserId(preferShortName)).ToOrDefault<T>();
         }
 
         public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
