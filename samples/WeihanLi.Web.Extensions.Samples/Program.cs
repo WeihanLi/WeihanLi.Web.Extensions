@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using WeihanLi.AspNetCore.Authentication;
-using WeihanLi.AspNetCore.Authentication.QueryAuthentication;
 
 namespace WeihanLi.Web.Extensions.Samples
 {

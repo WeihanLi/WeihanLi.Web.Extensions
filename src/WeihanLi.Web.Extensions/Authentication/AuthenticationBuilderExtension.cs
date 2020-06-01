@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication;
-using WeihanLi.AspNetCore.Authentication.HeaderAuthentication;
-using WeihanLi.AspNetCore.Authentication.QueryAuthentication;
+using WeihanLi.Web.Authentication.HeaderAuthentication;
+using WeihanLi.Web.Authentication.QueryAuthentication;
 
-namespace WeihanLi.AspNetCore.Authentication
+namespace WeihanLi.Web.Authentication
 {
     public static class AuthenticationBuilderExtension
     {

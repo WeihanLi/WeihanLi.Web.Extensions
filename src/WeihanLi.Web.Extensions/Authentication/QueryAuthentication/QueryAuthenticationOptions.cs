@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.AspNetCore.Authentication.QueryAuthentication
+namespace WeihanLi.Web.Authentication.QueryAuthentication
 {
-    public class QueryAuthenticationOptions : AuthenticationSchemeOptions
+    public sealed class QueryAuthenticationOptions : AuthenticationSchemeOptions
     {
         private string _userRolesQueryKey = "UserRoles";
         private string _userNameQueryKey = "UserName";
