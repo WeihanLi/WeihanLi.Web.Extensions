@@ -14,9 +14,42 @@ namespace WeihanLi.Web.Extensions
         /// <returns>user ip</returns>
         public static string GetUserIP(this HttpContext httpContext, string realIPHeader = "X-Forwarded-For")
         {
+            if(httpContext is null)
+            {
+                return null;
+            }
+
             return httpContext.Request.Headers.TryGetValue(realIPHeader, out var ip)
                 ? ip.ToString()
                 : httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        }
+
+        /// <summary>
+        /// GetUserId from claims, get from `nameid`/ClaimTypes.NameIdentifier by default
+        /// </summary>
+        /// <param name="principal">principal</param>
+        /// <param name="preferShortName"></param>
+        /// <returns></returns>
+        public static string GetUserId(this ClaimsPrincipal principal, bool preferShortName = false)
+        {
+            if (preferShortName)
+            {
+                var userId = GetUserId(principal, "nameid");
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    return userId;
+                }
+                return GetUserId(principal, ClaimTypes.NameIdentifier);
+            }
+            else
+            {
+                var userId = GetUserId(principal, ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    return userId;
+                }
+                return GetUserId(principal, "nameid");
+            }
         }
 
         /// <summary>
@@ -28,24 +61,10 @@ namespace WeihanLi.Web.Extensions
         /// <returns></returns>
         public static T GetUserId<T>(this ClaimsPrincipal principal, bool preferShortName = false)
         {
-            if (preferShortName)
-            {
-                var userId = GetUserId(principal, "nameid");
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    return userId.ToOrDefault<T>();
-                }
-                return GetUserId(principal, ClaimTypes.NameIdentifier).ToOrDefault<T>();
-            }
-            else
-            {
-                var userId = GetUserId(principal, ClaimTypes.NameIdentifier);
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    return userId.ToOrDefault<T>();
-                }
-                return GetUserId(principal, "nameid").ToOrDefault<T>();
-            }
+            if (typeof(T) == typeof(string))
+                return (T)(object)principal.GetUserId(preferShortName);
+
+            return (principal.GetUserId(preferShortName)).ToOrDefault<T>();
         }
 
         public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
@@ -58,7 +77,7 @@ namespace WeihanLi.Web.Extensions
             if (principal?.HasClaim(c => c.Type == claimType) == true)
                 return principal.FindFirst(claimType).Value;
 
-            return string.Empty;
+            return null;
         }
     }
 }

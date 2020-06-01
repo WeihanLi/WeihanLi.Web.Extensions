@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.Web.Middlewares
+namespace WeihanLi.Web.Middleware
 {
     public class CustomExceptionHandlerMiddleware
     {
@@ -24,7 +24,7 @@ namespace WeihanLi.Web.Middlewares
             {
                 await _next(context);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
                     .CreateLogger<CustomExceptionHandlerMiddleware>();
