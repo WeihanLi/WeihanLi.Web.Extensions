@@ -72,8 +72,8 @@ namespace WeihanLi.Web.Authentication.QueryAuthentication
 
         private Func<HttpContext, Task<bool>> _authenticationValidator = context =>
         {
-            var userIdHeader = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
-            return Task.FromResult(context.Request.Query.ContainsKey(userIdHeader));
+            var userIdKey = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
+            return Task.FromResult(context.Request.Query.ContainsKey(userIdKey));
         };
 
         public Func<HttpContext, Task<bool>> AuthenticationValidator
