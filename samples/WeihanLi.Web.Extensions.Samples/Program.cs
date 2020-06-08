@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using WeihanLi.Web.Authentication;
+using WeihanLi.Web.Authentication.HeaderAuthentication;
 
 namespace WeihanLi.Web.Extensions.Samples
 {
@@ -12,8 +14,17 @@ namespace WeihanLi.Web.Extensions.Samples
             var host = WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services =>
                 {
-                    services.AddAuthentication(QueryAuthenticationDefaults.AuthenticationSchema)
-                        .AddQuery();
+                    services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
+                        .AddQuery(options =>
+                        {
+                            options.UserIdQueryKey = "uid";
+                        })
+                        .AddHeader(options =>
+                        {
+                            options.UserIdHeaderName = "X-UserId";
+                            options.UserNameHeaderName = "X-UserName";
+                            options.UserRolesHeaderName = "X-UserRoles";
+                        });
 
                     services.AddControllers();
                     services.AddHttpContextAccessor();

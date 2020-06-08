@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.DependencyInjection;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;
 
@@ -29,6 +30,10 @@ namespace WeihanLi.Web.Authentication
         public static AuthenticationBuilder AddHeader(this AuthenticationBuilder builder, string schema,
             Action<HeaderAuthenticationOptions> configureOptions)
         {
+            if (null != configureOptions)
+            {
+                builder.Services.Configure(configureOptions);
+            }
             return builder.AddScheme<HeaderAuthenticationOptions, HeaderAuthenticationHandler>(schema,
                 configureOptions);
         }
@@ -57,6 +62,10 @@ namespace WeihanLi.Web.Authentication
         public static AuthenticationBuilder AddQuery(this AuthenticationBuilder builder, string schema,
             Action<QueryAuthenticationOptions> configureOptions)
         {
+            if (null != configureOptions)
+            {
+                builder.Services.Configure(configureOptions);
+            }
             return builder.AddScheme<QueryAuthenticationOptions, QueryAuthenticationHandler>(schema,
                 configureOptions);
         }

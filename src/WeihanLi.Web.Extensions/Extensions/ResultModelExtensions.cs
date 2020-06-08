@@ -6,6 +6,14 @@ namespace WeihanLi.Web.Extensions
 {
     public static class ResultModelExtensions
     {
+        public static IActionResult GetOkObjectResult(this ResultModel resultModel)
+        {
+            if (resultModel == null)
+                return new OkResult();
+
+            return new OkObjectResult(resultModel);
+        }
+
         public static IActionResult GetActionResult(this ResultModel resultModel)
         {
             if (resultModel == null)
