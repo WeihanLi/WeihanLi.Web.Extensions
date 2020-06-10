@@ -3,9 +3,11 @@ using WeihanLi.Common.Services;
 
 namespace WeihanLi.Web.Extensions.Samples
 {
-    [Route("/api/[controller]")]
+    [Route("api/values")]
+    [ApiController]
     public class ValuesController : ControllerBase
     {
+        [HttpGet]
         public IActionResult Get([FromServices] IUserIdProvider userIdProvider)
         {
             // var userId = User.GetUserId<int>();
