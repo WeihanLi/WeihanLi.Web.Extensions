@@ -1,9 +1,11 @@
 using System;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeihanLi.Common.Aspect;
+using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Extensions
 {
@@ -11,12 +13,12 @@ namespace WeihanLi.Web.Extensions
     {
         private readonly Action<FluentAspectOptions> _optionsAction;
         private readonly Action<IFluentAspectsBuilder> _aspectBuildAction;
-        private readonly Func<Type, bool> _ignoreTypesPredict;
+        private readonly Expression<Func<Type, bool>> _ignoreTypesPredict;
 
         public FluentAspectsServiceProviderFactory(
             Action<FluentAspectOptions> optionsAction,
             Action<IFluentAspectsBuilder> aspectBuildAction,
-            Func<Type, bool> ignoreTypesPredict
+            Expression<Func<Type, bool>> ignoreTypesPredict
             )
         {
             _optionsAction = optionsAction;
@@ -40,13 +42,14 @@ namespace WeihanLi.Web.Extensions
         public static IHostBuilder UseFluentAspectsServiceProviderFactory(this IHostBuilder hostBuilder,
             Action<FluentAspectOptions> optionsAction,
             Action<IFluentAspectsBuilder> aspectBuildAction = null,
-            Func<Type, bool> ignoreTypesPredict = null)
+            Expression<Func<Type, bool>> ignoreTypesPredict = null)
         {
             if (ignoreTypesPredict == null)
             {
                 ignoreTypesPredict = t =>
-                    t.Namespace?.StartsWith("Microsoft.") == true
-                    || t.Namespace?.StartsWith("System.") == true
+                    t.HasNamespace()
+                    && (t.Namespace.StartsWith("Microsoft.") == true
+                        || t.Namespace.StartsWith("System.") == true)
                     ;
             }
             hostBuilder.UseServiceProviderFactory(
