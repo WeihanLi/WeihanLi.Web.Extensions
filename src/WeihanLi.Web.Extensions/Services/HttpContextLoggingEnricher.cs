@@ -35,7 +35,7 @@ namespace WeihanLi.Web.Services
             }
         }
 
-        public void Enrich(LogHelperLoggingEvent loggingEvent)
+        public virtual void Enrich(LogHelperLoggingEvent loggingEvent)
         {
             if (null != _contextAccessor?.HttpContext)
             {

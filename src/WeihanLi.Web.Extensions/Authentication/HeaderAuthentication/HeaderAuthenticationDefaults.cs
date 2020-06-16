@@ -1,4 +1,4 @@
-﻿namespace WeihanLi.AspNetCore.Authentication.HeaderAuthentication
+﻿namespace WeihanLi.Web.Authentication.HeaderAuthentication
 {
     public static class HeaderAuthenticationDefaults
     {

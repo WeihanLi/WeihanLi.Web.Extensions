@@ -1,4 +1,4 @@
-﻿namespace WeihanLi.AspNetCore.Authentication.QueryAuthentication
+﻿namespace WeihanLi.Web.Authentication.QueryAuthentication
 {
     public static class QueryAuthenticationDefaults
     {

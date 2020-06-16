@@ -8,7 +8,7 @@
     <PackageSummary>WeihanLi.Web.Extensions, web extensions</PackageSummary>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-      Init
+      https://github.com/WeihanLi/WeihanLi.Web.Extensions/blob/dev/docs/ReleaseNotes.md
     </PackageReleaseNotes>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/7604648</PackageIconUrl>
     <PackageProjectUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions/tree/dev/src/WeihanLi.Web.Extensions</PackageProjectUrl>

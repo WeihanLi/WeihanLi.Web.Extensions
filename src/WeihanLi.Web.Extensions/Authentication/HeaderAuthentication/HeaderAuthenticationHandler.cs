@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.AspNetCore.Authentication.HeaderAuthentication
+namespace WeihanLi.Web.Authentication.HeaderAuthentication
 {
-    public class HeaderAuthenticationHandler : AuthenticationHandler<HeaderAuthenticationOptions>
+    public sealed class HeaderAuthenticationHandler : AuthenticationHandler<HeaderAuthenticationOptions>
     {
         public HeaderAuthenticationHandler(IOptionsMonitor<HeaderAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {

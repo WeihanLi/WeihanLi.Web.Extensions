@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using WeihanLi.AspNetCore.Authentication;
-using WeihanLi.AspNetCore.Authentication.QueryAuthentication;
+using Microsoft.Extensions.Hosting;
+using WeihanLi.Common.Aspect;
+using WeihanLi.Web.Authentication;
+using WeihanLi.Web.Authentication.HeaderAuthentication;
 
 namespace WeihanLi.Web.Extensions.Samples
 {
@@ -11,33 +12,51 @@ namespace WeihanLi.Web.Extensions.Samples
     {
         public static void Main(string[] args)
         {
-            var host = WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(services =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder =>
                 {
-                    services.AddAuthentication(QueryAuthenticationDefaults.AuthenticationSchema)
-                        .AddQuery();
+                    builder
+                        .ConfigureServices(services =>
+                        {
+                            services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
+                                .AddQuery(options =>
+                                {
+                                    options.UserIdQueryKey = "uid";
+                                })
+                                .AddHeader(options =>
+                                {
+                                    options.UserIdHeaderName = "X-UserId";
+                                    options.UserNameHeaderName = "X-UserName";
+                                    options.UserRolesHeaderName = "X-UserRoles";
+                                });
 
-                    services.AddControllers();
-                    services.AddHttpContextAccessor();
-                    services.AddHttpContextUserIdProvider(options =>
-                    {
-                        options.UserIdFactory = context => $"{context.GetUserIP()}";
-                    });
-                })
-                .Configure(app =>
-                {
-                    app.UseCustomExceptionHandler();
-                    app.UseHealthCheck();
-                    app.UseRouting();
-                    app.UseAuthentication();
-                    app.UseAuthorization();
+                            services.AddControllers();
+                            services.AddHttpContextUserIdProvider(options =>
+                            {
+                                options.UserIdFactory = context => $"{context.GetUserIP()}";
+                            });
+                        })
+                        .Configure(app =>
+                        {
+                            app.UseCustomExceptionHandler();
+                            app.UseHealthCheck();
 
-                    app.UseEndpoints(endpoints =>
-                    {
-                        endpoints.MapControllers();
-                        endpoints.MapDefaultControllerRoute();
-                    });
+                            app.UseRouting();
+                            app.UseAuthentication();
+                            app.UseAuthorization();
+
+                            app.UseEndpoints(endpoints =>
+                            {
+                                endpoints.MapControllers();
+                            });
+                        })
+                        ;
                 })
+                 .UseFluentAspectsServiceProviderFactory(options =>
+                 {
+                     options.InterceptAll()
+                       .With<EventPublishLogInterceptor>();
+                 })
                 .Build();
             host.Run();
         }

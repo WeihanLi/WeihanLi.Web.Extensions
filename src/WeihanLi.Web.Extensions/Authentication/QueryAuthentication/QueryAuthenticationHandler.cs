@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.AspNetCore.Authentication.QueryAuthentication
+namespace WeihanLi.Web.Authentication.QueryAuthentication
 {
-    public class QueryAuthenticationHandler : AuthenticationHandler<QueryAuthenticationOptions>
+    public sealed class QueryAuthenticationHandler : AuthenticationHandler<QueryAuthenticationOptions>
     {
         public QueryAuthenticationHandler(IOptionsMonitor<QueryAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {

@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.AspNetCore.Authentication.HeaderAuthentication
+namespace WeihanLi.Web.Authentication.HeaderAuthentication
 {
-    public class HeaderAuthenticationOptions : AuthenticationSchemeOptions
+    public sealed class HeaderAuthenticationOptions : AuthenticationSchemeOptions
     {
         private string _userRolesHeaderName = "UserRoles";
         private string _userNameHeaderName = "UserName";

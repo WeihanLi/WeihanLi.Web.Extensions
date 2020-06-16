@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace WeihanLi.AspNetCore.Authentication.QueryAuthentication
+namespace WeihanLi.Web.Authentication.QueryAuthentication
 {
-    public class QueryAuthenticationOptions : AuthenticationSchemeOptions
+    public sealed class QueryAuthenticationOptions : AuthenticationSchemeOptions
     {
         private string _userRolesQueryKey = "UserRoles";
         private string _userNameQueryKey = "UserName";
@@ -72,8 +72,8 @@ namespace WeihanLi.AspNetCore.Authentication.QueryAuthentication
 
         private Func<HttpContext, Task<bool>> _authenticationValidator = context =>
         {
-            var userIdHeader = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
-            return Task.FromResult(context.Request.Query.ContainsKey(userIdHeader));
+            var userIdKey = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
+            return Task.FromResult(context.Request.Query.ContainsKey(userIdKey));
         };
 
         public Func<HttpContext, Task<bool>> AuthenticationValidator
