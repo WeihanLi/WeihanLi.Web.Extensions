@@ -30,26 +30,19 @@ namespace WeihanLi.Web.Extensions
         /// <param name="principal">principal</param>
         /// <param name="preferShortName"></param>
         /// <returns></returns>
-        public static string GetUserId(this ClaimsPrincipal principal, bool preferShortName = false)
+        public static string GetUserId(this ClaimsPrincipal principal)
         {
-            if (preferShortName)
+            var userId = GetUserId(principal, ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
             {
-                var userId = GetUserId(principal, "nameid");
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    return userId;
-                }
-                return GetUserId(principal, ClaimTypes.NameIdentifier);
+                return userId;
             }
-            else
+            userId = GetUserId(principal, "nameid");
+            if (!string.IsNullOrEmpty(userId))
             {
-                var userId = GetUserId(principal, ClaimTypes.NameIdentifier);
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    return userId;
-                }
-                return GetUserId(principal, "nameid");
+                return userId;
             }
+            return GetUserId(principal, "sub");
         }
 
         /// <summary>
@@ -62,9 +55,9 @@ namespace WeihanLi.Web.Extensions
         public static T GetUserId<T>(this ClaimsPrincipal principal, bool preferShortName = false)
         {
             if (typeof(T) == typeof(string))
-                return (T)(object)principal.GetUserId(preferShortName);
+                return (T)(object)principal.GetUserId();
 
-            return (principal.GetUserId(preferShortName)).ToOrDefault<T>();
+            return (GetUserId(principal)).ToOrDefault<T>();
         }
 
         public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
