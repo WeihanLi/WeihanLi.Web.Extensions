@@ -11,7 +11,7 @@ steps:
   displayName: 'Use .NET Core sdk'
   inputs:
     packageType: sdk
-    version: 3.0.x
+    version: 5.0.x
     includePreviewVersions: true
 
 - script: dotnet --info
