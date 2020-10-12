@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PackageId>WeihanLi.Web.Extensions</PackageId>
     <Title>WeihanLi.Web.Extensions</Title>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0;netcoreapp3.1</TargetFrameworks>
     <Description>WeihanLi.Web.Extensions</Description>
     <PackageTags></PackageTags>
     <PackageSummary>WeihanLi.Web.Extensions, web extensions</PackageSummary>
