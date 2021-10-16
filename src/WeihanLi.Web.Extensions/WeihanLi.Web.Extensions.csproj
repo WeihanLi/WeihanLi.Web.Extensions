@@ -4,12 +4,12 @@
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WeihanLi.Common" Version="1.0.44" />
+    <PackageReference Include="WeihanLi.Common" Version="1.0.47-preview-20211009-134935" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="[2.1.0, 3.0.0)" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="[2.1.0, 3.0.0)" />
-    <Compile Remove="Extensions\FluentAspectServiceProviderFactory.cs"/>
+    <Compile Remove="Extensions\FluentAspectServiceProviderFactory.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0' OR '$(TargetFramework)' == 'netcoreapp3.1'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
