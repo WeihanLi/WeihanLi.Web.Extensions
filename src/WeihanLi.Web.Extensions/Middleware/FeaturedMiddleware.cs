@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
@@ -11,17 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace WeihanLi.Web.Middleware
 {
 
-    public interface IFeaturedFilterResponseFactory
+    public interface IFeatureFlagFilterResponseFactory
     {
         public Task<IActionResult> GetResponse(ResourceExecutingContext resourceExecutingContext);
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public sealed class FeaturedFilterAttribute : Attribute, IAsyncResourceFilter
+    public sealed class FeatureFlagFilterAttribute : Attribute, IAsyncResourceFilter
     {
         public bool DefaultValue { get; set; }
         public string FeatureFlagName { get; }
-        public FeaturedFilterAttribute(string featureFlagName)
+        public FeatureFlagFilterAttribute(string featureFlagName)
         {
             FeatureFlagName = featureFlagName ?? throw new ArgumentNullException(nameof(featureFlagName));
         }
@@ -29,10 +27,14 @@ namespace WeihanLi.Web.Middleware
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
             var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-            if (!configuration.IsFeatureEnabled(FeatureFlagName, DefaultValue))
+            if (configuration.IsFeatureEnabled(FeatureFlagName, DefaultValue))
+            {
+                await next();
+            }
+            else
             {
                 var responseFactory = context.HttpContext.RequestServices
-                .GetService<IFeaturedFilterResponseFactory>();
+                    .GetService<IFeatureFlagFilterResponseFactory>();
                 if (responseFactory != null)
                 {
                     context.Result = await responseFactory.GetResponse(context);
@@ -42,10 +44,6 @@ namespace WeihanLi.Web.Middleware
                     context.Result = new NotFoundResult();
                 }
             }
-            else
-            {
-                await next();
-            }
         }
     }
 
@@ -54,7 +52,7 @@ namespace WeihanLi.Web.Middleware
         public static IApplicationBuilder UseFeaturedMiddleware<TMiddleware>(this IApplicationBuilder app, string featureFlagName, bool defaultValue = false)
         {
             var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
-            if(configuration.IsFeatureEnabled(featureFlagName, defaultValue))
+            if (configuration.IsFeatureEnabled(featureFlagName, defaultValue))
             {
                 app.UseMiddleware<TMiddleware>();
             }

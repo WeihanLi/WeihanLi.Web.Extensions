@@ -26,7 +26,7 @@ namespace WeihanLi.Web.Extensions.Samples
         }
 
         [HttpGet("[action]")]
-        [FeaturedFilter("Flag1", DefaultValue = true)]
+        [FeatureFlagFilter("Flag1", DefaultValue = true)]
         public IActionResult FeatureEnableTest()
         {
             return Ok(new
@@ -36,7 +36,7 @@ namespace WeihanLi.Web.Extensions.Samples
         }
 
         [HttpGet("[action]")]
-        [FeaturedFilter("Flag2")]
+        [FeatureFlagFilter("Flag2", DefaultValue = false)]
         public IActionResult FeatureDisableTest()
         {
             return Ok(new
