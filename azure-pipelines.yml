@@ -20,6 +20,13 @@ steps:
     version: 5.0.x
     includePreviewVersions: true
 
+- task: UseDotNet@2
+  displayName: 'Use .NET 6 sdk'
+  inputs:
+    packageType: sdk
+    version: 6.0.x
+    includePreviewVersions: true
+
 - script: dotnet --info
   displayName: 'dotnet info'
 
