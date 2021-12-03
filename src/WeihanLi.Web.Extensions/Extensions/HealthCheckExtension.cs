@@ -21,12 +21,12 @@ namespace WeihanLi.Web.Extensions
 
         public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path)
         {
-            applicationBuilder.Map(path, builder => builder.Use(
-                (context, next) =>
+            Func<HttpContext, Func<Task>, Task> func = (context, next) =>
                 {
                     context.Response.StatusCode = 200;
                     return context.Response.WriteAsync("healthy");
-                }));
+                };
+            applicationBuilder.Map(path, builder => builder.Use(func));
             return applicationBuilder;
         }
 
@@ -56,8 +56,7 @@ namespace WeihanLi.Web.Extensions
             {
                 checkFunc = serviceProvider => Task.FromResult(true);
             }
-            applicationBuilder.Map(path, builder => builder.Use(
-                async (context, next) =>
+            Func<HttpContext, Func<Task>, Task> func = async (context, next) =>
                 {
                     try
                     {
@@ -80,7 +79,8 @@ namespace WeihanLi.Web.Extensions
                         context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
                         await context.Response.WriteAsync("unhealthy");
                     }
-                }));
+                };
+            applicationBuilder.Map(path, builder => builder.Use(func));
             return applicationBuilder;
         }
     }
