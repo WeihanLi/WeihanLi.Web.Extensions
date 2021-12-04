@@ -6,12 +6,7 @@
   <ItemGroup>
     <PackageReference Include="WeihanLi.Common" Version="1.0.47" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="[2.1.0, 3.0.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="[2.1.0, 3.0.0)" />
-    <Compile Remove="Extensions\FluentAspectServiceProviderFactory.cs" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net5.0' OR '$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>
