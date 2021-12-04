@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using WeihanLi.Common.Services;
+using WeihanLi.Web.Middleware;
 
 namespace WeihanLi.Web.Extensions.Samples
 {
@@ -21,6 +23,26 @@ namespace WeihanLi.Web.Extensions.Samples
                 User.Identity.Name,
                 User.Identity.AuthenticationType,
             } });
+        }
+
+        [HttpGet("[action]")]
+        [FeatureFlagFilter("Flag1", DefaultValue = true)]
+        public IActionResult FeatureEnableTest()
+        {
+            return Ok(new
+            {
+                Time = DateTime.UtcNow
+            });
+        }
+
+        [HttpGet("[action]")]
+        [FeatureFlagFilter("Flag2", DefaultValue = false)]
+        public IActionResult FeatureDisableTest()
+        {
+            return Ok(new
+            {
+                Time = DateTime.UtcNow
+            });
         }
     }
 }

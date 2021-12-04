@@ -28,7 +28,6 @@ namespace WeihanLi.Web.Extensions
         /// GetUserId from claims, get from `nameid`/ClaimTypes.NameIdentifier by default
         /// </summary>
         /// <param name="principal">principal</param>
-        /// <param name="preferShortName"></param>
         /// <returns></returns>
         public static string GetUserId(this ClaimsPrincipal principal)
         {
@@ -50,14 +49,13 @@ namespace WeihanLi.Web.Extensions
         /// </summary>
         /// <typeparam name="T">userId type</typeparam>
         /// <param name="principal">principal</param>
-        /// <param name="preferShortName"></param>
         /// <returns></returns>
-        public static T GetUserId<T>(this ClaimsPrincipal principal, bool preferShortName = false)
+        public static T GetUserId<T>(this ClaimsPrincipal principal)
         {
             if (typeof(T) == typeof(string))
                 return (T)(object)principal.GetUserId();
 
-            return (GetUserId(principal)).ToOrDefault<T>();
+            return GetUserId(principal).ToOrDefault<T>();
         }
 
         public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)

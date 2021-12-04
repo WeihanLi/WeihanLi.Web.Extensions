@@ -8,23 +8,23 @@ using WeihanLi.Web.Services;
 
 namespace WeihanLi.Web.Extensions
 {
-    public static class HttpContextUserIdProviderExtension
+    public static class HttpContextTenantProviderExtension
     {
-        public static IServiceCollection AddHttpContextUserIdProvider(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddHttpContextTenantProvider(this IServiceCollection serviceCollection)
         {
             Guard.NotNull(serviceCollection);
             serviceCollection.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            serviceCollection.TryAddSingleton<IUserIdProvider, HttpContextUserIdProvider>();
+            serviceCollection.TryAddSingleton<ITenantProvider, HttpContextTenantProvider>();
             return serviceCollection;
         }
 
-        public static IServiceCollection AddHttpContextUserIdProvider(this IServiceCollection serviceCollection, Action<HttpContextUserIdProviderOptions> optionsAction)
+        public static IServiceCollection AddHttpContextTenantProvider(this IServiceCollection serviceCollection, Action<HttpContextTenantProviderOptions> optionsAction)
         {
             Guard.NotNull(serviceCollection);
             Guard.NotNull(optionsAction);
 
             serviceCollection.Configure(optionsAction);
-            return serviceCollection.AddHttpContextUserIdProvider();
+            return serviceCollection.AddHttpContextTenantProvider();
         }
     }
 }

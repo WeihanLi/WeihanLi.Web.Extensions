@@ -1,0 +1,19 @@
+name: dotnetcore
+
+on: [push]
+
+jobs:
+  # Label of the container job
+  default:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+        include-prerelease: true
+    - name: dotnet info
+      run: dotnet --info
+    - name: build
+      run: dotnet build
