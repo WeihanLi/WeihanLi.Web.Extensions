@@ -8,14 +8,6 @@ namespace WeihanLi.Web.AccessControlHelper
 {
     public static class HtmlHelperExtension
     {
-        static HtmlHelperExtension()
-        {
-            //if (DependencyResolver.Current.TryResolveService<IControlAccessStrategy>(out _))
-            //{
-            //    throw new ArgumentException("Control显示策略未初始化，请注册显示策略", nameof(IControlAccessStrategy));
-            //}
-        }
-
         /// <summary>
         /// SparkActionLink
         /// </summary>
