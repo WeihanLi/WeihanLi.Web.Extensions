@@ -21,12 +21,12 @@ namespace WeihanLi.Web.Extensions
 
         public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path)
         {
-            Func<HttpContext, Func<Task>, Task> func = (context, next) =>
-                {
-                    context.Response.StatusCode = 200;
-                    return context.Response.WriteAsync("healthy");
-                };
-            applicationBuilder.Map(path, builder => builder.Use(func));
+            static Task DefaultHealthCheck(HttpContext context, Func<Task> next)
+            {
+                context.Response.StatusCode = 200;
+                return context.Response.WriteAsync("healthy");
+            }
+            applicationBuilder.Map(path, builder => builder.Use(DefaultHealthCheck));
             return applicationBuilder;
         }
 
@@ -56,30 +56,30 @@ namespace WeihanLi.Web.Extensions
             {
                 checkFunc = serviceProvider => Task.FromResult(true);
             }
-            Func<HttpContext, Func<Task>, Task> func = async (context, next) =>
+            async Task func(HttpContext context, Func<Task> next)
+            {
+                try
                 {
-                    try
+                    var healthy = await checkFunc.Invoke(context.RequestServices);
+                    if (healthy)
                     {
-                        var healthy = await checkFunc.Invoke(context.RequestServices);
-                        if (healthy)
-                        {
-                            context.Response.StatusCode = StatusCodes.Status200OK;
-                            await context.Response.WriteAsync("healthy");
-                        }
-                        else
-                        {
-                            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-                            await context.Response.WriteAsync("unhealthy");
-                        }
+                        context.Response.StatusCode = StatusCodes.Status200OK;
+                        await context.Response.WriteAsync("healthy");
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        context.RequestServices.GetService<ILoggerFactory>()
-                        .CreateLogger(typeof(HealthCheckExtensions)).LogError(ex, "HealthCheck Exception");
                         context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
                         await context.Response.WriteAsync("unhealthy");
                     }
-                };
+                }
+                catch (Exception ex)
+                {
+                    context.RequestServices.GetService<ILoggerFactory>()
+                      .CreateLogger(typeof(HealthCheckExtensions)).LogError(ex, "HealthCheck Exception");
+                    context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                    await context.Response.WriteAsync("unhealthy");
+                }
+            }
             applicationBuilder.Map(path, builder => builder.Use(func));
             return applicationBuilder;
         }
