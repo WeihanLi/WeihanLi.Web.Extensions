@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
 
-namespace WeihanLi.Web.AccessControlHelper
+using Microsoft.AspNetCore.Authorization;
+
+namespace WeihanLi.Web.AccessControlHelper;
+
+internal sealed class AccessControlRequirement : IAuthorizationRequirement
 {
-    internal sealed class AccessControlRequirement : IAuthorizationRequirement
-    {
-    }
 }

@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using WeihanLi.Common;
 
-namespace WeihanLi.Web.Extensions
+namespace WeihanLi.Web.Extensions;
+
+public static class DependenceResolverExtension
 {
-    public static class DependenceResolverExtension
+    /// <summary>
+    /// try get service from HttpContext.RequestServices
+    /// </summary>
+    /// <typeparam name="TService">TService</typeparam>
+    /// <param name="dependencyResolver">dependencyResolver</param>
+    /// <returns>service instance</returns>
+    public static TService ResolveCurrentService<TService>(this IDependencyResolver dependencyResolver)
     {
-        /// <summary>
-        /// try get service from HttpContext.RequestServices
-        /// </summary>
-        /// <typeparam name="TService">TService</typeparam>
-        /// <param name="dependencyResolver">dependencyResolver</param>
-        /// <returns>service instance</returns>
-        public static TService ResolveCurrentService<TService>(this IDependencyResolver dependencyResolver)
-        {
-            var contextAccessor = dependencyResolver.GetRequiredService<IHttpContextAccessor>();
-            return contextAccessor.HttpContext.RequestServices.GetService<TService>();
-        }
+        var contextAccessor = dependencyResolver.GetRequiredService<IHttpContextAccessor>();
+        return contextAccessor.HttpContext.RequestServices.GetService<TService>();
     }
 }

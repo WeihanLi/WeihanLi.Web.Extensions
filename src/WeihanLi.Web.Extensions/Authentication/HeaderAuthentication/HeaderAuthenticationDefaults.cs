@@ -1,7 +1,9 @@
-﻿namespace WeihanLi.Web.Authentication.HeaderAuthentication
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
+namespace WeihanLi.Web.Authentication.HeaderAuthentication;
+
+public static class HeaderAuthenticationDefaults
 {
-    public static class HeaderAuthenticationDefaults
-    {
-        public const string AuthenticationSchema = "Header";
-    }
+    public const string AuthenticationSchema = "Header";
 }

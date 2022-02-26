@@ -1,21 +1,23 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
 
-namespace WeihanLi.Web.Pager
+using System.Collections.Generic;
+
+namespace WeihanLi.Web.Pager;
+
+/// <summary>
+/// IPagedListModel
+/// </summary>
+/// <typeparam name="T">Type</typeparam>
+public interface IPagedListModel<out T> : IReadOnlyList<T>
 {
     /// <summary>
-    /// IPagedListModel
+    /// Data
     /// </summary>
-    /// <typeparam name="T">Type</typeparam>
-    public interface IPagedListModel<out T> : IReadOnlyList<T>
-    {
-        /// <summary>
-        /// Data
-        /// </summary>
-        IReadOnlyList<T> Data { get; }
+    IReadOnlyList<T> Data { get; }
 
-        /// <summary>
-        /// PagerModel
-        /// </summary>
-        IPagerModel Pager { get; }
-    }
+    /// <summary>
+    /// PagerModel
+    /// </summary>
+    IPagerModel Pager { get; }
 }
