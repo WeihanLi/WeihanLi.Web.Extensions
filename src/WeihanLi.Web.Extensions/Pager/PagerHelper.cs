@@ -1,4 +1,6 @@
-﻿
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 /* Unmerged change from project 'WeihanLi.Web.Extensions(net5.0)'
 Before:
 using System;

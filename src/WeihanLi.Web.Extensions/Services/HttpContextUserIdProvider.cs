@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using WeihanLi.Common.Services;
