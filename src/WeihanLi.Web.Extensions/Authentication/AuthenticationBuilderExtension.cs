@@ -1,24 +1,4 @@
-﻿
-/* Unmerged change from project 'WeihanLi.Web.Extensions(net5.0)'
-Before:
-using System;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System;
-*/
-
-/* Unmerged change from project 'WeihanLi.Web.Extensions(netcoreapp3.1)'
-Before:
-using System;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System;
-*/
-// Copyright (c) Weihan Li. All rights reserved.
+﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Authentication;

@@ -1,24 +1,4 @@
-﻿
-/* Unmerged change from project 'WeihanLi.Web.Extensions(net5.0)'
-Before:
-using System;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System;
-*/
-
-/* Unmerged change from project 'WeihanLi.Web.Extensions(netcoreapp3.1)'
-Before:
-using System;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System;
-*/
-// Copyright (c) Weihan Li. All rights reserved.
+﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.DataProtection;
@@ -126,7 +106,7 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                         var obj = content.JsonToObject<JToken>();
                         try
                         {
-                            ParamsProtectionHelper.UnprotectParams(obj, _protector, _option);
+                            ParamsProtectionHelper.UnProtectParams(obj, _protector, _option);
                         }
                         catch (Exception e)
                         {
@@ -146,7 +126,7 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                     var obj = XmlDataSerializer.Value.Deserialize<JToken>(request.Body.ToByteArray());
                     try
                     {
-                        ParamsProtectionHelper.UnprotectParams(obj, _protector, _option);
+                        ParamsProtectionHelper.UnProtectParams(obj, _protector, _option);
                     }
                     catch (Exception e)
                     {

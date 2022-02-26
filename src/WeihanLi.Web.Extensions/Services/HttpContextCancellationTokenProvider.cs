@@ -1,27 +1,4 @@
-﻿
-/* Unmerged change from project 'WeihanLi.Web.Extensions(net5.0)'
-Before:
-using System.Threading;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System.Threading;
-*/
-
-/* Unmerged change from project 'WeihanLi.Web.Extensions(netcoreapp3.1)'
-Before:
-using System.Threading;
-After:
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using System.Threading;
-*/
-// Copyright (c) Weihan Li. All rights reserved.
-// Licensed under the MIT license.
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Threading;
 using WeihanLi.Common.Services;
 
