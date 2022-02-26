@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;
 
@@ -8,6 +9,38 @@ namespace WeihanLi.Web.Authentication
 {
     public static class AuthenticationBuilderExtension
     {
+        #region AddApiKey
+
+        public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder builder)
+        {
+            return builder.AddApiKey(ApiKeyAuthenticationDefaults.AuthenticationSchema);
+        }
+
+        public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder builder, string schema)
+        {
+            return builder.AddApiKey(schema, _ => { });
+        }
+
+        public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder builder,
+            Action<ApiKeyAuthenticationOptions> configureOptions)
+        {
+            return builder.AddApiKey(ApiKeyAuthenticationDefaults.AuthenticationSchema,
+                configureOptions);
+        }
+
+        public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder builder, string schema,
+            Action<ApiKeyAuthenticationOptions> configureOptions)
+        {
+            if (null != configureOptions)
+            {
+                builder.Services.Configure(configureOptions);
+            }
+            return builder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(schema,
+                configureOptions);
+        }
+
+        #endregion AddApiKey
+
         #region AddHeader
 
         public static AuthenticationBuilder AddHeader(this AuthenticationBuilder builder)

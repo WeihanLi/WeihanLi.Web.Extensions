@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WeihanLi.Common.Services;
+using WeihanLi.Web.Authentication.ApiKeyAuthentication;
+using WeihanLi.Web.Authentication.HeaderAuthentication;
+using WeihanLi.Web.Authentication.QueryAuthentication;
 using WeihanLi.Web.Middleware;
 
 namespace WeihanLi.Web.Extensions.Samples
@@ -10,19 +16,27 @@ namespace WeihanLi.Web.Extensions.Samples
     public class ValuesController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get([FromServices] IUserIdProvider userIdProvider)
+        public async Task<IActionResult> Get([FromServices] IUserIdProvider userIdProvider)
         {
-            // var userId = User.GetUserId<int>();
+            var headerAuthResult = await HttpContext.AuthenticateAsync(HeaderAuthenticationDefaults.AuthenticationSchema);
+            var queryAuthResult = await HttpContext.AuthenticateAsync(QueryAuthenticationDefaults.AuthenticationSchema);
+            var apiKeyAuthResult = await HttpContext.AuthenticateAsync(ApiKeyAuthenticationDefaults.AuthenticationSchema);
 
-            var userId2 = userIdProvider.GetUserId();
-
-            return Ok(new object[] { userId2, new
+            return Ok(new
             {
-                User.Identity.IsAuthenticated,
-                UserId = User.GetUserId(),
-                User.Identity.Name,
-                User.Identity.AuthenticationType,
-            } });
+                userId = userIdProvider.GetUserId(),
+                defaultAuthResult = User.Identity,
+                headerAuthResult = headerAuthResult.Principal?.Identity,
+                queryAuthResult = queryAuthResult.Principal?.Identity,
+                apiKeyAuthResult = apiKeyAuthResult.Principal?.Identity,
+            });
+        }
+
+        [HttpGet("apiKeyTest")]
+        [Authorize(AuthenticationSchemes = ApiKeyAuthenticationDefaults.AuthenticationSchema)]
+        public IActionResult ApiKeyAuthTest()
+        {
+            return Ok(User.Identity);
         }
 
         [HttpGet("[action]")]

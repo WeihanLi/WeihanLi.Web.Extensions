@@ -1,18 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Web.Authentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
+using WeihanLi.Web.Extensions;
+using WeihanLi.Web.Extensions.Samples;
 
-namespace WeihanLi.Web.Extensions.Samples
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
                 {
                     builder
@@ -28,9 +25,18 @@ namespace WeihanLi.Web.Extensions.Samples
                                     options.UserIdHeaderName = "X-UserId";
                                     options.UserNameHeaderName = "X-UserName";
                                     options.UserRolesHeaderName = "X-UserRoles";
-                                });
+                                })
+                                .AddApiKey(options =>
+                                {
+                                    options.ApiKey = "123456";
+                                    options.ApiKeyName = "X-ApiKey";
+                                })
+                                ;
 
-                            services.AddControllers();
+                            services.AddControllers().AddJsonOptions(options =>
+                            {
+                                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                            });
                             services.AddHttpContextUserIdProvider(options =>
                             {
                                 options.UserIdFactory = context => $"{context.GetUserIP()}";
@@ -38,7 +44,7 @@ namespace WeihanLi.Web.Extensions.Samples
                         })
                         .Configure(app =>
                         {
-                            app.UseCustomExceptionHandler();
+                            // app.UseCustomExceptionHandler();
                             app.UseHealthCheck();
 
                             app.UseRouting();
@@ -50,7 +56,7 @@ namespace WeihanLi.Web.Extensions.Samples
                                 endpoints.MapControllers();
                             });
                         })
-                        ;
+;
                 })
                  .UseFluentAspectsServiceProviderFactory(options =>
                  {
@@ -58,7 +64,5 @@ namespace WeihanLi.Web.Extensions.Samples
                        .With<EventPublishLogInterceptor>();
                  })
                 .Build();
-            host.Run();
-        }
-    }
-}
+
+host.Run();
