@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
 
-namespace WeihanLi.Web.Extensions
+using Microsoft.AspNetCore.Builder;
+
+namespace WeihanLi.Web.Extensions;
+
+public static class MiddlewareExtension
 {
-    public static class MiddlewareExtension
+    /// <summary>
+    /// UseCustomExceptionHandler
+    /// </summary>
+    /// <param name="applicationBuilder">applicationBuilder</param>
+    /// <returns></returns>
+    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder applicationBuilder)
     {
-        /// <summary>
-        /// UseCustomExceptionHandler
-        /// </summary>
-        /// <param name="applicationBuilder">applicationBuilder</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder applicationBuilder)
-        {
-            applicationBuilder.UseMiddleware<Middleware.CustomExceptionHandlerMiddleware>();
-            return applicationBuilder;
-        }
+        applicationBuilder.UseMiddleware<Middleware.CustomExceptionHandlerMiddleware>();
+        return applicationBuilder;
     }
 }

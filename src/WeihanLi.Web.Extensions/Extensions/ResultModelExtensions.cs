@@ -1,49 +1,51 @@
-﻿using System.Net;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using WeihanLi.Common.Models;
 
-namespace WeihanLi.Web.Extensions
+namespace WeihanLi.Web.Extensions;
+
+public static class ResultModelExtensions
 {
-    public static class ResultModelExtensions
+    public static IActionResult GetOkObjectResult(this ResultModel resultModel)
     {
-        public static IActionResult GetOkObjectResult(this ResultModel resultModel)
-        {
-            if (resultModel == null)
-                return new OkResult();
+        if (resultModel == null)
+            return new OkResult();
 
-            return new OkObjectResult(resultModel);
-        }
+        return new OkObjectResult(resultModel);
+    }
 
-        public static IActionResult GetActionResult(this ResultModel resultModel)
-        {
-            if (resultModel == null)
-                return new NoContentResult();
+    public static IActionResult GetActionResult(this ResultModel resultModel)
+    {
+        if (resultModel == null)
+            return new NoContentResult();
 
-            if (resultModel.Status == ResultStatus.RequestError)
-                return new BadRequestObjectResult(resultModel);
+        if (resultModel.Status == ResultStatus.RequestError)
+            return new BadRequestObjectResult(resultModel);
 
-            if (resultModel.Status == ResultStatus.ResourceNotFound)
-                return new NotFoundObjectResult(resultModel);
+        if (resultModel.Status == ResultStatus.ResourceNotFound)
+            return new NotFoundObjectResult(resultModel);
 
-            if (resultModel.Status == ResultStatus.MethodNotAllowed)
-                return new ObjectResult(resultModel)
-                {
-                    StatusCode = (int)HttpStatusCode.MethodNotAllowed
-                };
+        if (resultModel.Status == ResultStatus.MethodNotAllowed)
+            return new ObjectResult(resultModel)
+            {
+                StatusCode = (int)HttpStatusCode.MethodNotAllowed
+            };
 
-            if (resultModel.Status == ResultStatus.Unauthorized)
-                return new ObjectResult(resultModel)
-                {
-                    StatusCode = (int)HttpStatusCode.Unauthorized
-                };
+        if (resultModel.Status == ResultStatus.Unauthorized)
+            return new ObjectResult(resultModel)
+            {
+                StatusCode = (int)HttpStatusCode.Unauthorized
+            };
 
-            if (resultModel.Status == ResultStatus.NoPermission)
-                return new ObjectResult(resultModel)
-                {
-                    StatusCode = (int)HttpStatusCode.Forbidden
-                };
+        if (resultModel.Status == ResultStatus.NoPermission)
+            return new ObjectResult(resultModel)
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden
+            };
 
-            return new OkObjectResult(resultModel);
-        }
+        return new OkObjectResult(resultModel);
     }
 }

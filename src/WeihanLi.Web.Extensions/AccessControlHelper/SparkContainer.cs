@@ -1,48 +1,50 @@
-﻿using System;
-using System.IO;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.IO;
 
-namespace WeihanLi.Web.AccessControlHelper
+namespace WeihanLi.Web.AccessControlHelper;
+
+public sealed class SparkContainer : IDisposable
 {
-    public sealed class SparkContainer : IDisposable
+    private readonly string _tagName;
+    private readonly ViewContext _viewContext;
+    private readonly bool _canAccess;
+    private bool _disposed;
+    private readonly TextWriter _writer;
+
+    public SparkContainer(ViewContext viewContext, string tagName, bool canAccess = true)
     {
-        private readonly string _tagName;
-        private readonly ViewContext _viewContext;
-        private readonly bool _canAccess;
-        private bool _disposed;
-        private readonly TextWriter _writer;
-
-        public SparkContainer(ViewContext viewContext, string tagName, bool canAccess = true)
+        _viewContext = viewContext;
+        _tagName = tagName;
+        _canAccess = canAccess;
+        if (!_canAccess)
         {
-            _viewContext = viewContext;
-            _tagName = tagName;
-            _canAccess = canAccess;
-            if (!_canAccess)
-            {
-                _writer = viewContext.Writer;
-                viewContext.Writer = TextWriter.Null;
-            }
+            _writer = viewContext.Writer;
+            viewContext.Writer = TextWriter.Null;
         }
+    }
 
-        public void Dispose()
+    public void Dispose()
+    {
+        if (!_disposed)
         {
-            if (!_disposed)
-            {
-                _disposed = true;
-                EndContainer();
-            }
+            _disposed = true;
+            EndContainer();
         }
+    }
 
-        public void EndContainer()
+    public void EndContainer()
+    {
+        if (!_canAccess)
         {
-            if (!_canAccess)
-            {
-                _viewContext.Writer = _writer;
-            }
-            else
-            {
-                _viewContext.Writer.Write("</{0}>", _tagName);
-            }
+            _viewContext.Writer = _writer;
+        }
+        else
+        {
+            _viewContext.Writer.Write("</{0}>", _tagName);
         }
     }
 }

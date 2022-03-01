@@ -1,16 +1,18 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
 
-namespace WeihanLi.Web.AccessControlHelper
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
+
+namespace WeihanLi.Web.AccessControlHelper;
+
+/// <summary>
+/// NoAccessControl
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public sealed class NoAccessControlAttribute : Attribute, IAuthorizationFilter
 {
-    /// <summary>
-    /// NoAccessControl
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public sealed class NoAccessControlAttribute : Attribute, IAuthorizationFilter
+    public void OnAuthorization(AuthorizationFilterContext context)
     {
-        public void OnAuthorization(AuthorizationFilterContext context)
-        {
-        }
     }
 }

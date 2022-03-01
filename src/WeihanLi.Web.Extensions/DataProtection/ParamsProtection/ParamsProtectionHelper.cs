@@ -1,41 +1,120 @@
-﻿using System;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.AspNetCore.DataProtection;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.DataProtection;
-using Newtonsoft.Json.Linq;
 
-namespace WeihanLi.Web.DataProtection.ParamsProtection
+namespace WeihanLi.Web.DataProtection.ParamsProtection;
+
+internal static class ParamsProtectionHelper
 {
-    internal static class ParamsProtectionHelper
+    public const string DefaultPurpose = "ParamsProtector";
+
+    private static bool IsParamNeedProtect(this ParamsProtectionOptions option, string propName, string value)
     {
-        public const string DefaultPurpose = "ParamsProtector";
-
-        private static bool IsParamNeedProtect(this ParamsProtectionOptions option, string propName, string value)
+        if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
         {
-            if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
+            return (!option.ParamValueProtectFuncEnabled || option.ParamValueNeedProtectFunc(value));
+        }
+        return false;
+    }
+
+    private static bool IsParamNeedUnprotect(this ParamsProtectionOptions option, string propName, string value)
+    {
+        if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
+        {
+            return !option.ParamValueProtectFuncEnabled || !option.ParamValueNeedProtectFunc(value);
+        }
+        return false;
+    }
+
+    private static bool IsParamValueNeedProtect(this ParamsProtectionOptions option, string value)
+    {
+        return !option.ParamValueProtectFuncEnabled || option.ParamValueNeedProtectFunc(value);
+    }
+
+    private static void ProtectParams(JToken token, ITimeLimitedDataProtector protector, ParamsProtectionOptions option)
+    {
+        if (token is JArray array)
+        {
+            foreach (var j in array)
             {
-                return (!option.ParamValueProtectFuncEnabled || option.ParamValueNeedProtectFunc(value));
+                if (array.Parent is JProperty property && j is JValue val)
+                {
+                    var strJ = val.Value.ToString();
+                    if (option.IsParamNeedProtect(property.Name, strJ))
+                    {
+                        val.Value = protector.Protect(strJ, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
+                    }
+                }
+                else
+                {
+                    ProtectParams(j, protector, option);
+                }
             }
-            return false;
         }
-
-        private static bool IsParamNeedUnprotect(this ParamsProtectionOptions option, string propName, string value)
+        else if (token is JObject obj)
         {
-            if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
+            foreach (var property in obj.Children<JProperty>())
             {
-                return !option.ParamValueProtectFuncEnabled || !option.ParamValueNeedProtectFunc(value);
+                var val = property.Value.ToString();
+                if (option.IsParamNeedProtect(property.Name, val))
+                {
+                    property.Value = protector.Protect(val, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
+                }
+                else
+                {
+                    if (property.Value.HasValues)
+                    {
+                        ProtectParams(property.Value, protector, option);
+                    }
+                }
             }
-            return false;
         }
+    }
 
-        private static bool IsParamValueNeedProtect(this ParamsProtectionOptions option, string value)
+    public static bool TryGetUnprotectedValue(this IDataProtector protector, ParamsProtectionOptions option,
+        string value, out string unprotectedValue)
+    {
+        if (option.AllowUnprotectedParams &&
+            (option.ParamValueProtectFuncEnabled && option.ParamValueNeedProtectFunc(value))
+            )
         {
-            return !option.ParamValueProtectFuncEnabled || option.ParamValueNeedProtectFunc(value);
+            unprotectedValue = value;
         }
-
-        private static void ProtectParams(JToken token, ITimeLimitedDataProtector protector, ParamsProtectionOptions option)
+        else
         {
+            try
+            {
+                unprotectedValue = protector.Unprotect(value);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e, $"Error in unprotect value:{value}");
+                unprotectedValue = value;
+                if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void ProtectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
+    {
+        if (option.Enabled && option.ProtectParams?.Length > 0)
+        {
+            if (protector is ITimeLimitedDataProtector timeLimitedDataProtector)
+            {
+                ProtectParams(token, timeLimitedDataProtector, option);
+                return;
+            }
             if (token is JArray array)
             {
                 foreach (var j in array)
@@ -45,7 +124,7 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection
                         var strJ = val.Value.ToString();
                         if (option.IsParamNeedProtect(property.Name, strJ))
                         {
-                            val.Value = protector.Protect(strJ, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
+                            val.Value = protector.Protect(strJ);
                         }
                     }
                     else
@@ -61,7 +140,7 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection
                     var val = property.Value.ToString();
                     if (option.IsParamNeedProtect(property.Name, val))
                     {
-                        property.Value = protector.Protect(val, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
+                        property.Value = protector.Protect(val);
                     }
                     else
                     {
@@ -73,157 +152,80 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection
                 }
             }
         }
+    }
 
-        public static bool TryGetUnprotectedValue(this IDataProtector protector, ParamsProtectionOptions option,
-            string value, out string unprotectedValue)
+    public static void UnProtectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
+    {
+        if (option.Enabled && option.ProtectParams?.Length > 0)
         {
-            if (option.AllowUnprotectedParams &&
-                (option.ParamValueProtectFuncEnabled && option.ParamValueNeedProtectFunc(value))
-                )
+            if (token is JArray array)
             {
-                unprotectedValue = value;
-            }
-            else
-            {
-                try
+                foreach (var j in array)
                 {
-                    unprotectedValue = protector.Unprotect(value);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e, $"Error in unprotect value:{value}");
-                    unprotectedValue = value;
-                    if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
+                    if (j is JValue val)
                     {
-                        return true;
-                    }                    
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public static void ProtectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
-        {
-            if (option.Enabled && option.ProtectParams?.Length > 0)
-            {
-                if (protector is ITimeLimitedDataProtector timeLimitedDataProtector)
-                {
-                    ProtectParams(token, timeLimitedDataProtector, option);
-                    return;
-                }
-                if (token is JArray array)
-                {
-                    foreach (var j in array)
-                    {
-                        if (array.Parent is JProperty property && j is JValue val)
+                        var strJ = val.Value.ToString();
+                        if (array.Parent is JProperty property && option.IsParamNeedUnprotect(property.Name, strJ))
                         {
-                            var strJ = val.Value.ToString();
-                            if (option.IsParamNeedProtect(property.Name, strJ))
+                            try
                             {
-                                val.Value = protector.Protect(strJ);
+                                val.Value = protector.Unprotect(strJ);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e);
+                                if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
+                                {
+                                    val.Value = strJ;
+                                }
+                                else
+                                {
+                                    throw;
+                                }
                             }
                         }
-                        else
-                        {
-                            ProtectParams(j, protector, option);
-                        }
+                    }
+                    else
+                    {
+                        UnProtectParams(j, protector, option);
                     }
                 }
-                else if (token is JObject obj)
+            }
+            else if (token is JObject obj)
+            {
+                foreach (var property in obj.Children<JProperty>())
                 {
-                    foreach (var property in obj.Children<JProperty>())
+                    if (property.Value is JArray)
+                    {
+                        UnProtectParams(property.Value, protector, option);
+                    }
+                    else
                     {
                         var val = property.Value.ToString();
-                        if (option.IsParamNeedProtect(property.Name, val))
+                        if (option.IsParamNeedUnprotect(property.Name, val))
                         {
-                            property.Value = protector.Protect(val);
+                            try
+                            {
+                                property.Value = protector.Unprotect(val);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e);
+                                if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
+                                {
+                                    property.Value = val;
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
                         }
                         else
                         {
                             if (property.Value.HasValues)
                             {
-                                ProtectParams(property.Value, protector, option);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void UnprotectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
-        {
-            if (option.Enabled && option.ProtectParams?.Length > 0)
-            {
-                if (token is JArray array)
-                {
-                    foreach (var j in array)
-                    {
-                        if (j is JValue val)
-                        {
-                            var strJ = val.Value.ToString();
-                            if (array.Parent is JProperty property && option.IsParamNeedUnprotect(property.Name, strJ))
-                            {
-                                try
-                                {
-                                    val.Value = protector.Unprotect(strJ);
-                                }
-                                catch (Exception e)
-                                {
-                                    Debug.WriteLine(e);
-                                    if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
-                                    {
-                                        val.Value = strJ;
-                                    }
-                                    else
-                                    {
-                                        throw;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            UnprotectParams(j, protector, option);
-                        }
-                    }
-                }
-                else if (token is JObject obj)
-                {
-                    foreach (var property in obj.Children<JProperty>())
-                    {
-                        if (property.Value is JArray)
-                        {
-                            UnprotectParams(property.Value, protector, option);
-                        }
-                        else
-                        {
-                            var val = property.Value.ToString();
-                            if (option.IsParamNeedUnprotect(property.Name, val))
-                            {
-                                try
-                                {
-                                    property.Value = protector.Unprotect(val);
-                                }
-                                catch (Exception e)
-                                {
-                                    Debug.WriteLine(e);
-                                    if (option.AllowUnprotectedParams && e is CryptographicException && !e.Message.Contains("expired"))
-                                    {
-                                        property.Value = val;
-                                    }
-                                    else
-                                    {
-                                        throw;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (property.Value.HasValues)
-                                {
-                                    UnprotectParams(property.Value, protector, option);
-                                }
+                                UnProtectParams(property.Value, protector, option);
                             }
                         }
                     }

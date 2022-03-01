@@ -1,58 +1,60 @@
-﻿using System.Linq;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 using WeihanLi.Common;
 using WeihanLi.Extensions;
 
-namespace WeihanLi.Web.DataProtection.ParamsProtection
+namespace WeihanLi.Web.DataProtection.ParamsProtection;
+
+public class ParamsProtectionResultFilter : IResultFilter
 {
-    public class ParamsProtectionResultFilter : IResultFilter
+    private readonly IDataProtector _protector;
+    private readonly ParamsProtectionOptions _option;
+    private readonly ILogger _logger;
+
+    public ParamsProtectionResultFilter(IDataProtectionProvider protectionProvider, IOptions<ParamsProtectionOptions> options, ILogger<ParamsProtectionResultFilter> logger)
     {
-        private readonly IDataProtector _protector;
-        private readonly ParamsProtectionOptions _option;
-        private readonly ILogger _logger;
+        _logger = logger;
+        _option = options.Value;
 
-        public ParamsProtectionResultFilter(IDataProtectionProvider protectionProvider, IOptions<ParamsProtectionOptions> options, ILogger<ParamsProtectionResultFilter> logger)
+        _protector = protectionProvider.CreateProtector(_option.ProtectorPurpose ?? ParamsProtectionHelper.DefaultPurpose);
+
+        if (_option.ExpiresIn.GetValueOrDefault(0) > 0)
         {
-            _logger = logger;
-            _option = options.Value;
-
-            _protector = protectionProvider.CreateProtector(_option.ProtectorPurpose ?? ParamsProtectionHelper.DefaultPurpose);
-
-            if (_option.ExpiresIn.GetValueOrDefault(0) > 0)
-            {
-                _protector = _protector.ToTimeLimitedDataProtector();
-            }
+            _protector = _protector.ToTimeLimitedDataProtector();
         }
+    }
 
-        public void OnResultExecuting(ResultExecutingContext context)
+    public void OnResultExecuting(ResultExecutingContext context)
+    {
+        if (_option.Enabled && _option.ProtectParams.Length > 0)
         {
-            if (_option.Enabled && _option.ProtectParams.Length > 0)
+            foreach (var pair in _option.NeedProtectResponseValues)
             {
-                foreach (var pair in _option.NeedProtectResponseValues)
+                if (pair.Key.IsInstanceOfType(context.Result))
                 {
-                    if (pair.Key.IsInstanceOfType(context.Result))
+                    var prop = CacheUtil.GetTypeProperties(pair.Key).FirstOrDefault(p => p.Name == pair.Value);
+                    var val = prop?.GetValueGetter()?.Invoke(context.Result);
+                    if (val != null)
                     {
-                        var prop = CacheUtil.GetTypeProperties(pair.Key).FirstOrDefault(p => p.Name == pair.Value);
-                        var val = prop?.GetValueGetter()?.Invoke(context.Result);
-                        if (val != null)
-                        {
-                            _logger.LogDebug($"ParamsProtector is protecting {pair.Key.FullName} Value");
+                        _logger.LogDebug($"ParamsProtector is protecting {pair.Key.FullName} Value");
 
-                            var obj = JToken.FromObject(val);
-                            ParamsProtectionHelper.ProtectParams(obj, _protector, _option);
-                            prop.GetValueSetter().Invoke(context.Result, obj);
-                        }
+                        var obj = JToken.FromObject(val);
+                        ParamsProtectionHelper.ProtectParams(obj, _protector, _option);
+                        prop.GetValueSetter().Invoke(context.Result, obj);
                     }
                 }
             }
         }
+    }
 
-        public void OnResultExecuted(ResultExecutedContext context)
-        {
-        }
+    public void OnResultExecuted(ResultExecutedContext context)
+    {
     }
 }
