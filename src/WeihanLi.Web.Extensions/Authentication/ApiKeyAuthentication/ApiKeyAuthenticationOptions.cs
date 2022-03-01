@@ -27,4 +27,5 @@ public enum KeyLocation
     Header = 0,
     Query = 1,
     HeaderOrQuery = 2,
+    QueryOrHeader = 3,
 }

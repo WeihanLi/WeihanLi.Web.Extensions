@@ -32,6 +32,7 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
         {
             KeyLocation.Query => Request.Query.TryGetValue(Options.ApiKeyName, out keyValues),
             KeyLocation.HeaderOrQuery => Request.Headers.TryGetValue(Options.ApiKeyName, out keyValues) || Request.Query.TryGetValue(Options.ApiKeyName, out keyValues),
+            KeyLocation.QueryOrHeader => Request.Query.TryGetValue(Options.ApiKeyName, out keyValues) || Request.Headers.TryGetValue(Options.ApiKeyName, out keyValues),
             _ => Request.Headers.TryGetValue(Options.ApiKeyName, out keyValues),
         };
         if (!keyExists)
