@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using WeihanLi.Common.Helpers;
-using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Authentication.ApiKeyAuthentication;
 
@@ -19,13 +19,7 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
     {
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    {
-        var authResult = HandleAuthenticateInternal();
-        return Task.FromResult(authResult);
-    }
-
-    private AuthenticateResult HandleAuthenticateInternal()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         StringValues keyValues;
         var keyExists = Options.KeyLocation switch
@@ -38,20 +32,21 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
         if (!keyExists)
             return AuthenticateResult.NoResult();
 
-        if (keyValues.ToString().Equals(Options.ApiKey))
+        var validator = Options.ApiKeyValidator ?? ((_, keyValue) => Task.FromResult(string.Equals(Options.ApiKey, keyValue)));
+        if (await validator.Invoke(Context, keyValues.ToString()))
         {
-            var clientId = Options.ClientId.GetValueOrDefault(ApplicationHelper.ApplicationName);
+            var claims = new[]
+            {
+                new Claim("issuer", ClaimsIssuer),
+            }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? Array.Empty<Claim>());
             return AuthenticateResult.Success(
                 new AuthenticationTicket(
                     new ClaimsPrincipal(new[]
                     {
-                            new ClaimsIdentity(new[]
-                            {
-                                new Claim(nameof(Options.ClientId), clientId, ClaimValueTypes.String, ClaimsIssuer),
-                            }, Scheme.Name)
+                        new ClaimsIdentity(claims, Scheme.Name)
                     }), Scheme.Name)
             );
         }
-        return AuthenticateResult.Fail("Invalid Api-Key");
+        return AuthenticateResult.Fail("Invalid ApiKey");
     }
 }

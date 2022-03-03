@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Web.Authentication;
+using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Extensions;
 using WeihanLi.Web.Extensions.Samples;
@@ -31,8 +32,10 @@ var host = Host.CreateDefaultBuilder(args)
                                 })
                                 .AddApiKey(options =>
                                 {
+                                    options.ClaimsIssuer = "https://id.weihanli.xyz";
                                     options.ApiKey = "123456";
                                     options.ApiKeyName = "X-ApiKey";
+                                    options.KeyLocation = KeyLocation.HeaderOrQuery;
                                 })
                                 ;
 

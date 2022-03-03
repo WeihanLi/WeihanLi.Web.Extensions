@@ -2,7 +2,10 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace WeihanLi.Web.Authentication.ApiKeyAuthentication;
 
@@ -10,8 +13,9 @@ public sealed class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
 {
     public string ApiKey { get; set; }
     public string ApiKeyName { get; set; } = "X-ApiKey";
-    public string ClientId { get; set; }
     public KeyLocation KeyLocation { get; set; }
+    public Func<HttpContext, string, Task<bool>> ApiKeyValidator { get; set; }
+    public Func<HttpContext, ApiKeyAuthenticationOptions, Claim[]> ClaimsGenerator { get; set; }
 
     public override void Validate()
     {
