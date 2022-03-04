@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Threading.Tasks;
 using WeihanLi.Common;
 
 namespace WeihanLi.Web.Filters;

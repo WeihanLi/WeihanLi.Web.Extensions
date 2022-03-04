@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Http;
-using System;
 using WeihanLi.Common.Logging;
 using WeihanLi.Web.Extensions;
 

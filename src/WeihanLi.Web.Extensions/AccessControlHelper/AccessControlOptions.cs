@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
 
 namespace WeihanLi.Web.AccessControlHelper;
 

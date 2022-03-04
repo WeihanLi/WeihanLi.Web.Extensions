@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
 
 namespace WeihanLi.Web.AccessControlHelper;
 

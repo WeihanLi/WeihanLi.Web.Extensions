@@ -3,7 +3,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Linq.Expressions;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Extensions;

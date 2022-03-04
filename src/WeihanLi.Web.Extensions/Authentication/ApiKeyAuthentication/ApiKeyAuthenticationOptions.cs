@@ -3,9 +3,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace WeihanLi.Web.Authentication.ApiKeyAuthentication;
 

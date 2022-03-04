@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.IO;
 
 namespace WeihanLi.Web.AccessControlHelper;
 

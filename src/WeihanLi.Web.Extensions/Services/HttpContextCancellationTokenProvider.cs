@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Http;
-using System.Threading;
 using WeihanLi.Common.Services;
 
 namespace WeihanLi.Web.Services;
