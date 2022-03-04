@@ -1,11 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
 namespace WeihanLi.Web.Authentication.HeaderAuthentication;
 
 public sealed class HeaderAuthenticationOptions : AuthenticationSchemeOptions

@@ -3,7 +3,6 @@
 
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace WeihanLi.Web.AccessControlHelper;
