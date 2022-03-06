@@ -4,15 +4,16 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Reflection;
+using WeihanLi.Web.Filters;
 
 namespace WeihanLi.Web.AccessControlHelper;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class AccessControlAttribute : Attribute, IAuthorizationFilter
+public class AccessControlAttribute : AuthorizationFilterAttribute
 {
     public string AccessKey { get; set; }
 
-    public virtual void OnAuthorization(AuthorizationFilterContext filterContext)
+    public override void OnAuthorization(AuthorizationFilterContext filterContext)
     {
         if (filterContext == null)
             throw new ArgumentNullException(nameof(filterContext));
@@ -35,7 +36,6 @@ public class AccessControlAttribute : Attribute, IAuthorizationFilter
         }
     }
 }
-
 
 internal static class AjaxRequestExtensions
 {
