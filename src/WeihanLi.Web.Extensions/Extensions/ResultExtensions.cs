@@ -48,6 +48,7 @@ public static class ResultModelExtensions
         return new OkObjectResult(resultModel);
     }
 
+    [Obsolete]
     public static IActionResult GetOkOResult(this ResultModel resultModel)
     {
         return resultModel is null
@@ -55,6 +56,7 @@ public static class ResultModelExtensions
             : new OkObjectResult(resultModel);
     }
 
+    [Obsolete]
     public static IActionResult GetRestResult(this ResultModel resultModel)
     {
         if (resultModel == null)
