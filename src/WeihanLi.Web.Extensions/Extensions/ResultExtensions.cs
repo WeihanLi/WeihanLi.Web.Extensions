@@ -9,83 +9,40 @@ namespace WeihanLi.Web.Extensions;
 
 public static class ResultModelExtensions
 {
-    public static IActionResult GetOkOResult(this Result resultModel)
+    public static IActionResult GetOkResult<T>(this T result)
     {
-        return resultModel is null
+        return result is null
             ? new OkResult()
-            : new OkObjectResult(resultModel);
+            : new OkObjectResult(result);
     }
 
-    public static IActionResult GetRestResult(this Result resultModel)
+    public static IActionResult GetRestResult<T>(this T result, ResultStatus status = ResultStatus.Success)
     {
-        if (resultModel == null)
+        if (result is null)
             return new NoContentResult();
 
-        if (resultModel.Status == ResultStatus.RequestError)
-            return new BadRequestObjectResult(resultModel);
-
-        if (resultModel.Status == ResultStatus.ResourceNotFound)
-            return new NotFoundObjectResult(resultModel);
-
-        if (resultModel.Status == ResultStatus.MethodNotAllowed)
-            return new ObjectResult(resultModel)
+        return status switch
+        {
+            ResultStatus.RequestError => new BadRequestObjectResult(result),
+            ResultStatus.ResourceNotFound => new NotFoundObjectResult(result),
+            ResultStatus.MethodNotAllowed => new ObjectResult(result)
             {
                 StatusCode = (int)HttpStatusCode.MethodNotAllowed
-            };
-
-        if (resultModel.Status == ResultStatus.Unauthorized)
-            return new ObjectResult(resultModel)
-            {
-                StatusCode = (int)HttpStatusCode.Unauthorized
-            };
-
-        if (resultModel.Status == ResultStatus.NoPermission)
-            return new ObjectResult(resultModel)
-            {
-                StatusCode = (int)HttpStatusCode.Forbidden
-            };
-
-        return new OkObjectResult(resultModel);
+            },
+            ResultStatus.Unauthorized => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Unauthorized },
+            ResultStatus.NoPermission => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
+            _ => new OkObjectResult(result)
+        };
     }
 
-    [Obsolete]
-    public static IActionResult GetOkOResult(this ResultModel resultModel)
+    public static IActionResult GetRestResult(this Result result)
     {
-        return resultModel is null
-            ? new OkResult()
-            : new OkObjectResult(resultModel);
+        return result.GetRestResult(result.Status);
     }
 
     [Obsolete]
     public static IActionResult GetRestResult(this ResultModel resultModel)
     {
-        if (resultModel == null)
-            return new NoContentResult();
-
-        if (resultModel.Status == ResultStatus.RequestError)
-            return new BadRequestObjectResult(resultModel);
-
-        if (resultModel.Status == ResultStatus.ResourceNotFound)
-            return new NotFoundObjectResult(resultModel);
-
-        if (resultModel.Status == ResultStatus.MethodNotAllowed)
-            return new ObjectResult(resultModel)
-            {
-                StatusCode = (int)HttpStatusCode.MethodNotAllowed
-            };
-
-        if (resultModel.Status == ResultStatus.Unauthorized)
-            return new ObjectResult(resultModel)
-            {
-                StatusCode = (int)HttpStatusCode.Unauthorized
-            };
-
-        if (resultModel.Status == ResultStatus.NoPermission)
-            return new ObjectResult(resultModel)
-            {
-                StatusCode = (int)HttpStatusCode.Forbidden
-            };
-
-        return new OkObjectResult(resultModel);
+        return resultModel.GetRestResult(resultModel.Status);
     }
 }
