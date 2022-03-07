@@ -4,7 +4,7 @@
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WeihanLi.Common" Version="1.0.48" />
+    <PackageReference Include="WeihanLi.Common" Version="1.0.49-preview-20220306-151500" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
