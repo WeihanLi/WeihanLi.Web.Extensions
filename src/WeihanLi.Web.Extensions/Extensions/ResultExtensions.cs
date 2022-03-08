@@ -39,10 +39,4 @@ public static class ResultModelExtensions
     {
         return result.GetRestResult(result.Status);
     }
-
-    [Obsolete]
-    public static IActionResult GetRestResult(this ResultModel resultModel)
-    {
-        return resultModel.GetRestResult(resultModel.Status);
-    }
 }
