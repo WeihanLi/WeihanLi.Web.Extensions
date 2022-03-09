@@ -8,9 +8,11 @@ namespace WeihanLi.Web.Extensions.Samples.Filters;
 
 public class TestAuthFilter : AuthorizationFilterAttribute
 {
+    public string Role { get; set; }
+
     public override void OnAuthorization(AuthorizationFilterContext context)
     {
         if (!context.IsEffectivePolicy(this)) return;
-        Console.WriteLine($"{nameof(TestAuthFilter)} is executing");
+        Console.WriteLine($"{nameof(TestAuthFilter)}({Role}) is executing");
     }
 }

@@ -13,6 +13,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(builder =>
     {
         builder
+            // .ConfigureLogging(lb => lb.SetMinimumLevel(LogLevel.Warning))
             .ConfigureServices(services =>
             {
                 services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)

@@ -6,11 +6,11 @@ using WeihanLi.Web.Extensions.Samples.Filters;
 
 namespace WeihanLi.Web.Extensions.Samples;
 
-[TestAuthFilter]
+[TestAuthFilter(Role = "Admin")]
 [Route("api/authTest")]
 public class AuthTestController : ControllerBase
 {
-    [TestAuthFilter]
+    [TestAuthFilter(Role = "User")]
     [HttpGet]
     public IActionResult Index()
     {
