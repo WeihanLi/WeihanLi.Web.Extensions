@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 
 namespace WeihanLi.Web.AccessControlHelper;
 

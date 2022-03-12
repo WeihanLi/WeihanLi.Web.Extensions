@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
 using WeihanLi.Web.AccessControlHelper;
 
 namespace Microsoft.AspNetCore.Builder

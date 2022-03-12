@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.AspNetCore.Http;
-using System;
 using WeihanLi.Common.Logging;
 using WeihanLi.Web.Extensions;
 

@@ -2,10 +2,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
+using WeihanLi.Common;
 
 namespace WeihanLi.Web.AccessControlHelper;
 
@@ -24,7 +21,7 @@ internal sealed class AccessControlAuthorizationHandler : AuthorizationHandler<A
     {
         var httpContext = _contextAccessor.HttpContext;
         var accessKey = _options.AccessKeyResolver?.Invoke(httpContext);
-        var resourceAccessStrategy = httpContext.RequestServices.GetService<IResourceAccessStrategy>();
+        var resourceAccessStrategy = Guard.NotNull(httpContext).RequestServices.GetRequiredService<IResourceAccessStrategy>();
         if (resourceAccessStrategy.IsCanAccess(accessKey))
         {
             context.Succeed(requirement);

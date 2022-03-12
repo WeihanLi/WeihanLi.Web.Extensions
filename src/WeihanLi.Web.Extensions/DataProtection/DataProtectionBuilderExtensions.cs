@@ -3,8 +3,6 @@
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using WeihanLi.Web.DataProtection.ParamsProtection;
 
 namespace WeihanLi.Web.DataProtection;

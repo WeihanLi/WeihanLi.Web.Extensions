@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
-
 namespace WeihanLi.Web.AccessControlHelper;
 
 public class AccessControlOptions
