@@ -4,7 +4,6 @@
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WeihanLi.Common" Version="1.0.49-preview-20220309-012617" />
     <PackageReference Include="WeihanLi.Common" Version="1.0.49-preview-20220312-180433" />
   </ItemGroup>
   <ItemGroup>
