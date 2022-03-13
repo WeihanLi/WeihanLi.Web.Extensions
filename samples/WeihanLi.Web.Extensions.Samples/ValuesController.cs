@@ -3,10 +3,13 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WeihanLi.Common.Models;
 using WeihanLi.Common.Services;
 using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;
+using WeihanLi.Web.Authorization.Token;
 using WeihanLi.Web.Middleware;
 
 namespace WeihanLi.Web.Extensions.Samples;
@@ -57,5 +60,24 @@ public class ValuesController : ControllerBase
         {
             Time = DateTime.UtcNow
         });
+    }
+
+    [HttpGet("getToken")]
+    public IActionResult GetToken(string userName, [FromServices] ITokenService tokenService)
+    {
+        return tokenService
+            .GenerateToken(new Claim("name", userName))
+            .WrapResult()
+            .GetRestResult();
+    }
+
+    [HttpGet("validateToken")]
+    public async Task<IActionResult> ValidateToken(string token, [FromServices] ITokenService tokenService)
+    {
+        return await tokenService
+            .ValidateToken(token)
+            .ContinueWith(r =>
+                r.Result.WrapResult().GetRestResult()
+                );
     }
 }
