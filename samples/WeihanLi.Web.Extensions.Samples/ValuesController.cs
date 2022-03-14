@@ -63,12 +63,13 @@ public class ValuesController : ControllerBase
     }
 
     [HttpGet("getToken")]
-    public IActionResult GetToken(string userName, [FromServices] ITokenService tokenService)
+    public async Task<IActionResult> GetToken(string userName, [FromServices] ITokenService tokenService)
     {
-        return tokenService
+        return await tokenService
             .GenerateToken(new Claim("name", userName))
-            .WrapResult()
-            .GetRestResult();
+            .ContinueWith(r =>
+                r.Result.WrapResult().GetRestResult()
+            );
     }
 
     [HttpGet("validateToken")]
@@ -78,6 +79,6 @@ public class ValuesController : ControllerBase
             .ValidateToken(token)
             .ContinueWith(r =>
                 r.Result.WrapResult().GetRestResult()
-                );
+            );
     }
 }

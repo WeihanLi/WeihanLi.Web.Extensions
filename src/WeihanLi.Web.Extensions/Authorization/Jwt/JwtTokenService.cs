@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using WeihanLi.Common;
+using WeihanLi.Extensions;
 using WeihanLi.Web.Authorization.Token;
 
 namespace WeihanLi.Web.Authorization.Jwt;
@@ -21,7 +22,45 @@ public class JwtTokenService : ITokenService
         _lazyTokenValidationParameters = new(() => _tokenOptions.GetTokenValidationParameters());
     }
 
-    public async Task<TokenEntity> GenerateToken(params Claim[] claims)
+    public Task<TokenEntity> GenerateToken(params Claim[] claims)
+        => GenerateTokenInternal(_tokenOptions.EnableRefreshToken, claims);
+
+    public Task<TokenValidationResult> ValidateToken(string token)
+    {
+        return _tokenHandler.ValidateTokenAsync(token, _lazyTokenValidationParameters.Value);
+    }
+
+    public virtual async Task<TokenEntity> RefreshToken(string refreshToken)
+    {
+        // TODO: cache validation parameters
+        var validationParameters = _tokenOptions.GetTokenValidationParameters(parameters =>
+        {
+            parameters.ValidAudience = GetRefreshTokenAudience();
+        });
+
+        var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, validationParameters);
+        if (!refreshTokenValidateResult.IsValid)
+        {
+            throw new InvalidOperationException("Invalid RefreshToken", refreshTokenValidateResult.Exception);
+        }
+        return await GenerateTokenInternal(false, refreshTokenValidateResult.Claims.Select(c => new Claim(c.Key, c.Value.ToString() ?? string.Empty)).ToArray());
+    }
+
+    protected virtual Task<string> GetRefreshToken(Claim[] claims)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var jwt = new JwtSecurityToken(
+            issuer: _tokenOptions.Issuer,
+            audience: GetRefreshTokenAudience(),
+            claims: claims,
+            notBefore: now.UtcDateTime,
+            expires: now.Add(_tokenOptions.ValidFor).UtcDateTime,
+            signingCredentials: _tokenOptions.SigningCredentials);
+        var encodedJwt = _tokenHandler.WriteToken(jwt);
+        return encodedJwt.WrapTask();
+    }
+
+    private async Task<TokenEntity> GenerateTokenInternal(bool refreshToken, Claim[] claims)
     {
         var now = DateTimeOffset.UtcNow;
         var claimList = new List<Claim>()
@@ -42,7 +81,7 @@ public class JwtTokenService : ITokenService
             signingCredentials: _tokenOptions.SigningCredentials);
         var encodedJwt = _tokenHandler.WriteToken(jwt);
 
-        var response = _tokenOptions.EnableRefreshToken ? new TokenEntityWithRefreshToken()
+        var response = refreshToken ? new TokenEntityWithRefreshToken()
         {
             AccessToken = encodedJwt,
             ExpiresIn = (int)_tokenOptions.ValidFor.TotalSeconds,
@@ -53,39 +92,6 @@ public class JwtTokenService : ITokenService
             ExpiresIn = (int)_tokenOptions.ValidFor.TotalSeconds
         };
         return response;
-    }
-
-    public Task<TokenValidationResult> ValidateToken(string token)
-    {
-        return _tokenHandler.ValidateTokenAsync(token, _lazyTokenValidationParameters.Value);
-    }
-
-    public virtual async Task<TokenEntity> RefreshToken(string refreshToken)
-    {
-        var validationParameters = _tokenOptions.GetTokenValidationParameters(parameters =>
-        {
-            parameters.ValidAudience = GetRefreshTokenAudience();
-        });
-        var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, validationParameters);
-        if (!refreshTokenValidateResult.IsValid)
-        {
-            throw new InvalidOperationException("Invalid RefreshToken", refreshTokenValidateResult.Exception);
-        }
-        return await GenerateToken(refreshTokenValidateResult.Claims.Select(c => new Claim(c.Key, c.Value.ToString())).ToArray());
-    }
-
-    protected virtual Task<string> GetRefreshToken(Claim[] claims)
-    {
-        var now = DateTimeOffset.UtcNow;
-        var jwt = new JwtSecurityToken(
-            issuer: _tokenOptions.Issuer,
-            audience: GetRefreshTokenAudience(),
-            claims: claims,
-            notBefore: now.UtcDateTime,
-            expires: now.Add(_tokenOptions.ValidFor).UtcDateTime,
-            signingCredentials: _tokenOptions.SigningCredentials);
-        var encodedJwt = _tokenHandler.WriteToken(jwt);
-        return Task.FromResult(encodedJwt);
     }
 
     private string GetRefreshTokenAudience() => $"{_tokenOptions.Audience}_RefreshToken";
