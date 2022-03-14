@@ -10,13 +10,6 @@ using WeihanLi.Web.Authorization.Jwt;
 using WeihanLi.Web.Extensions;
 using WeihanLi.Web.Extensions.Samples;
 
-var value = 0;
-Parallel.For(0, 10000, _ =>
-{
-    value++;
-});
-Console.WriteLine(value);
-
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(builder =>
     {
