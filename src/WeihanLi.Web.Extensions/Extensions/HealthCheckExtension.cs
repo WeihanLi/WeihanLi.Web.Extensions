@@ -72,7 +72,7 @@ public static class HealthCheckExtensions
             }
             catch (Exception ex)
             {
-                context.RequestServices.GetService<ILoggerFactory>()
+                context.RequestServices.GetRequiredService<ILoggerFactory>()
                   .CreateLogger(typeof(HealthCheckExtensions)).LogError(ex, "HealthCheck Exception");
                 context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
                 await context.Response.WriteAsync("unhealthy");
