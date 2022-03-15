@@ -15,7 +15,8 @@ public class JwtTokenService : ITokenService
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtTokenOptions _tokenOptions;
 
-    private readonly Lazy<TokenValidationParameters> _lazyTokenValidationParameters,
+    private readonly Lazy<TokenValidationParameters>
+        _lazyTokenValidationParameters,
         _lazyRefreshTokenValidationParameters;
 
     public JwtTokenService(IOptions<JwtTokenOptions> tokenOptions)
@@ -31,10 +32,10 @@ public class JwtTokenService : ITokenService
         );
     }
 
-    public Task<TokenEntity> GenerateToken(params Claim[] claims)
+    public virtual Task<TokenEntity> GenerateToken(params Claim[] claims)
         => GenerateTokenInternal(_tokenOptions.EnableRefreshToken, claims);
 
-    public Task<TokenValidationResult> ValidateToken(string token)
+    public virtual Task<TokenValidationResult> ValidateToken(string token)
     {
         return _tokenHandler.ValidateTokenAsync(token, _lazyTokenValidationParameters.Value);
     }

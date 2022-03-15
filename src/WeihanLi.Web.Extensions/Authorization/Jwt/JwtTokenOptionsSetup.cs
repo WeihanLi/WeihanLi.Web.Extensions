@@ -7,9 +7,9 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-internal sealed class JwtTokenOptionsSetup : IConfigureOptions<JwtTokenOptions>
+internal sealed class JwtTokenOptionsSetup : IPostConfigureOptions<JwtTokenOptions>
 {
-    public void Configure(JwtTokenOptions options)
+    public void PostConfigure(string name, JwtTokenOptions options)
     {
         if (options.SecurityKeyFactory is null)
         {
