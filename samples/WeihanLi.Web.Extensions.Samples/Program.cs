@@ -41,6 +41,8 @@ var host = Host.CreateDefaultBuilder(args)
                     options.SecretKey = Guid.NewGuid().ToString();
                     options.Issuer = "https://id.weihanli.xyz";
                     options.Audience = "SparkTodo";
+                    // EnableRefreshToken, disabled by default
+                    options.EnableRefreshToken = true;
                 });
                 services.AddControllers().AddJsonOptions(options =>
                 {
