@@ -69,12 +69,15 @@ public class JwtTokenService : ITokenService
         var now = DateTimeOffset.UtcNow;
         var claimList = new List<Claim>()
         {
-            new (JwtRegisteredClaimNames.Jti, _tokenOptions.JtiGenerator?.Invoke() ?? GuidIdGenerator.Instance.NewId()),
             new (JwtRegisteredClaimNames.Iat, now.ToUnixTimeMilliseconds().ToString(), ClaimValueTypes.Integer64)
         };
         if (claims != null)
         {
             claimList.AddRange(claims);
+        }
+        if (!claimList.Exists(c => c.Type == JwtRegisteredClaimNames.Jti))
+        {
+            claimList.Add(new(JwtRegisteredClaimNames.Jti, _tokenOptions.JtiGenerator?.Invoke() ?? GuidIdGenerator.Instance.NewId()));
         }
         var jwt = new JwtSecurityToken(
             issuer: _tokenOptions.Issuer,
