@@ -1,85 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
 
-namespace WeihanLi.Web.Authentication.QueryAuthentication
+namespace WeihanLi.Web.Authentication.QueryAuthentication;
+
+public sealed class QueryAuthenticationOptions : AuthenticationSchemeOptions
 {
-    public sealed class QueryAuthenticationOptions : AuthenticationSchemeOptions
+    private string _userRolesQueryKey = "UserRoles";
+    private string _userNameQueryKey = "UserName";
+    private string _userIdQueryKey = "UserId";
+    private string _delimiter = ",";
+
+    public string UserIdQueryKey
     {
-        private string _userRolesQueryKey = "UserRoles";
-        private string _userNameQueryKey = "UserName";
-        private string _userIdQueryKey = "UserId";
-        private string _delimiter = ",";
-
-        public string UserIdQueryKey
+        get => _userIdQueryKey;
+        set
         {
-            get => _userIdQueryKey;
-            set
+            if (!string.IsNullOrWhiteSpace(value))
             {
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    _userIdQueryKey = value;
-                }
+                _userIdQueryKey = value;
             }
         }
+    }
 
-        public string UserNameQueryKey
+    public string UserNameQueryKey
+    {
+        get => _userNameQueryKey;
+        set
         {
-            get => _userNameQueryKey;
-            set
+            if (!string.IsNullOrWhiteSpace(value))
             {
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    _userNameQueryKey = value;
-                }
+                _userNameQueryKey = value;
             }
         }
+    }
 
-        public string UserRolesQueryKey
+    public string UserRolesQueryKey
+    {
+        get => _userRolesQueryKey;
+        set
         {
-            get => _userRolesQueryKey;
-            set
+            if (!string.IsNullOrWhiteSpace(value))
             {
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    _userRolesQueryKey = value;
-                }
+                _userRolesQueryKey = value;
             }
         }
+    }
 
-        /// <summary>
-        /// 自定义其他的 header
-        /// key: QueryKey
-        /// value: claimType
-        /// </summary>
-        public Dictionary<string, string> AdditionalQueryToClaims { get; } = new Dictionary<string, string>();
+    /// <summary>
+    /// 自定义其他的 header
+    /// key: QueryKey
+    /// value: claimType
+    /// </summary>
+    public Dictionary<string, string> AdditionalQueryToClaims { get; } = new Dictionary<string, string>();
 
-        public string Delimiter
+    public string Delimiter
+    {
+        get => _delimiter;
+        set
         {
-            get => _delimiter;
-            set
+            if (string.IsNullOrEmpty(value))
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    _delimiter = value;
-                }
+                _delimiter = value;
             }
         }
+    }
 
-        private Func<HttpContext, Task<bool>> _authenticationValidator = context =>
-        {
-            var userIdKey = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
-            return Task.FromResult(context.Request.Query.ContainsKey(userIdKey));
-        };
+    private Func<HttpContext, Task<bool>> _authenticationValidator = context =>
+    {
+        var userIdKey = context.RequestServices.GetRequiredService<IOptions<QueryAuthenticationOptions>>().Value.UserIdQueryKey;
+        return Task.FromResult(context.Request.Query.ContainsKey(userIdKey));
+    };
 
-        public Func<HttpContext, Task<bool>> AuthenticationValidator
-        {
-            get => _authenticationValidator;
-            set => _authenticationValidator = value ?? throw new ArgumentNullException(nameof(AuthenticationValidator));
-        }
+    public Func<HttpContext, Task<bool>> AuthenticationValidator
+    {
+        get => _authenticationValidator;
+        set => _authenticationValidator = value ?? throw new ArgumentNullException(nameof(AuthenticationValidator));
     }
 }

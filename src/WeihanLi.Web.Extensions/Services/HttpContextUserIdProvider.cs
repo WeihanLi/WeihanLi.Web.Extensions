@@ -1,46 +1,45 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 using WeihanLi.Common.Services;
 using WeihanLi.Web.Extensions;
 
-namespace WeihanLi.Web.Services
-{
-    public sealed class HttpContextUserIdProviderOptions
-    {
-        private Func<HttpContext, string> _userIdFactory = context => context?.User?.GetUserId();
+namespace WeihanLi.Web.Services;
 
-        public Func<HttpContext, string> UserIdFactory
+public sealed class HttpContextUserIdProviderOptions
+{
+    private Func<HttpContext, string> _userIdFactory = context => context?.User?.GetUserId();
+
+    public Func<HttpContext, string> UserIdFactory
+    {
+        get => _userIdFactory;
+        set
         {
-            get => _userIdFactory;
-            set
+            if (value != null)
             {
-                if (value != null)
-                {
-                    _userIdFactory = value;
-                }
+                _userIdFactory = value;
             }
         }
     }
+}
 
-    public sealed class HttpContextUserIdProvider : IUserIdProvider
+public sealed class HttpContextUserIdProvider : IUserIdProvider
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly Func<HttpContext, string> _userIdFactory;
+
+    public HttpContextUserIdProvider(
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<HttpContextUserIdProviderOptions> options
+        )
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly Func<HttpContext, string> _userIdFactory;
+        _httpContextAccessor = httpContextAccessor;
 
-        public HttpContextUserIdProvider(
-            IHttpContextAccessor httpContextAccessor,
-            IOptions<HttpContextUserIdProviderOptions> options
-            )
-        {
-            _httpContextAccessor = httpContextAccessor;
+        _userIdFactory = options.Value.UserIdFactory;
+    }
 
-            _userIdFactory = options.Value.UserIdFactory;
-        }
-
-        public string GetUserId()
-        {
-            return _userIdFactory.Invoke(_httpContextAccessor.HttpContext);
-        }
+    public string GetUserId()
+    {
+        return _userIdFactory.Invoke(_httpContextAccessor.HttpContext);
     }
 }

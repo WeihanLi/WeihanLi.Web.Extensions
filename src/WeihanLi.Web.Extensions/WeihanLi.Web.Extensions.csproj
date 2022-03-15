@@ -1,16 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../build/common.props" />
   <PropertyGroup>
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WeihanLi.Common" Version="1.0.38" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
+    <PackageReference Include="WeihanLi.Common" Version="1.0.49" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.1.0, 3.0.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="[2.1.0, 3.0.0)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' OR '$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>
