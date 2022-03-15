@@ -54,7 +54,7 @@ public class JwtTokenService : ITokenService
             audience: GetRefreshTokenAudience(),
             claims: claims,
             notBefore: now.UtcDateTime,
-            expires: now.Add(_tokenOptions.ValidFor).UtcDateTime,
+            expires: now.Add(_tokenOptions.RefreshTokenValidFor).UtcDateTime,
             signingCredentials: _tokenOptions.SigningCredentials);
         var encodedJwt = _tokenHandler.WriteToken(jwt);
         return encodedJwt.WrapTask();
