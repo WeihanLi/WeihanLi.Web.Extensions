@@ -14,12 +14,21 @@ public class JwtTokenService : ITokenService
 {
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtTokenOptions _tokenOptions;
-    private readonly Lazy<TokenValidationParameters> _lazyTokenValidationParameters;
+
+    private readonly Lazy<TokenValidationParameters> _lazyTokenValidationParameters,
+        _lazyRefreshTokenValidationParameters;
 
     public JwtTokenService(IOptions<JwtTokenOptions> tokenOptions)
     {
         _tokenOptions = tokenOptions.Value;
-        _lazyTokenValidationParameters = new(() => _tokenOptions.GetTokenValidationParameters());
+        _lazyTokenValidationParameters = new(() =>
+            _tokenOptions.GetTokenValidationParameters());
+        _lazyRefreshTokenValidationParameters = new(() =>
+            _tokenOptions.GetTokenValidationParameters(parameters =>
+            {
+                parameters.ValidAudience = GetRefreshTokenAudience();
+            })
+        );
     }
 
     public Task<TokenEntity> GenerateToken(params Claim[] claims)
@@ -32,13 +41,7 @@ public class JwtTokenService : ITokenService
 
     public virtual async Task<TokenEntity> RefreshToken(string refreshToken)
     {
-        // TODO: cache validation parameters
-        var validationParameters = _tokenOptions.GetTokenValidationParameters(parameters =>
-        {
-            parameters.ValidAudience = GetRefreshTokenAudience();
-        });
-
-        var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, validationParameters);
+        var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, _lazyRefreshTokenValidationParameters.Value);
         if (!refreshTokenValidateResult.IsValid)
         {
             throw new InvalidOperationException("Invalid RefreshToken", refreshTokenValidateResult.Exception);
