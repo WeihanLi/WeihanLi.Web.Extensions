@@ -1,6 +1,4 @@
 <Project>
-  <Import Project="./build/sign.props" />
-
   <PropertyGroup>
 		<VersionMajor>1</VersionMajor>
 		<VersionMinor>2</VersionMinor>
@@ -40,8 +38,5 @@
     <Using Include="Microsoft.Extensions.Configuration" />
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Microsoft.Extensions.Options" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 </Project>

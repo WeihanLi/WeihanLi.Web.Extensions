@@ -10,7 +10,7 @@ using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;
 using WeihanLi.Web.Authorization.Token;
-using WeihanLi.Web.Middleware;
+using WeihanLi.Web.Filters;
 
 namespace WeihanLi.Web.Extensions.Samples;
 
