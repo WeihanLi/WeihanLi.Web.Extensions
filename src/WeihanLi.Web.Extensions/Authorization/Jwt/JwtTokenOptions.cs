@@ -69,6 +69,8 @@ public class JwtTokenOptions
 
     public TimeSpan RefreshTokenValidFor { get; set; } = TimeSpan.FromHours(8);
 
+    public string RefreshTokenOwnerClaimType { get; set; } = "x-rt-owner";
+
     internal SecurityKey SecurityKey { get; set; }
 
     internal SigningCredentials SigningCredentials { get; set; }
