@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-public class JwtBearerOptionsPostSetup :
+internal sealed class JwtBearerOptionsPostSetup :
     IPostConfigureOptions<JwtBearerOptions>
 {
     private readonly IOptions<JwtTokenOptions> _options;
