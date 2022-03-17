@@ -73,7 +73,7 @@ public class JwtTokenOptions
 
     internal SigningCredentials SigningCredentials { get; set; }
 
-    public TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters> parametersAction = null)
+    internal TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters> parametersAction = null)
     {
         var parameters = new TokenValidationParameters
         {

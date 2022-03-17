@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../build/common.props" />
   <PropertyGroup>
+    <PackageId>WeihanLi.Web.Extensions</PackageId>
+    <Title>WeihanLi.Web.Extensions</Title>
+    <TargetFramework>net6.0</TargetFramework>
+    <Description>WeihanLi.Web.Extensions</Description>
+    <PackageTags>weihanli;web;aspnetcore;mvc</PackageTags>
+    <PackageSummary>WeihanLi.Web.Extensions, aspnetcore extensions</PackageSummary>
+    <PackageProjectUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions/tree/dev/src/WeihanLi.Web.Extensions</PackageProjectUrl>    
     <RootNamespace>WeihanLi.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
     <PackageReference Include="WeihanLi.Common" Version="1.0.50" />
   </ItemGroup>
