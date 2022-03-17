@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using WeihanLi.Common.Models;
 using WeihanLi.Common.Services;
@@ -24,6 +26,7 @@ public class ValuesController : ControllerBase
         var headerAuthResult = await HttpContext.AuthenticateAsync(HeaderAuthenticationDefaults.AuthenticationSchema);
         var queryAuthResult = await HttpContext.AuthenticateAsync(QueryAuthenticationDefaults.AuthenticationSchema);
         var apiKeyAuthResult = await HttpContext.AuthenticateAsync(ApiKeyAuthenticationDefaults.AuthenticationSchema);
+        var bearerAuthResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
 
         return Ok(new
         {
@@ -32,6 +35,7 @@ public class ValuesController : ControllerBase
             headerAuthResult = headerAuthResult.Principal?.Identity,
             queryAuthResult = queryAuthResult.Principal?.Identity,
             apiKeyAuthResult = apiKeyAuthResult.Principal?.Identity,
+            bearerAuthResult = bearerAuthResult.Principal?.Identity
         });
     }
 
@@ -63,13 +67,15 @@ public class ValuesController : ControllerBase
     }
 
     [HttpGet("getToken")]
-    public async Task<IActionResult> GetToken(string userName, [FromServices] ITokenService tokenService)
+    public async Task<IActionResult> GetToken([Required] string userName, [FromServices] ITokenService tokenService)
     {
-        return await tokenService
-            .GenerateToken(new Claim("name", userName))
-            .ContinueWith(r =>
-                r.Result.WrapResult().GetRestResult()
-            );
+        var token = await tokenService
+            .GenerateToken(new Claim("name", userName));
+        if (token is TokenEntityWithRefreshToken tokenEntityWithRefreshToken)
+        {
+            return tokenEntityWithRefreshToken.WrapResult().GetRestResult();
+        }
+        return token.WrapResult().GetRestResult();
     }
 
     [HttpGet("validateToken")]
@@ -77,6 +83,16 @@ public class ValuesController : ControllerBase
     {
         return await tokenService
             .ValidateToken(token)
+            .ContinueWith(r =>
+                r.Result.WrapResult().GetRestResult()
+            );
+    }
+
+    [HttpGet("RefreshToken")]
+    public async Task<IActionResult> RefreshToken(string refreshToken, [FromServices] ITokenService tokenService)
+    {
+        return await tokenService
+            .RefreshToken(refreshToken)
             .ContinueWith(r =>
                 r.Result.WrapResult().GetRestResult()
             );

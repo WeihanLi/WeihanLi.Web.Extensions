@@ -39,4 +39,9 @@ public static class ResultModelExtensions
     {
         return result.GetRestResult(result.Status);
     }
+
+    public static IActionResult GetRestResult<T>(this Result<T> result)
+    {
+        return result.GetRestResult(result.Status);
+    }
 }
