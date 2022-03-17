@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -25,6 +26,7 @@ public class ValuesController : ControllerBase
         var headerAuthResult = await HttpContext.AuthenticateAsync(HeaderAuthenticationDefaults.AuthenticationSchema);
         var queryAuthResult = await HttpContext.AuthenticateAsync(QueryAuthenticationDefaults.AuthenticationSchema);
         var apiKeyAuthResult = await HttpContext.AuthenticateAsync(ApiKeyAuthenticationDefaults.AuthenticationSchema);
+        var bearerAuthResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
 
         return Ok(new
         {
@@ -33,6 +35,7 @@ public class ValuesController : ControllerBase
             headerAuthResult = headerAuthResult.Principal?.Identity,
             queryAuthResult = queryAuthResult.Principal?.Identity,
             apiKeyAuthResult = apiKeyAuthResult.Principal?.Identity,
+            bearerAuthResult = bearerAuthResult.Principal?.Identity
         });
     }
 

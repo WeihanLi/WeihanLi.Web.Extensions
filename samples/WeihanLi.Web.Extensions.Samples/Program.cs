@@ -18,6 +18,7 @@ var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>
             {
                 services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
+                    .AddJwtBearer()
                     .AddQuery(options =>
                     {
                         options.UserIdQueryKey = "uid";
@@ -36,7 +37,7 @@ var host = Host.CreateDefaultBuilder(args)
                         options.KeyLocation = KeyLocation.HeaderOrQuery;
                     })
                     ;
-                services.AddJwtTokenService(options =>
+                services.AddJwtTokenServiceWithJwtBearerAuth(options =>
                 {
                     options.SecretKey = Guid.NewGuid().ToString();
                     options.Issuer = "https://id.weihanli.xyz";
