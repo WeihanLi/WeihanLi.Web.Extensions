@@ -1,8 +1,11 @@
+﻿// Copyright (c) Weihan Li. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-public class JwtBearerOptionsPostSetup:
+public class JwtBearerOptionsPostSetup :
     IPostConfigureOptions<JwtBearerOptions>
 {
     private readonly IOptions<JwtTokenOptions> _options;
