@@ -50,13 +50,13 @@ public class JwtTokenService : ITokenService
         return await GenerateTokenInternal(false, refreshTokenValidateResult.Claims.Select(c => new Claim(c.Key, c.Value.ToString() ?? string.Empty)).ToArray());
     }
 
-    protected virtual Task<string> GetRefreshToken(Claim[] claims)
+    protected virtual Task<string> GetRefreshToken(Claim[] claims, string jti)
     {
         var now = DateTimeOffset.UtcNow;
         var jwt = new JwtSecurityToken(
             issuer: _tokenOptions.Issuer,
             audience: GetRefreshTokenAudience(),
-            claims: claims,
+            claims: (claims ?? Array.Empty<Claim>()).Union(new[] { new Claim(_tokenOptions.RefreshTokenOwnerClaimType, jti) }),
             notBefore: now.UtcDateTime,
             expires: now.Add(_tokenOptions.RefreshTokenValidFor).UtcDateTime,
             signingCredentials: _tokenOptions.SigningCredentials);
@@ -75,9 +75,12 @@ public class JwtTokenService : ITokenService
         {
             claimList.AddRange(claims);
         }
-        if (!claimList.Exists(c => c.Type == JwtRegisteredClaimNames.Jti))
+
+        var jti = claimList.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+        if (jti is null)
         {
-            claimList.Add(new(JwtRegisteredClaimNames.Jti, _tokenOptions.JtiGenerator?.Invoke() ?? GuidIdGenerator.Instance.NewId()));
+            jti = _tokenOptions.JtiGenerator?.Invoke() ?? GuidIdGenerator.Instance.NewId();
+            claimList.Add(new(JwtRegisteredClaimNames.Jti, jti));
         }
         var jwt = new JwtSecurityToken(
             issuer: _tokenOptions.Issuer,
@@ -92,7 +95,7 @@ public class JwtTokenService : ITokenService
         {
             AccessToken = encodedJwt,
             ExpiresIn = (int)_tokenOptions.ValidFor.TotalSeconds,
-            RefreshToken = await GetRefreshToken(claims)
+            RefreshToken = await GetRefreshToken(claims, jti)
         } : new TokenEntity()
         {
             AccessToken = encodedJwt,
