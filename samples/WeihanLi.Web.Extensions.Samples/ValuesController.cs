@@ -26,7 +26,7 @@ public class ValuesController : ControllerBase
     [HttpGet("[action]")]
     public IActionResult ServiceScopeTest()
     {
-        Task.Run(()=>
+        Task.Run(() =>
         {
             using var scope = _serviceScopeFactory.CreateScope();
             var tokenService = scope.ServiceProvider.GetRequiredService<ITokenService>();
