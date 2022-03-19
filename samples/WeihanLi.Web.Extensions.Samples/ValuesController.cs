@@ -20,6 +20,21 @@ namespace WeihanLi.Web.Extensions.Samples;
 [ApiController]
 public class ValuesController : ControllerBase
 {
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    public ValuesController(IServiceScopeFactory serviceScopeFactory) => _serviceScopeFactory = serviceScopeFactory;
+
+    [HttpGet("[action]")]
+    public IActionResult ServiceScopeTest()
+    {
+        Task.Run(()=>
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var tokenService = scope.ServiceProvider.GetRequiredService<ITokenService>();
+            System.Console.WriteLine(tokenService.GetHashCode());
+        });
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<IActionResult> Get([FromServices] IUserIdProvider userIdProvider)
     {
