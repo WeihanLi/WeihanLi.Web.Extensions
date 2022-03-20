@@ -12,6 +12,7 @@ namespace WeihanLi.Web.Authorization.Jwt;
 
 public class JwtTokenService : ITokenService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtTokenOptions _tokenOptions;
 
@@ -19,8 +20,9 @@ public class JwtTokenService : ITokenService
         _lazyTokenValidationParameters,
         _lazyRefreshTokenValidationParameters;
 
-    public JwtTokenService(IOptions<JwtTokenOptions> tokenOptions)
+    public JwtTokenService(IHttpContextAccessor httpContextAccessor, IOptions<JwtTokenOptions> tokenOptions)
     {
+        _httpContextAccessor = httpContextAccessor;
         _tokenOptions = tokenOptions.Value;
         _lazyTokenValidationParameters = new(() =>
             _tokenOptions.GetTokenValidationParameters());
@@ -28,6 +30,7 @@ public class JwtTokenService : ITokenService
             _tokenOptions.GetTokenValidationParameters(parameters =>
             {
                 parameters.ValidAudience = GetRefreshTokenAudience();
+                parameters.IssuerSigningKey = _tokenOptions.RefreshTokenSigningCredentials.Key;
             })
         );
     }
@@ -43,11 +46,12 @@ public class JwtTokenService : ITokenService
     public virtual async Task<TokenEntity> RefreshToken(string refreshToken)
     {
         var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, _lazyRefreshTokenValidationParameters.Value);
-        if (!refreshTokenValidateResult.IsValid)
+        if (!refreshTokenValidateResult.IsValid || _tokenOptions.RefreshTokenValidator?.Invoke(refreshTokenValidateResult, _httpContextAccessor.HttpContext) == false)
         {
             throw new InvalidOperationException("Invalid RefreshToken", refreshTokenValidateResult.Exception);
         }
-        return await GenerateTokenInternal(false,
+        var renewRefreshToken = _tokenOptions.RenewRefreshTokenPredicate?.Invoke(refreshTokenValidateResult);
+        return await GenerateTokenInternal(renewRefreshToken.GetValueOrDefault(),
             refreshTokenValidateResult.Claims
                 .Where(x => x.Key != JwtRegisteredClaimNames.Jti)
                 .Select(c => new Claim(c.Key, c.Value.ToString() ?? string.Empty)).ToArray()
@@ -74,7 +78,7 @@ public class JwtTokenService : ITokenService
             claims: claimList,
             notBefore: now.UtcDateTime,
             expires: now.Add(_tokenOptions.RefreshTokenValidFor).UtcDateTime,
-            signingCredentials: _tokenOptions.SigningCredentials);
+            signingCredentials: _tokenOptions.RefreshTokenSigningCredentials);
         var encodedJwt = _tokenHandler.WriteToken(jwt);
         return encodedJwt.WrapTask();
     }

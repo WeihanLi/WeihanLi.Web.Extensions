@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
+using WeihanLi.Common;
 using WeihanLi.Common.Aspect;
+using WeihanLi.Extensions;
 using WeihanLi.Web.Authentication;
 using WeihanLi.Web.Authentication.ApiKeyAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
@@ -44,6 +47,13 @@ var host = Host.CreateDefaultBuilder(args)
                     options.Audience = "SparkTodo";
                     // EnableRefreshToken, disabled by default
                     options.EnableRefreshToken = true;
+                    // Renew refresh token always
+                    // options.RenewRefreshTokenPredicate = _ => true;
+                    options.RefreshTokenSigningCredentialsFactory = () =>
+                        new SigningCredentials(
+                            new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
+                            SecurityAlgorithms.HmacSha256
+                            );
                 });
                 services.AddControllers().AddJsonOptions(options =>
                 {
