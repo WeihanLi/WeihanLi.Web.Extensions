@@ -21,12 +21,13 @@ namespace WeihanLi.Web.Extensions.Samples;
 public class ValuesController : ControllerBase
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+
     public ValuesController(IServiceScopeFactory serviceScopeFactory) => _serviceScopeFactory = serviceScopeFactory;
 
     [HttpGet("[action]")]
     public IActionResult ServiceScopeTest()
     {
-        Task.Run(()=>
+        Task.Run(() =>
         {
             using var scope = _serviceScopeFactory.CreateScope();
             var tokenService = scope.ServiceProvider.GetRequiredService<ITokenService>();
@@ -106,10 +107,19 @@ public class ValuesController : ControllerBase
     [HttpGet("RefreshToken")]
     public async Task<IActionResult> RefreshToken(string refreshToken, [FromServices] ITokenService tokenService)
     {
-        return await tokenService
-            .RefreshToken(refreshToken)
-            .ContinueWith(r =>
-                r.Result.WrapResult().GetRestResult()
-            );
+        var token = await tokenService
+            .RefreshToken(refreshToken);
+        if (token is TokenEntityWithRefreshToken tokenEntityWithRefreshToken)
+        {
+            return tokenEntityWithRefreshToken.WrapResult().GetRestResult();
+        }
+        return token.WrapResult().GetRestResult();
+    }
+
+    [HttpGet("[action]")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public IActionResult BearerAuthTest()
+    {
+        return Ok();
     }
 }
