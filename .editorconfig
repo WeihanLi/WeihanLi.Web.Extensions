@@ -100,4 +100,4 @@ dotnet_diagnostic.IDE0052.severity = warning
 
 # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
 # Avoid unused private fields
-dotnet_diagnostic.CA1823.severity = error
+dotnet_diagnostic.CA1823.severity = warning
