@@ -56,9 +56,9 @@ public static class HttpContextExtension
     /// <returns></returns>
     public static T GetUserId<T>(this ClaimsPrincipal principal) => GetUserId(principal).ToOrDefault<T>();
 
-    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType) 
+    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
         => GetUserId(principal, claimType).ToOrDefault<T>();
 
-    public static string GetUserId(this ClaimsPrincipal principal, string claimType) 
+    public static string GetUserId(this ClaimsPrincipal principal, string claimType)
         => principal.FindFirst(claimType)?.Value;
 }
