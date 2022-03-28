@@ -7,7 +7,7 @@ using WeihanLi.Common.Models;
 
 namespace WeihanLi.Web.Filters;
 
-public sealed class ApiResultFilter: Attribute, IResultFilter, IExceptionFilter
+public sealed class ApiResultFilter : Attribute, IResultFilter, IExceptionFilter
 {
     public void OnResultExecuting(ResultExecutingContext context)
     {
