@@ -7,9 +7,9 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
-public class ParamsProtectionOptions
+public sealed class ParamsProtectionOptions
 {
-    private string[] _protectParams = new string[0];
+    private string[] _protectParams = Array.Empty<string>();
 
     /// <summary>
     /// ProtectorPurpose

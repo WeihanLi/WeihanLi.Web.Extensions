@@ -13,7 +13,7 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
-public class ParamsProtectionResourceFilter : IResourceFilter
+public sealed class ParamsProtectionResourceFilter : IResourceFilter
 {
     private static readonly Lazy<XmlDataSerializer> XmlDataSerializer = new Lazy<XmlDataSerializer>(() => new XmlDataSerializer());
     private readonly IDataProtector _protector;
@@ -40,19 +40,19 @@ public class ParamsProtectionResourceFilter : IResourceFilter
             var request = context.HttpContext.Request;
 
             // QueryString
-            if (request.Query != null && request.Query.Count > 0)
+            if (request.Query.Count > 0)
             {
                 var queryDic = request.Query.ToDictionary(query => query.Key, query => query.Value);
                 foreach (var param in _option.ProtectParams)
                 {
                     if (queryDic.ContainsKey(param))
                     {
-                        var vals = new List<string>();
+                        var values = new List<string>(queryDic[param].Count);
                         for (var i = 0; i < queryDic[param].Count; i++)
                         {
                             if (_protector.TryGetUnprotectedValue(_option, queryDic[param][i], out var val))
                             {
-                                vals.Add(val);
+                                values.Add(val);
                             }
                             else
                             {
@@ -62,19 +62,19 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                                 return;
                             }
                         }
-                        queryDic[param] = new StringValues(vals.ToArray());
+                        queryDic[param] = new StringValues(values.ToArray());
                     }
                     context.HttpContext.Request.Query = new QueryCollection(queryDic);
                 }
             }
             // route value
-            if (context.RouteData?.Values != null)
+            if (context.RouteData.Values.Count > 0)
             {
                 foreach (var param in _option.ProtectParams)
                 {
                     if (context.RouteData.Values.ContainsKey(param))
                     {
-                        if (_protector.TryGetUnprotectedValue(_option, context.RouteData.Values[param].ToString(), out var val))
+                        if (_protector.TryGetUnprotectedValue(_option, context.RouteData.Values[param]?.ToString(), out var val))
                         {
                             context.RouteData.Values[param] = val;
                         }
@@ -89,32 +89,31 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                     }
                 }
             }
-
+            
             if (request.Method.EqualsIgnoreCase("POST") || request.Method.EqualsIgnoreCase("PUT"))
             {
-                if (request.ContentType.Contains("json"))
+                var contentType = request.ContentType ?? string.Empty;
+                if (contentType.Contains("json"))
                 {
-                    using (var reader = new StreamReader(request.Body, Encoding.UTF8))
+                    using var reader = new StreamReader(request.Body, Encoding.UTF8);
+                    var content = reader.ReadToEnd();
+                    var obj = content.JsonToObject<JToken>();
+                    try
                     {
-                        var content = reader.ReadToEnd();
-                        var obj = content.JsonToObject<JToken>();
-                        try
-                        {
-                            ParamsProtectionHelper.UnProtectParams(obj, _protector, _option);
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.LogWarning(e, "Error in unprotect request body");
-
-                            context.Result = new StatusCodeResult(_option.InvalidRequestStatusCode);
-
-                            return;
-                        }
-
-                        context.HttpContext.Request.Body = obj.ToJson().GetBytes().ToMemoryStream();
+                        ParamsProtectionHelper.UnProtectParams(obj, _protector, _option);
                     }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(e, "Error in unprotect request body");
+
+                        context.Result = new StatusCodeResult(_option.InvalidRequestStatusCode);
+
+                        return;
+                    }
+
+                    context.HttpContext.Request.Body = obj.ToJson().GetBytes().ToMemoryStream();
                 } // json body
-                else if (request.ContentType.Contains("xml"))
+                else if (contentType.Contains("xml"))
                 {
                     // TODO: need test
                     var obj = XmlDataSerializer.Value.Deserialize<JToken>(request.Body.ToByteArray());
@@ -134,7 +133,7 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                 } // xml body
 
                 // form data
-                if (request.HasFormContentType && request.Form != null && request.Form.Count > 0)
+                if (request.HasFormContentType && request.Form.Count > 0)
                 {
                     var formDic = request.Form.ToDictionary(_ => _.Key, _ => _.Value);
                     foreach (var param in _option.ProtectParams)
@@ -142,9 +141,9 @@ public class ParamsProtectionResourceFilter : IResourceFilter
                         if (formDic.TryGetValue(param, out var values))
                         {
                             var vals = new List<string>();
-                            for (var i = 0; i < values.Count; i++)
+                            foreach (var item in values)
                             {
-                                if (_protector.TryGetUnprotectedValue(_option, values[i], out var val))
+                                if (_protector.TryGetUnprotectedValue(_option, item, out var val))
                                 {
                                     vals.Add(val);
                                 }
