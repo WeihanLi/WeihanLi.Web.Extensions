@@ -18,6 +18,7 @@ namespace WeihanLi.Web.Extensions.Samples;
 
 [Route("api/values")]
 [ApiController]
+[ApiResultFilter]
 public class ValuesController : ControllerBase
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -31,7 +32,7 @@ public class ValuesController : ControllerBase
         {
             using var scope = _serviceScopeFactory.CreateScope();
             var tokenService = scope.ServiceProvider.GetRequiredService<ITokenService>();
-            System.Console.WriteLine(tokenService.GetHashCode());
+            Console.WriteLine(tokenService.GetHashCode());
         });
         return Ok();
     }
@@ -121,5 +122,11 @@ public class ValuesController : ControllerBase
     public IActionResult BearerAuthTest()
     {
         return Ok();
+    }
+
+    [HttpGet("[action]")]
+    public IActionResult ExceptionTest()
+    {
+        throw new Exception();
     }
 }

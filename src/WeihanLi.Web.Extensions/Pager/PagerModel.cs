@@ -50,16 +50,16 @@ internal sealed class PagerModel : IPagerModel
 
     public Func<int, string> OnPageChange { get; set; }
 
-    private int groupSize = 12;
+    private int _groupSize = 12;
 
     public int GroupSize
     {
-        get => groupSize;
+        get => _groupSize;
         set
         {
             if (value > 1)
             {
-                groupSize = value;
+                _groupSize = value;
             }
         }
     }
