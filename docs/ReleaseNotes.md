@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.3.0
+
+- Add `ApiResultFilter`
+
 ## 1.2.1
 
 - add FluentAspectServiceProviderFactory
