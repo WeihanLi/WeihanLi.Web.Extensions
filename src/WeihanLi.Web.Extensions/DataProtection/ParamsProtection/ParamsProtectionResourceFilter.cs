@@ -89,7 +89,7 @@ public sealed class ParamsProtectionResourceFilter : IResourceFilter
                     }
                 }
             }
-            
+
             if (request.Method.EqualsIgnoreCase("POST") || request.Method.EqualsIgnoreCase("PUT"))
             {
                 var contentType = request.ContentType ?? string.Empty;
