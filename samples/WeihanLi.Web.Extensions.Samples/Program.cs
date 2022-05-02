@@ -81,5 +81,4 @@ await app.RunAsync();
 
 string Hello() => "Hello Minimal API!";
 
-IResult BadRequest(OkObjectHttpResult) => Results.BadRequest();
-
+IResult BadRequest() => Results.BadRequest();
