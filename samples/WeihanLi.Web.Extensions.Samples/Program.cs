@@ -12,79 +12,74 @@ using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authorization.Jwt;
 using WeihanLi.Web.Extensions;
 using WeihanLi.Web.Extensions.Samples;
+using WeihanLi.Web.Filters;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureWebHostDefaults(builder =>
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
+    .AddJwtBearer()
+    .AddQuery(options =>
     {
-        builder
-            // .ConfigureLogging(lb => lb.SetMinimumLevel(LogLevel.Warning))
-            .ConfigureServices(services =>
-            {
-                services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
-                    .AddJwtBearer()
-                    .AddQuery(options =>
-                    {
-                        options.UserIdQueryKey = "uid";
-                    })
-                    .AddHeader(options =>
-                    {
-                        options.UserIdHeaderName = "X-UserId";
-                        options.UserNameHeaderName = "X-UserName";
-                        options.UserRolesHeaderName = "X-UserRoles";
-                    })
-                    .AddApiKey(options =>
-                    {
-                        options.ClaimsIssuer = "https://id.weihanli.xyz";
-                        options.ApiKey = "123456";
-                        options.ApiKeyName = "X-ApiKey";
-                        options.KeyLocation = KeyLocation.HeaderOrQuery;
-                    })
-                    ;
-                services.AddJwtTokenServiceWithJwtBearerAuth(options =>
-                {
-                    options.SecretKey = Guid.NewGuid().ToString();
-                    options.Issuer = "https://id.weihanli.xyz";
-                    options.Audience = "SparkTodo";
-                    // EnableRefreshToken, disabled by default
-                    options.EnableRefreshToken = true;
-                    // Renew refresh token always
-                    // options.RenewRefreshTokenPredicate = _ => true;
-                    options.RefreshTokenSigningCredentialsFactory = () =>
-                        new SigningCredentials(
-                            new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
-                            SecurityAlgorithms.HmacSha256
-                            );
-                });
-                services.AddControllers().AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                });
-                services.AddHttpContextUserIdProvider(options =>
-                {
-                    options.UserIdFactory = context => $"{context.GetUserIP()}";
-                });
-            })
-            .Configure(app =>
-            {
-                // app.UseCustomExceptionHandler();
-                app.UseHealthCheck();
-
-                app.UseRouting();
-                app.UseAuthentication();
-                app.UseAuthorization();
-
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
-            })
-    ;
+        options.UserIdQueryKey = "uid";
     })
-     .UseFluentAspectsServiceProviderFactory(options =>
-     {
-         options.InterceptAll()
-           .With<EventPublishLogInterceptor>();
-     })
-    .Build();
+    .AddHeader(options =>
+    {
+        options.UserIdHeaderName = "X-UserId";
+        options.UserNameHeaderName = "X-UserName";
+        options.UserRolesHeaderName = "X-UserRoles";
+    })
+    .AddApiKey(options =>
+    {
+        options.ClaimsIssuer = "https://id.weihanli.xyz";
+        options.ApiKey = "123456";
+        options.ApiKeyName = "X-ApiKey";
+        options.KeyLocation = KeyLocation.HeaderOrQuery;
+    })
+    ;
+builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
+    {
+        options.SecretKey = Guid.NewGuid().ToString();
+        options.Issuer = "https://id.weihanli.xyz";
+        options.Audience = "SparkTodo";
+        // EnableRefreshToken, disabled by default
+        options.EnableRefreshToken = true;
+        // Renew refresh token always
+        // options.RenewRefreshTokenPredicate = _ => true;
+        options.RefreshTokenSigningCredentialsFactory = () =>
+            new SigningCredentials(
+              new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
+              SecurityAlgorithms.HmacSha256
+            );
+    });
+builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+builder.Services.AddHttpContextUserIdProvider(options =>
+    {
+        options.UserIdFactory = context => $"{context.GetUserIP()}";
+    });
+builder.Host.UseFluentAspectsServiceProviderFactory(options =>
+    {
+        options.InterceptAll()
+          .With<EventPublishLogInterceptor>();
+    });
 
-host.Run();
+var app = builder.Build();
+
+app.Map("/Hello", () => "Hello Minimal API!").AddFilter<ApiResultFilter>();
+app.Map("/HelloV2", Hello).AddFilter<ApiResultFilter>();
+app.Map("/BadRequest", BadRequest).AddFilter<ApiResultFilter>();
+
+app.UseHealthCheck();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+await app.RunAsync();
+
+
+string Hello() => "Hello Minimal API!";
+
+IResult BadRequest(OkObjectHttpResult) => Results.BadRequest();
+
