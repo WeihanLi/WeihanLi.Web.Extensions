@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using WeihanLi.Web.Authentication.ApiKeyAuthentication;
+using WeihanLi.Web.Authentication.BasicAuthentication;
 using WeihanLi.Web.Authentication.HeaderAuthentication;
 using WeihanLi.Web.Authentication.QueryAuthentication;
 
@@ -36,6 +37,38 @@ public static class AuthenticationBuilderExtension
             builder.Services.Configure(configureOptions);
         }
         return builder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(schema,
+            configureOptions);
+    }
+
+    #endregion AddApiKey
+
+    #region AddBasic
+
+    public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder)
+    {
+        return builder.AddBasic(BasicAuthenticationDefaults.AuthenticationSchema);
+    }
+
+    public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder, string schema)
+    {
+        return builder.AddBasic(schema, _ => { });
+    }
+
+    public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder,
+        Action<BasicAuthenticationOptions> configureOptions)
+    {
+        return builder.AddBasic(BasicAuthenticationDefaults.AuthenticationSchema,
+            configureOptions);
+    }
+
+    public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder, string schema,
+        Action<BasicAuthenticationOptions> configureOptions)
+    {
+        if (null != configureOptions)
+        {
+            builder.Services.Configure(configureOptions);
+        }
+        return builder.AddScheme<BasicAuthenticationOptions, BasicAuthenticationHandler>(schema,
             configureOptions);
     }
 
