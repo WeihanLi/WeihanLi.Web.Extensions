@@ -7,6 +7,7 @@ using WeihanLi.Common.Models;
 
 namespace WeihanLi.Web.Filters;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public sealed class ApiResultFilter : Attribute
     , IResultFilter, IExceptionFilter
 #if NET7_0
@@ -16,10 +17,7 @@ public sealed class ApiResultFilter : Attribute
 {
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (context.Result is Result)
-            return;
-
-        if (context.Result is ObjectResult objectResult && objectResult.Value is not Result)
+        if (context.Result is ObjectResult { Value: not Result } objectResult)
         {
             var result = new Result<object>()
             {
@@ -52,8 +50,8 @@ public sealed class ApiResultFilter : Attribute
             if (result is Result)
             {
                 return result;
-            }            
-            if (result is ObjectResult objectResult && objectResult.Value is not Result)
+            }
+            if (result is ObjectResult { Value: not Result } objectResult)
             {
                 return new Result<object>()
                 {
@@ -78,7 +76,7 @@ public sealed class ApiResultFilter : Attribute
     private static ResultStatus HttpStatusCode2ResultStatus(int? statusCode)
     {
         statusCode ??= 200;
-        ResultStatus status = ResultStatus.Success;
+        var status = ResultStatus.Success;
         if (Enum.IsDefined(typeof(ResultStatus), statusCode.Value))
         {
             status = (ResultStatus)statusCode.Value;
