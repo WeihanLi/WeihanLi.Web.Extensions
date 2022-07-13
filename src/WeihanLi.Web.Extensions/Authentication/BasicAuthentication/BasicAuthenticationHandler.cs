@@ -4,6 +4,7 @@
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using WeihanLi.Extensions;
 using AuthenticateResult = Microsoft.AspNetCore.Authentication.AuthenticateResult;
 
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
@@ -28,18 +29,31 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
             {
                 return AuthenticateResult.Fail("Invalid Authorization header");
             }
-            var array = token.Split(':');
-            if (array.Length != 2)
+
+            string userName, password;
+            try
+            {
+                var array = Convert.FromBase64String(token).GetString().Split(':');
+                if (array.Length != 2)
+                {
+                    return AuthenticateResult.Fail("Invalid Authorization header");
+                }
+
+                userName = array[0];
+                password = array[1];
+            }
+            catch
             {
                 return AuthenticateResult.Fail("Invalid Authorization header");
             }
 
-            var valid = await Options.UserCredentialValidator.Invoke(Request.HttpContext, array[0], array[1]);
+
+            var valid = await Options.UserCredentialValidator.Invoke(Request.HttpContext, userName, password);
             if (valid)
             {
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.Name, array[0]),
+                    new Claim(ClaimTypes.Name, userName),
                     new Claim("issuer", ClaimsIssuer),
                 };
                 return AuthenticateResult.Success(new AuthenticationTicket(

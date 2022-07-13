@@ -11,8 +11,8 @@ public sealed class BasicAuthenticationOptions : AuthenticationSchemeOptions
     public Func<HttpContext, string, string, Task<bool>> UserCredentialValidator { get; set; }
         = (context, user, pass) =>
         {
-            var options = context.RequestServices.GetRequiredService<IOptionsMonitor<BasicAuthenticationOptions>>()
-                .CurrentValue;
+            var options = context.RequestServices.GetRequiredService<IOptions<BasicAuthenticationOptions>>()
+                .Value;
             return Task.FromResult(user == options.UserName && pass == options.Password);
         };
 }

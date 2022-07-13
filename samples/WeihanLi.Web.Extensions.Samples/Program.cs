@@ -18,6 +18,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
     .AddJwtBearer()
+    .AddBasic(options =>
+    {
+        options.UserName = "test";
+        options.Password = "test";
+    })
     .AddQuery(options =>
     {
         options.UserIdQueryKey = "uid";
@@ -51,6 +56,11 @@ builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
               SecurityAlgorithms.HmacSha256
             );
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Basic", policyBuilder => policyBuilder.AddAuthenticationSchemes("Basic").RequireAuthenticatedUser());
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -67,9 +77,10 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
 
 var app = builder.Build();
 
-app.Map("/Hello", () => "Hello Minimal API!").AddFilter<ApiResultFilter>();
-app.Map("/HelloV2", Hello).AddFilter<ApiResultFilter>();
-app.Map("/BadRequest", BadRequest).AddFilter<ApiResultFilter>();
+app.Map("/Hello", () => "Hello Minimal API!").AddRouteHandlerFilter<ApiResultFilter>();
+app.Map("/HelloV2", Hello).AddRouteHandlerFilter<ApiResultFilter>();
+app.Map("/BadRequest", BadRequest).AddRouteHandlerFilter<ApiResultFilter>();
+app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
 
 app.UseHealthCheck();
 app.UseAuthentication();
