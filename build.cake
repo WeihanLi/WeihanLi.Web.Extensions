@@ -2,6 +2,8 @@
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
 
+var apiKey = Argument("apiKey", "");
+var stable = Argument("stable", "false");
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
@@ -56,7 +58,7 @@ Task("restore")
     {
       foreach(var project in srcProjects)
       {
-         DotNetCoreRestore(project.FullPath);
+         DotNetRestore(project.FullPath);
       }
     });
 
@@ -66,13 +68,13 @@ Task("build")
     .IsDependentOn("restore")
     .Does(() =>
     {
-      var buildSetting = new DotNetCoreBuildSettings{
+      var buildSetting = new DotNetBuildSettings{
          NoRestore = true,
          Configuration = configuration
       };
       foreach(var project in srcProjects)
       {
-         DotNetCoreBuild(project.FullPath, buildSetting);
+         DotNetBuild(project.FullPath, buildSetting);
       }
     });
 
@@ -81,22 +83,22 @@ Task("test")
     .IsDependentOn("build")
     .Does(() =>
     {
-      var testSettings = new DotNetCoreTestSettings{
+      var testSettings = new DotNetTestSettings{
          NoRestore = true,
          Configuration = configuration
       };
       foreach(var project in testProjects)
       {
-         DotNetCoreTest(project.FullPath, testSettings);
+         DotNetTest(project.FullPath, testSettings);
       }
     });
 
 Task("pack")
     .Description("Pack package")
     .IsDependentOn("build")
-    .Does(() =>
+    .Does((context) =>
     {
-      var settings = new DotNetCorePackSettings
+      var settings = new DotNetPackSettings
       {
          Configuration = configuration,
          OutputDirectory = artifacts,
@@ -104,31 +106,38 @@ Task("pack")
          NoRestore = true,
          NoBuild = true
       };
-      if(branchName != "master"){
+      if(branchName != "master" && stable != "true"){
          settings.VersionSuffix = $"preview-{DateTime.UtcNow:yyyyMMdd-HHmmss}";
       }
       foreach (var project in packProjects)
       {
-         DotNetCorePack(project.FullPath, settings);
+         DotNetPack(project.FullPath, settings);
       }
-      PublishArtifacts();
+      PublishArtifacts(context);
     });
 
-bool PublishArtifacts(){
-   if(!isWindowsAgent){
+bool PublishArtifacts(ICakeContext context)
+{
+   if (context.Environment.Platform.IsUnix())
+   {
       return false;
    }
-   if(branchName == "master" || branchName == "preview")
+   if (string.IsNullOrEmpty(apiKey))
    {
-      var pushSetting =new DotNetCoreNuGetPushSettings
+      apiKey = EnvironmentVariable("Nuget__ApiKey");
+   }
+   if (!string.IsNullOrEmpty(apiKey))
+   {
+      var pushSetting =new DotNetNuGetPushSettings
       {
-         Source = EnvironmentVariable("Nuget__SourceUrl") ?? "https://api.nuget.org/v3/index.json",
-         ApiKey = EnvironmentVariable("Nuget__ApiKey")
+         Source = "https://api.nuget.org/v3/index.json",
+         ApiKey = apiKey,
+         SkipDuplicate = true
       };
       var packages = GetFiles($"{artifacts}/*.nupkg");
-      foreach(var package in packages)
+      foreach (var package in packages)
       {
-         DotNetCoreNuGetPush(package.FullPath, pushSetting);
+         DotNetNuGetPush(package.FullPath, pushSetting);
       }
       return true;
    }
