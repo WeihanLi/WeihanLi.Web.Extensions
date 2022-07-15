@@ -131,7 +131,7 @@ bool PublishArtifacts(ICakeContext context)
       "preview"
    };
 
-   if (string.IsNullOrEmpty(apiKey) && publishBranches.Contains(branchName)
+   if (string.IsNullOrEmpty(apiKey) && publishBranches.Contains(branchName))
    {
       apiKey = EnvironmentVariable("Nuget__ApiKey");
    }
