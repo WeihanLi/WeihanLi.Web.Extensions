@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
@@ -122,13 +123,21 @@ bool PublishArtifacts(ICakeContext context)
    {
       return false;
    }
-   if (string.IsNullOrEmpty(apiKey))
+   var publishBranches = new HashSet<string>()
+   {
+      "local",
+      "main",
+      "master",
+      "preview"
+   };
+
+   if (string.IsNullOrEmpty(apiKey) && publishBranches.Contains(branchName)
    {
       apiKey = EnvironmentVariable("Nuget__ApiKey");
    }
    if (!string.IsNullOrEmpty(apiKey))
    {
-      var pushSetting =new DotNetNuGetPushSettings
+      var pushSetting = new DotNetNuGetPushSettings
       {
          Source = "https://api.nuget.org/v3/index.json",
          ApiKey = apiKey,
