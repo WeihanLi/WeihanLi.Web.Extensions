@@ -21,7 +21,8 @@ public sealed class ApiResultFilter : Attribute
         {
             var result = new Result<object>()
             {
-                Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                Data = objectResult.Value,
+                Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
             };
             objectResult.Value = result;
         }
