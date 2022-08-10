@@ -11,7 +11,7 @@ namespace WeihanLi.Web.Filters;
 public sealed class ApiResultFilter : Attribute
     , IResultFilter, IExceptionFilter
 #if NET7_0
-    , IRouteHandlerFilter
+    , IEndpointFilter
 #endif
 
 {
@@ -21,8 +21,7 @@ public sealed class ApiResultFilter : Attribute
         {
             var result = new Result<object>()
             {
-                Data = objectResult.Value,
-                Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
             };
             objectResult.Value = result;
         }
@@ -35,35 +34,39 @@ public sealed class ApiResultFilter : Attribute
     public void OnException(ExceptionContext context)
     {
         var result = Result.Fail(context.Exception.ToString(), ResultStatus.ProcessFail);
-        context.Result = new ObjectResult(result)
-        {
-            StatusCode = 500
-        };
+        context.Result = new ObjectResult(result) { StatusCode = 500 };
     }
 #if NET7_0
 
-    public async ValueTask<object> InvokeAsync(RouteHandlerInvocationContext context, RouteHandlerFilterDelegate next)
+    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         try
         {
             var result = await next(context);
-            if (result is Result)
+            if (result is Result or ObjectResult { Value: Result } or IValueHttpResult { Value: Result })
             {
                 return result;
             }
+
             if (result is ObjectResult { Value: not Result } objectResult)
             {
                 return new Result<object>()
                 {
-                    Data = objectResult.Value,
-                    Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                    Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
                 };
+            }
+
+            if (result is IValueHttpResult { Value: not Result } valueHttpResult)
+            {
+                var status = valueHttpResult is IStatusCodeHttpResult statusCodeHttpResult
+                    ? HttpStatusCode2ResultStatus(statusCodeHttpResult.StatusCode)
+                    : HttpStatusCode2ResultStatus(200);
+                return new Result<object>() { Data = valueHttpResult.Value, Status = status };
             }
 
             return new Result<object>()
             {
-                Data = result,
-                Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
+                Data = result, Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
             };
         }
         catch (Exception ex)
@@ -81,10 +84,12 @@ public sealed class ApiResultFilter : Attribute
         {
             status = (ResultStatus)statusCode.Value;
         }
+
         if (status == ResultStatus.None)
         {
             status = ResultStatus.Success;
         }
+
         return status;
     }
 }

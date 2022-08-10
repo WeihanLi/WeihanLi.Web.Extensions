@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using WeihanLi.Common;
 using WeihanLi.Common.Aspect;
+using WeihanLi.Common.Models;
 using WeihanLi.Extensions;
 using WeihanLi.Web.Authentication;
 using WeihanLi.Web.Authentication.ApiKeyAuthentication;
@@ -77,9 +78,11 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
 
 var app = builder.Build();
 
-app.Map("/Hello", () => "Hello Minimal API!").AddRouteHandlerFilter<ApiResultFilter>();
-app.Map("/HelloV2", Hello).AddRouteHandlerFilter<ApiResultFilter>();
-app.Map("/BadRequest", BadRequest).AddRouteHandlerFilter<ApiResultFilter>();
+app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
+app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
+app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
+app.Map("/HelloV4", () => Results.Ok(Result.Success(new { Name = "test" }))).AddEndpointFilter<ApiResultFilter>();
+app.Map("/BadRequest", BadRequest).AddEndpointFilter<ApiResultFilter>();
 app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
 
 app.UseHealthCheck();
