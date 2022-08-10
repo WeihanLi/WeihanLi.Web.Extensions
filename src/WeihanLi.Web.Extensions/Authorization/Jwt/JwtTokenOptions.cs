@@ -61,25 +61,30 @@ public class JwtTokenOptions
     ///   sensitive string.  Use of this claim is OPTIONAL.</remarks>
     public Func<string> JtiGenerator => () => GuidIdGenerator.Instance.NewId();
 
-    public string SecurityAlgorithm { get; set; } = SecurityAlgorithms.HmacSha256;
-
-    public Func<SecurityKey> SecurityKeyFactory { get; set; }
+    public Func<SigningCredentials> SigningCredentialsFactory { get; set; }
 
     public bool EnableRefreshToken { get; set; }
 
+    public Func<TokenValidationResult, bool> RenewRefreshTokenPredicate { get; set; }
+
     public TimeSpan RefreshTokenValidFor { get; set; } = TimeSpan.FromHours(8);
 
-    internal SecurityKey SecurityKey { get; set; }
+    public Func<SigningCredentials> RefreshTokenSigningCredentialsFactory { get; set; }
+
+    public string RefreshTokenOwnerClaimType { get; set; } = "x-rt-owner";
+
+    public Func<TokenValidationResult, HttpContext, bool> RefreshTokenValidator { get; set; }
 
     internal SigningCredentials SigningCredentials { get; set; }
+    internal SigningCredentials RefreshTokenSigningCredentials { get; set; }
 
-    public TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters> parametersAction = null)
+    internal TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters> parametersAction = null)
     {
         var parameters = new TokenValidationParameters
         {
             // The signing key must match!
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = SecurityKey,
+            IssuerSigningKey = SigningCredentials.Key,
             // Validate the JWT Issuer (iss) claim
             ValidateIssuer = true,
             ValidIssuer = Issuer,

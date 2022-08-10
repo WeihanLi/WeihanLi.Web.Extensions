@@ -16,6 +16,6 @@ public static class DependenceResolverExtension
     public static TService ResolveCurrentService<TService>(this IDependencyResolver dependencyResolver)
     {
         var contextAccessor = dependencyResolver.GetRequiredService<IHttpContextAccessor>();
-        return contextAccessor.HttpContext.RequestServices.GetService<TService>();
+        return Guard.NotNull(contextAccessor.HttpContext).RequestServices.GetService<TService>();
     }
 }

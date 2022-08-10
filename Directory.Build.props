@@ -1,9 +1,7 @@
 <Project>
-  <Import Project="./build/sign.props" />
-
   <PropertyGroup>
 		<VersionMajor>1</VersionMajor>
-		<VersionMinor>2</VersionMinor>
+		<VersionMinor>4</VersionMinor>
 		<VersionPatch>0</VersionPatch>
 		<VersionRevision>0</VersionRevision>
 		<VersionPrefix Condition="'$(VersionRevision)'=='0'">$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
@@ -15,20 +13,10 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions</RepositoryUrl>
-    <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <ContinuousIntegrationBuild Condition="'$(TF_BUILD)' == 'true' or '$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-
+    <RepositoryUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions</RepositoryUrl>    
     <Authors>WeihanLi</Authors>
-    <Copyright>Copyright 2016-2021 (c) WeihanLi</Copyright>
+    <Copyright>Copyright 2016-$([System.DateTime]::Now.Year) (c) WeihanLi</Copyright>
     <NoWarn>$(NoWarn);NU5048;</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -40,8 +28,5 @@
     <Using Include="Microsoft.Extensions.Configuration" />
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Microsoft.Extensions.Options" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 </Project>

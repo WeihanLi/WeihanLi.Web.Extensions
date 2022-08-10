@@ -30,11 +30,6 @@ internal static class ParamsProtectionHelper
         return false;
     }
 
-    private static bool IsParamValueNeedProtect(this ParamsProtectionOptions option, string value)
-    {
-        return !option.ParamValueProtectFuncEnabled || option.ParamValueNeedProtectFunc(value);
-    }
-
     private static void ProtectParams(JToken token, ITimeLimitedDataProtector protector, ParamsProtectionOptions option)
     {
         if (token is JArray array)

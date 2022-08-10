@@ -14,10 +14,13 @@ ASP.NET Core Web extensions
 
 - MVC Pager
 - Data Protection
-- Access Control Helper
+- Authorization
+  - Access Control Helper
+  - JwtTokenService
 - Authentication
   - Query
   - Header
-  - API-Key
+  - Api-Key
+  - Basic
 - Feature flag
 - Http context extensions

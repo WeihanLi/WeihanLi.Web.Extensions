@@ -7,19 +7,22 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-internal sealed class JwtTokenOptionsSetup : IConfigureOptions<JwtTokenOptions>
+internal sealed class JwtTokenOptionsSetup : IPostConfigureOptions<JwtTokenOptions>
 {
-    public void Configure(JwtTokenOptions options)
+    public void PostConfigure(string name, JwtTokenOptions options)
     {
-        if (options.SecurityKeyFactory is null)
+        if (options.SigningCredentialsFactory is null)
         {
             if (options.SecretKey.IsNotNullOrWhiteSpace())
             {
-                options.SecurityKeyFactory = () => new SymmetricSecurityKey(options.SecretKey.GetBytes());
+                options.SigningCredentialsFactory = () => new SigningCredentials(new SymmetricSecurityKey(options.SecretKey.GetBytes()), SecurityAlgorithms.HmacSha256);
             }
         }
-        Guard.NotNull(options.SecurityKeyFactory);
-        options.SecurityKey = options.SecurityKeyFactory();
-        options.SigningCredentials = new SigningCredentials(options.SecurityKey, options.SecurityAlgorithm);
+        Guard.NotNull(options.SigningCredentialsFactory);
+        options.SigningCredentials = options.SigningCredentialsFactory();
+        options.RefreshTokenSigningCredentials = options.RefreshTokenSigningCredentials is null
+            ? options.SigningCredentials
+            : options.RefreshTokenSigningCredentialsFactory()
+            ;
     }
 }

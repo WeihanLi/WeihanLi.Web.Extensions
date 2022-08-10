@@ -10,7 +10,7 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
-public class ParamsProtectionResultFilter : IResultFilter
+public sealed class ParamsProtectionResultFilter : IResultFilter
 {
     private readonly IDataProtector _protector;
     private readonly ParamsProtectionOptions _option;
@@ -45,7 +45,7 @@ public class ParamsProtectionResultFilter : IResultFilter
 
                         var obj = JToken.FromObject(val);
                         ParamsProtectionHelper.ProtectParams(obj, _protector, _option);
-                        prop.GetValueSetter().Invoke(context.Result, obj);
+                        prop.GetValueSetter()?.Invoke(context.Result, obj);
                     }
                 }
             }
