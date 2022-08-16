@@ -22,9 +22,9 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
         }
 
         var authHeader = authHeaderValues.ToString();
-        if (authHeader.StartsWith("Basic", StringComparison.OrdinalIgnoreCase))
+        if (authHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
         {
-            var token = authHeader[("Basic".Length + 1)..];
+            var token = authHeader[("Basic ".Length)..];
             if (string.IsNullOrEmpty(token))
             {
                 return AuthenticateResult.Fail("Invalid Authorization header");
