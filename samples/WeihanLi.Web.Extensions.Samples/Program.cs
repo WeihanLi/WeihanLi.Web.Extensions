@@ -24,10 +24,7 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
         options.UserName = "test";
         options.Password = "test";
     })
-    .AddQuery(options =>
-    {
-        options.UserIdQueryKey = "uid";
-    })
+    .AddQuery(options => { options.UserIdQueryKey = "uid"; })
     .AddHeader(options =>
     {
         options.UserIdHeaderName = "X-UserId";
@@ -43,38 +40,39 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
     })
     ;
 builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
-    {
-        options.SecretKey = Guid.NewGuid().ToString();
-        options.Issuer = "https://id.weihanli.xyz";
-        options.Audience = "SparkTodo";
-        // EnableRefreshToken, disabled by default
-        options.EnableRefreshToken = true;
-        // Renew refresh token always
-        // options.RenewRefreshTokenPredicate = _ => true;
-        options.RefreshTokenSigningCredentialsFactory = () =>
-            new SigningCredentials(
-              new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
-              SecurityAlgorithms.HmacSha256
-            );
-    });
+{
+    options.SecretKey = Guid.NewGuid().ToString();
+    options.Issuer = "https://id.weihanli.xyz";
+    options.Audience = "SparkTodo";
+    // EnableRefreshToken, disabled by default
+    options.EnableRefreshToken = true;
+    // Renew refresh token always
+    // options.RenewRefreshTokenPredicate = _ => true;
+    options.RefreshTokenSigningCredentialsFactory = () =>
+        new SigningCredentials(
+            new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
+            SecurityAlgorithms.HmacSha256
+        );
+});
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Basic", policyBuilder => policyBuilder.AddAuthenticationSchemes("Basic").RequireAuthenticatedUser());
+    options.AddPolicy("Basic",
+        policyBuilder => policyBuilder.AddAuthenticationSchemes("Basic").RequireAuthenticatedUser());
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddHttpContextUserIdProvider(options =>
-    {
-        options.UserIdFactory = context => $"{context.GetUserIP()}";
-    });
+{
+    options.UserIdFactory = context => $"{context.GetUserIP()}";
+});
 builder.Host.UseFluentAspectsServiceProviderFactory(options =>
-    {
-        options.InterceptAll()
-          .With<EventPublishLogInterceptor>();
-    });
+{
+    options.InterceptAll()
+        .With<EventPublishLogInterceptor>();
+});
 
 var app = builder.Build();
 
@@ -84,6 +82,11 @@ app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<A
 app.Map("/HelloV4", () => Results.Ok(Result.Success(new { Name = "test" }))).AddEndpointFilter<ApiResultFilter>();
 app.Map("/BadRequest", BadRequest).AddEndpointFilter<ApiResultFilter>();
 app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
+
+var testGroup1 = app.MapGroup("/test1");
+testGroup1.Map("/hello", () => "Hello");
+testGroup1.Map("/world", () => "World");
+testGroup1.AddEndpointFilter<ApiResultFilter>();
 
 app.UseHealthCheck();
 app.UseAuthentication();
