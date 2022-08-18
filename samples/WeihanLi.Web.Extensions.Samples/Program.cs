@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using WeihanLi.Common;
@@ -82,6 +83,17 @@ app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<A
 app.Map("/HelloV4", () => Results.Ok(Result.Success(new { Name = "test" }))).AddEndpointFilter<ApiResultFilter>();
 app.Map("/BadRequest", BadRequest).AddEndpointFilter<ApiResultFilter>();
 app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
+
+// conditional filter
+var conditionalTest = app.MapGroup("/conditional");
+conditionalTest.Map("/NotFound", () => "Not Found")
+    .AddEndpointFilter(new EnvironmentFilter("Production"));
+conditionalTest.Map("/Dynamic", () => "You get it")
+    .AddEndpointFilter(new ConditionalFilter()
+    {
+        ConditionFunc = c => c.Request.Query.TryGetValue("enable", out _),
+        ResultFactory = c => Results.NotFound(new{ c.Request.QueryString })
+    });
 
 var testGroup1 = app.MapGroup("/test1");
 testGroup1.Map("/hello", () => "Hello");

@@ -14,8 +14,8 @@ public class ConditionalFilter: IAsyncResourceFilter
 #endif
 
 {
-    protected Func<HttpContext, bool> ConditionFunc { get; set; } = _ => true;
-    protected Func<HttpContext, object> ResultFactory { get; set; } = c => new NotFoundResult();
+    public Func<HttpContext, bool> ConditionFunc { get; init; } = _ => true;
+    public Func<HttpContext, object> ResultFactory { get; init; } = _ => new NotFoundResult();
 
     public virtual async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
     {
@@ -31,7 +31,7 @@ public class ConditionalFilter: IAsyncResourceFilter
         }
     }
 #if NET7_0_OR_GREATER
-    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public virtual async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var result = ConditionFunc.Invoke(context.HttpContext);
         if (result)
