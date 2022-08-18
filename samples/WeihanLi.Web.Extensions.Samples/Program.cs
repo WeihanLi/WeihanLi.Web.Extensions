@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using WeihanLi.Common;
@@ -92,7 +91,7 @@ conditionalTest.Map("/Dynamic", () => "You get it")
     .AddEndpointFilter(new ConditionalFilter()
     {
         ConditionFunc = c => c.Request.Query.TryGetValue("enable", out _),
-        ResultFactory = c => Results.NotFound(new{ c.Request.QueryString })
+        ResultFactory = c => Results.NotFound(new { c.Request.QueryString })
     });
 
 var testGroup1 = app.MapGroup("/test1");

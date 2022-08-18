@@ -8,7 +8,7 @@ using WeihanLi.Common;
 
 namespace WeihanLi.Web.Filters;
 
-public class ConditionalFilter: IAsyncResourceFilter
+public class ConditionalFilter : IAsyncResourceFilter
 #if NET7_0_OR_GREATER
     , IEndpointFilter
 #endif
@@ -27,7 +27,7 @@ public class ConditionalFilter: IAsyncResourceFilter
         else
         {
             var result = ResultFactory.Invoke(context.HttpContext);
-            context.Result =  result as IActionResult ?? new OkObjectResult(result);
+            context.Result = result as IActionResult ?? new OkObjectResult(result);
         }
     }
 #if NET7_0_OR_GREATER
@@ -43,7 +43,7 @@ public class ConditionalFilter: IAsyncResourceFilter
 #endif
 }
 
-public sealed class EnvironmentFilter: ConditionalFilter
+public sealed class EnvironmentFilter : ConditionalFilter
 {
     public EnvironmentFilter(params string[] environmentNames)
     {
