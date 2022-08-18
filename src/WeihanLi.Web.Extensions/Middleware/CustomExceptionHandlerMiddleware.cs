@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WeihanLi.Web.Middleware;
 
-public class CustomExceptionHandlerOptions
+public sealed class CustomExceptionHandlerOptions
 {
     public Func<HttpContext, ILogger, Exception, Task> OnException { get; set; } =
         (context, logger, exception) =>
@@ -22,7 +22,7 @@ public class CustomExceptionHandlerOptions
         };
 }
 
-public class CustomExceptionHandlerMiddleware
+public sealed class CustomExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly CustomExceptionHandlerOptions _options;
@@ -43,7 +43,7 @@ public class CustomExceptionHandlerMiddleware
         {
             var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger<CustomExceptionHandlerMiddleware>();
-            if (context.RequestAborted.IsCancellationRequested && (ex is TaskCanceledException || ex is OperationCanceledException))
+            if (context.RequestAborted.IsCancellationRequested && ex is OperationCanceledException)
             {
                 _options.OnRequestAborted?.Invoke(context, logger);
             }
