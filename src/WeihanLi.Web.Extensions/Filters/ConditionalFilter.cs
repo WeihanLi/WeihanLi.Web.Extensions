@@ -15,8 +15,14 @@ public class ConditionalFilter: IAsyncResourceFilter
 
 {
     public Func<HttpContext, bool> ConditionFunc { get; init; } = _ => true;
-    public Func<HttpContext, object> ResultFactory { get; init; } = _ => new NotFoundResult();
 
+    public Func<HttpContext, object> ResultFactory { get; init; } = _ =>
+#if NET7_0_OR_GREATER
+       Results.NotFound()
+#else
+            new NotFoundResult()
+#endif
+        ;
     public virtual async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
     {
         var condition = ConditionFunc.Invoke(context.HttpContext);
