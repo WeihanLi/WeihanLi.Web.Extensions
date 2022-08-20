@@ -26,9 +26,9 @@ public sealed class EnvironmentFilter : ConditionalFilter
 /// <summary>
 /// Should works only for non-production
 /// </summary>
-public sealed class NonProductionFilter : ConditionalFilter
+public sealed class NonProductionEnvironmentFilter : ConditionalFilter
 {
-    public NonProductionFilter()
+    public NonProductionEnvironmentFilter()
     {
         ConditionFunc = c => c.RequestServices.GetRequiredService<IWebHostEnvironment>()
             .IsProduction() == false;
