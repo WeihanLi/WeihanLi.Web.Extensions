@@ -7,28 +7,24 @@ using WeihanLi.Common.Models;
 
 namespace WeihanLi.Web.Filters;
 
-public sealed class ApiResultFilter : Attribute, IResultFilter, IExceptionFilter
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+public sealed class ApiResultFilter : Attribute
+    , IResultFilter, IExceptionFilter
+#if NET7_0_OR_GREATER
+    , IEndpointFilter
+#endif
+
 {
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (context.Result is ObjectResult objectResult)
+        if (context.Result is ObjectResult { Value: not Result } objectResult)
         {
-            if (objectResult.Value is not Result)
+            var result = new Result<object>()
             {
-                var result = new Result<object>()
-                {
-                    Data = objectResult.Value
-                };
-                if (Enum.IsDefined(typeof(ResultStatus), objectResult.StatusCode.GetValueOrDefault()))
-                {
-                    result.Status = (ResultStatus)objectResult.StatusCode.GetValueOrDefault();
-                }
-                if (result.Status == ResultStatus.None)
-                {
-                    result.Status = ResultStatus.Success;
-                }
-                objectResult.Value = result;
-            }
+                Data = objectResult.Value,
+                Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+            };
+            objectResult.Value = result;
         }
     }
 
@@ -39,9 +35,62 @@ public sealed class ApiResultFilter : Attribute, IResultFilter, IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var result = Result.Fail(context.Exception.ToString(), ResultStatus.ProcessFail);
-        context.Result = new ObjectResult(result)
+        context.Result = new ObjectResult(result) { StatusCode = 500 };
+    }
+#if NET7_0_OR_GREATER
+
+    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        try
         {
-            StatusCode = 500
-        };
+            var result = await next(context);
+            if (result is Result or ObjectResult { Value: Result } or IValueHttpResult { Value: Result })
+            {
+                return result;
+            }
+
+            if (result is ObjectResult { Value: not Result } objectResult)
+            {
+                return new Result<object>()
+                {
+                    Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                };
+            }
+
+            if (result is IValueHttpResult { Value: not Result } valueHttpResult)
+            {
+                var status = valueHttpResult is IStatusCodeHttpResult statusCodeHttpResult
+                    ? HttpStatusCode2ResultStatus(statusCodeHttpResult.StatusCode)
+                    : HttpStatusCode2ResultStatus(200);
+                return new Result<object>() { Data = valueHttpResult.Value, Status = status };
+            }
+
+            return new Result<object>()
+            {
+                Data = result, Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
+            };
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.ToString(), ResultStatus.ProcessFail);
+        }
+    }
+#endif
+
+    private static ResultStatus HttpStatusCode2ResultStatus(int? statusCode)
+    {
+        statusCode ??= 200;
+        var status = ResultStatus.Success;
+        if (Enum.IsDefined(typeof(ResultStatus), statusCode.Value))
+        {
+            status = (ResultStatus)statusCode.Value;
+        }
+
+        if (status == ResultStatus.None)
+        {
+            status = ResultStatus.Success;
+        }
+
+        return status;
     }
 }

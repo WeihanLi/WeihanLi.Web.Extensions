@@ -1,5 +1,16 @@
 # Release Notes
 
+## 1.4.0
+
+- Add Basic auth support
+- Add `net7.0` target
+- Support `IEndpointFilter` for `ApiResultFilter`
+- Add `ConditionalFilter`/`EnvironmentFilter`/`NonProductionEnvironmentFilter`
+
+## 1.3.0
+
+- Add `ApiResultFilter`
+
 ## 1.2.1
 
 - add FluentAspectServiceProviderFactory

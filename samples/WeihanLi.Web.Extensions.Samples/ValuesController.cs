@@ -127,6 +127,21 @@ public class ValuesController : ControllerBase
     [HttpGet("[action]")]
     public IActionResult ExceptionTest()
     {
-        throw new Exception();
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("EnvironmentFilterTest/Dev")]
+    [EnvironmentFilter("Development")]
+    //[EnvironmentFilter("Production")]
+    public IActionResult EnvironmentFilterDevTest()
+    {
+        return Ok(new { Title = ".NET is amazing!" });
+    }
+
+    [HttpGet("EnvironmentFilterTest/Prod")]
+    [EnvironmentFilter("Production")]
+    public IActionResult EnvironmentFilterProdTest()
+    {
+        return Ok(new { Title = ".NET is amazing!" });
     }
 }
