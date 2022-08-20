@@ -3,12 +3,11 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Hosting;
-using WeihanLi.Common;
 
 namespace WeihanLi.Web.Filters;
 
-public class ConditionalFilter : IAsyncResourceFilter
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+public class ConditionalFilter : Attribute, IAsyncResourceFilter
 #if NET7_0_OR_GREATER
     , IEndpointFilter
 #endif
@@ -23,6 +22,7 @@ public class ConditionalFilter : IAsyncResourceFilter
             new NotFoundResult()
 #endif
         ;
+
     public virtual async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
     {
         var condition = ConditionFunc.Invoke(context.HttpContext);
@@ -33,7 +33,12 @@ public class ConditionalFilter : IAsyncResourceFilter
         else
         {
             var result = ResultFactory.Invoke(context.HttpContext);
-            context.Result = result as IActionResult ?? new OkObjectResult(result);
+            context.Result = result switch
+            {
+                IActionResult actionResult => actionResult,
+                IResult httpResult => new HttpResultActionResultAdapter(httpResult),
+                _ => new OkObjectResult(result)
+            };
         }
     }
 #if NET7_0_OR_GREATER
@@ -49,25 +54,17 @@ public class ConditionalFilter : IAsyncResourceFilter
 #endif
 }
 
-public sealed class EnvironmentFilter : ConditionalFilter
+internal sealed class HttpResultActionResultAdapter : IActionResult
 {
-    public EnvironmentFilter(params string[] environmentNames)
-    {
-        Guard.NotNull(environmentNames);
-        var allowedEnvironments = environmentNames.ToHashSet();
-        ConditionFunc = c =>
-        {
-            var env = c.RequestServices.GetRequiredService<IWebHostEnvironment>().EnvironmentName;
-            return allowedEnvironments.Contains(env);
-        };
-    }
-}
+    private readonly IResult _result;
 
-public sealed class NonProductionFilter : ConditionalFilter
-{
-    public NonProductionFilter()
+    public HttpResultActionResultAdapter(IResult result)
     {
-        ConditionFunc = c => c.RequestServices.GetRequiredService<IWebHostEnvironment>()
-            .IsProduction() == false;
+        _result = result;
+    }
+
+    public Task ExecuteResultAsync(ActionContext context)
+    {
+        return _result.ExecuteAsync(context.HttpContext);
     }
 }

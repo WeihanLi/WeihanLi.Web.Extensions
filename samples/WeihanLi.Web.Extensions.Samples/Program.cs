@@ -99,6 +99,15 @@ testGroup1.Map("/hello", () => "Hello");
 testGroup1.Map("/world", () => "World");
 testGroup1.AddEndpointFilter<ApiResultFilter>();
 
+
+var envGroup = app.MapGroup("/env-test");
+envGroup.Map("/dev", () => "env-test")
+    .AddEndpointFilter(new EnvironmentFilter(Environments.Development));
+envGroup.Map("/prod", () => "env-test")
+    .AddEndpointFilter(new EnvironmentFilter(Environments.Production));
+// attribute endpoint filter not supported for now, https://github.com/dotnet/aspnetcore/issues/43421
+// envGroup.Map("/stage", [EnvironmentFilter("Staging")]() => "env-test");
+
 app.UseHealthCheck();
 app.UseAuthentication();
 app.UseAuthorization();
