@@ -9,6 +9,7 @@ namespace WeihanLi.Web.Filters;
 /// <summary>
 /// Environment filter with allowed environment name
 /// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
 public sealed class EnvironmentFilter : ConditionalFilter
 {
     public EnvironmentFilter(params string[] environmentNames)
@@ -24,8 +25,9 @@ public sealed class EnvironmentFilter : ConditionalFilter
 }
 
 /// <summary>
-/// Should works only for non-production
+/// Should work only for non-production
 /// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
 public sealed class NonProductionEnvironmentFilter : ConditionalFilter
 {
     public NonProductionEnvironmentFilter()
