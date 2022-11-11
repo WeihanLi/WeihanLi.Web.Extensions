@@ -125,6 +125,12 @@ public class ValuesController : ControllerBase
     }
 
     [HttpGet("[action]")]
+    public IActionResult Test()
+    {
+        return Ok(new { Name = "Amazing .NET" });
+    }
+
+    [HttpGet("[action]")]
     public IActionResult ExceptionTest()
     {
         throw new NotImplementedException();

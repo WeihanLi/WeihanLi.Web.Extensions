@@ -59,7 +59,7 @@ public sealed class ApiResultFilter : Attribute
 
             if (result is IValueHttpResult { Value: not Result } valueHttpResult)
             {
-                var status = valueHttpResult is IStatusCodeHttpResult statusCodeHttpResult
+                var status = result is IStatusCodeHttpResult statusCodeHttpResult
                     ? HttpStatusCode2ResultStatus(statusCodeHttpResult.StatusCode)
                     : HttpStatusCode2ResultStatus(200);
                 return new Result<object>() { Data = valueHttpResult.Value, Status = status };
