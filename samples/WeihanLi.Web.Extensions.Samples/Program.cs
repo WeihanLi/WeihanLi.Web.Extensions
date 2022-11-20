@@ -76,6 +76,7 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
 
 var app = builder.Build();
 
+app.MapRuntimeInfo();
 app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
