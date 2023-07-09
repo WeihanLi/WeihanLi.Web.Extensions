@@ -153,7 +153,8 @@ public class ValuesController : ControllerBase
 
     [HttpPost("RawTextFormatterTest")]
     [Consumes("text/plain")]
-    public object RawTextFormatterTest([FromBody]string input)
+    public string RawTextFormatterTest([FromBody]string input)
+    public string RawTextFormatterTest([FromBody] string input)
     {
         return new { input };
     }
