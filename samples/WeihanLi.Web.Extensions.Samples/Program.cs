@@ -2,6 +2,8 @@
 // Licensed under the MIT license.
 
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using WeihanLi.Common;
 using WeihanLi.Common.Aspect;
@@ -14,6 +16,7 @@ using WeihanLi.Web.Authorization.Jwt;
 using WeihanLi.Web.Extensions;
 using WeihanLi.Web.Extensions.Samples;
 using WeihanLi.Web.Filters;
+using WeihanLi.Web.Formatters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +63,10 @@ builder.Services.AddAuthorization(options =>
         policyBuilder => policyBuilder.AddAuthenticationSchemes("Basic").RequireAuthenticatedUser());
 });
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddControllers(options =>
+{
+    options.InputFormatters.Add(new RawTextInputFormatter());
+}).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
@@ -68,14 +74,35 @@ builder.Services.AddHttpContextUserIdProvider(options =>
 {
     options.UserIdFactory = context => $"{context.GetUserIP()}";
 });
-builder.Host.UseFluentAspectsServiceProviderFactory(options =>
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
 {
-    options.InterceptAll()
-        .With<EventPublishLogInterceptor>();
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "v1 API docs"
+    });
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"), true);
 });
+
+builder.Host.UseFluentAspectsServiceProviderFactory(options =>
+    {
+        options.InterceptAll()
+            .With<EventPublishLogInterceptor>();
+    }, ignoreTypesPredict: t => t.HasNamespace() && (
+        t.Namespace.StartsWith("Microsoft.")
+        || t.Namespace.StartsWith("System.")
+        || t.Namespace.StartsWith("Swashbuckle.")
+        )
+    );
 
 var app = builder.Build();
 
+app.UseSwagger().UseSwaggerUI(options =>
+{
+    options.RoutePrefix = string.Empty;
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+});
 app.MapRuntimeInfo();
 app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();

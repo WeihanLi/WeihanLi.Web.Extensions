@@ -150,4 +150,12 @@ public class ValuesController : ControllerBase
     {
         return Ok(new { Title = ".NET is amazing!" });
     }
+
+    [HttpPost("RawTextFormatterTest")]
+    [Consumes("text/plain")]
+    [Produces("text/plain")]
+    public string RawTextFormatterTest([FromBody]string input)
+    {
+        return input;
+    }
 }
