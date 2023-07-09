@@ -155,6 +155,6 @@ public class ValuesController : ControllerBase
     [Consumes("text/plain")]
     public Result RawTextFormatterTest([FromBody] string input)
     {
-        return Result.Success(input);
+        return Result.Success<string>(input);
     }
 }
