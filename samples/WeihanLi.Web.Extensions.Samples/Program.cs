@@ -98,11 +98,6 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
 
 var app = builder.Build();
 
-app.UseSwagger().UseSwaggerUI(options =>
-{
-    options.RoutePrefix = string.Empty;
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-});
 app.MapRuntimeInfo();
 app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
@@ -137,6 +132,11 @@ envGroup.Map("/prod", () => "env-test")
 // envGroup.Map("/stage", [EnvironmentFilter("Staging")]() => "env-test");
 
 app.UseHealthCheck();
+app.UseSwagger().UseSwaggerUI(options =>
+{
+    options.RoutePrefix = string.Empty;
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
