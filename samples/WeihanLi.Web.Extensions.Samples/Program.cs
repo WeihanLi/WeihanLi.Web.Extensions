@@ -65,7 +65,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddControllers(options =>
 {
-    options.InputFormatters.Add(new RawTextInputFormatter());
+    options.InputFormatters.Add(new PlainTextInputFormatter());
 }).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

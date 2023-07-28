@@ -7,9 +7,9 @@ using System.Text;
 
 namespace WeihanLi.Web.Formatters;
 
-public sealed class RawTextInputFormatter : TextInputFormatter
+public sealed class PlainTextInputFormatter : TextInputFormatter
 {
-    public RawTextInputFormatter()
+    public PlainTextInputFormatter()
     {
         SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/plain"));
 
