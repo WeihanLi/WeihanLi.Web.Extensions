@@ -136,6 +136,7 @@ app.UseSwagger().UseSwaggerUI(options =>
     options.RoutePrefix = string.Empty;
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
 });
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
