@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using WeihanLi.Common;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
 using WeihanLi.Extensions;
@@ -53,7 +52,7 @@ builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
     // options.RenewRefreshTokenPredicate = _ => true;
     options.RefreshTokenSigningCredentialsFactory = () =>
         new SigningCredentials(
-            new SymmetricSecurityKey(GuidIdGenerator.Instance.NewId().GetBytes()),
+            new SymmetricSecurityKey(WeihanLi.Common.Services.GuidIdGenerator.Instance.NewId().GetBytes()),
             SecurityAlgorithms.HmacSha256
         );
 });
