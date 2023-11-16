@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PackageId>WeihanLi.Web.Extensions</PackageId>
     <Title>WeihanLi.Web.Extensions</Title>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Description>WeihanLi.Web.Extensions</Description>
     <PackageTags>weihanli;web;aspnetcore;mvc</PackageTags>
     <PackageSummary>WeihanLi.Web.Extensions, aspnetcore extensions</PackageSummary>
@@ -12,8 +12,9 @@
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)'=='net6.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
     <PackageReference Condition="'$(TargetFramework)'=='net7.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
-    <PackageReference Include="WeihanLi.Common" Version="1.0.57" />
+    <PackageReference Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+    <PackageReference Include="WeihanLi.Common" Version="1.0.60" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

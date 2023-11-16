@@ -2,11 +2,11 @@
 // Licensed under the MIT license.
 
 using Microsoft.IdentityModel.Tokens;
-using WeihanLi.Common;
+using WeihanLi.Common.Services;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-public class JwtTokenOptions
+public sealed class JwtTokenOptions
 {
     /// <summary>
     /// "iss" (Issuer) Claim
