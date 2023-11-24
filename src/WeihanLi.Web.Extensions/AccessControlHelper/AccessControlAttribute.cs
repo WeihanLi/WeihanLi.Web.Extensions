@@ -9,7 +9,7 @@ using WeihanLi.Web.Filters;
 namespace WeihanLi.Web.AccessControlHelper;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class AccessControlAttribute : AuthorizationFilterAttribute
+public sealed class AccessControlAttribute : AuthorizationFilterAttribute
 {
     public string AccessKey { get; set; }
 
