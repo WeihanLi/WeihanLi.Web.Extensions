@@ -22,5 +22,5 @@ ASP.NET Core Web extensions
   - Header
   - Api-Key
   - Basic
-- Feature flag
-- Http context extensions
+- Feature Flag
+- `HttpContext` extensions

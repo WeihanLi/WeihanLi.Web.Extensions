@@ -3,7 +3,7 @@
 
 namespace WeihanLi.Web.AccessControlHelper;
 
-public class AccessControlOptions
+public sealed class AccessControlOptions
 {
     public bool UseAsDefaultPolicy { get; set; }
 
