@@ -51,13 +51,15 @@ public sealed class JwtTokenOptions
     /// <summary>
     /// "jti" (JWT ID) Claim (default ID is a GUID)
     /// </summary>
-    /// <remarks>The "jti" (JWT ID) claim provides a unique identifier for the JWT.
+    /// <remarks>
+    ///   The "jti" (JWT ID) claim provides a unique identifier for the JWT.
     ///   The identifier value MUST be assigned in a manner that ensures that
     ///   there is a negligible probability that the same value will be
     ///   accidentally assigned to a different data object; if the application
     ///   uses multiple issuers, collisions MUST be prevented among values
     ///   produced by different issuers as well.  The "jti" claim can be used
     ///   to prevent the JWT from being replayed.
+    /// </remarks>
     public Func<string> JtiGenerator => () => GuidIdGenerator.Instance.NewId();
 
     public Func<SigningCredentials> SigningCredentialsFactory { get; set; }
