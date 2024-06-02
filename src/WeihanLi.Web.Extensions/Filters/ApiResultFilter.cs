@@ -34,7 +34,7 @@ public sealed class ApiResultFilter : Attribute
 
     public void OnException(ExceptionContext context)
     {
-        var result = Result.Fail(context.Exception.ToString(), ResultStatus.ProcessFail);
+        var result = Result.Fail(context.Exception.ToString(), ResultStatus.InternalError);
         context.Result = new ObjectResult(result) { StatusCode = 500 };
     }
 #if NET7_0_OR_GREATER
@@ -67,12 +67,13 @@ public sealed class ApiResultFilter : Attribute
 
             return new Result<object>()
             {
-                Data = result, Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
+                Data = result,
+                Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
             };
         }
         catch (Exception ex)
         {
-            return Result.Fail(ex.ToString(), ResultStatus.ProcessFail);
+            return Result.Fail(ex.ToString(), ResultStatus.InternalError);
         }
     }
 #endif

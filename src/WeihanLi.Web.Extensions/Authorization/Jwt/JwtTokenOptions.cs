@@ -51,14 +51,15 @@ public sealed class JwtTokenOptions
     /// <summary>
     /// "jti" (JWT ID) Claim (default ID is a GUID)
     /// </summary>
-    /// <remarks>The "jti" (JWT ID) claim provides a unique identifier for the JWT.
+    /// <remarks>
+    ///   The "jti" (JWT ID) claim provides a unique identifier for the JWT.
     ///   The identifier value MUST be assigned in a manner that ensures that
     ///   there is a negligible probability that the same value will be
     ///   accidentally assigned to a different data object; if the application
     ///   uses multiple issuers, collisions MUST be prevented among values
     ///   produced by different issuers as well.  The "jti" claim can be used
-    ///   to prevent the JWT from being replayed.  The "jti" value is a case-
-    ///   sensitive string.  Use of this claim is OPTIONAL.</remarks>
+    ///   to prevent the JWT from being replayed.
+    /// </remarks>
     public Func<string> JtiGenerator => () => GuidIdGenerator.Instance.NewId();
 
     public Func<SigningCredentials> SigningCredentialsFactory { get; set; }
@@ -71,9 +72,14 @@ public sealed class JwtTokenOptions
 
     public Func<SigningCredentials> RefreshTokenSigningCredentialsFactory { get; set; }
 
+    public string NameClaimType { get; set; }
+    public string RoleClaimType { get; set; }
+
     public string RefreshTokenOwnerClaimType { get; set; } = "x-rt-owner";
 
     public Func<TokenValidationResult, HttpContext, bool> RefreshTokenValidator { get; set; }
+
+    public Action<TokenValidationParameters> TokenValidationConfigure { get; set; }
 
     internal SigningCredentials SigningCredentials { get; set; }
     internal SigningCredentials RefreshTokenSigningCredentials { get; set; }
@@ -96,7 +102,18 @@ public sealed class JwtTokenOptions
             // If you want to allow a certain amount of clock drift, set that here:
             ClockSkew = ClockSkew
         };
+
+        if (!string.IsNullOrEmpty(NameClaimType))
+        {
+            parameters.NameClaimType = NameClaimType;
+        }
+        if (!string.IsNullOrEmpty(RoleClaimType))
+        {
+            parameters.RoleClaimType = RoleClaimType;
+        }
+
         parametersAction?.Invoke(parameters);
+        TokenValidationConfigure?.Invoke(parameters);
         return parameters;
     }
 }
