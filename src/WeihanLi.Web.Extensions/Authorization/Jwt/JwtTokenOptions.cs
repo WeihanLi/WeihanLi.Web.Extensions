@@ -77,7 +77,7 @@ public sealed class JwtTokenOptions
 
     public Func<TokenValidationResult, HttpContext, bool> RefreshTokenValidator { get; set; }
 
-    public Action<TokenValidationParameters> TokenValidationConfigure { get; set; } 
+    public Action<TokenValidationParameters> TokenValidationConfigure { get; set; }
 
     internal SigningCredentials SigningCredentials { get; set; }
     internal SigningCredentials RefreshTokenSigningCredentials { get; set; }
@@ -100,7 +100,7 @@ public sealed class JwtTokenOptions
             // If you want to allow a certain amount of clock drift, set that here:
             ClockSkew = ClockSkew
         };
-        
+
         if (!string.IsNullOrEmpty(NameClaimType))
         {
             parameters.NameClaimType = NameClaimType;
@@ -109,7 +109,7 @@ public sealed class JwtTokenOptions
         {
             parameters.RoleClaimType = RoleClaimType;
         }
-        
+
         parametersAction?.Invoke(parameters);
         TokenValidationConfigure?.Invoke(parameters);
         return parameters;
