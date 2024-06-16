@@ -21,6 +21,7 @@ public static class ResultModelExtensions
         if (result is null)
             return new NoContentResult();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         return status switch
         {
             ResultStatus.RequestError or ResultStatus.BadRequest => new BadRequestObjectResult(result),
@@ -33,6 +34,7 @@ public static class ResultModelExtensions
             ResultStatus.NoPermission or ResultStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             _ => new OkObjectResult(result)
         };
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     public static IActionResult GetRestResult(this Result result)
