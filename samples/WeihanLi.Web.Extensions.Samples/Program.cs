@@ -137,6 +137,8 @@ app.UseSwagger().UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
 });
 
+app.MapConfigInspector().ShortCircuit();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

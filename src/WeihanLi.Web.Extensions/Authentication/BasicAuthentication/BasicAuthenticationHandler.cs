@@ -10,6 +10,14 @@ using AuthenticateResult = Microsoft.AspNetCore.Authentication.AuthenticateResul
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticationOptions>
 {
+#if NET8_0_OR_GREATER
+    public BasicAuthenticationHandler(IOptionsMonitor<BasicAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder) 
+        : base(options, logger, encoder)
+    {
+    }
+    
+    [Obsolete("ISystemClock is obsolete, use TimeProvider on AuthenticationSchemeOptions instead.")]
+#endif
     public BasicAuthenticationHandler(IOptionsMonitor<BasicAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
     {
     }

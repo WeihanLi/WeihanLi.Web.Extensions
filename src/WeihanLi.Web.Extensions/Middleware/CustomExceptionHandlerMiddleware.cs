@@ -14,12 +14,7 @@ public sealed class CustomExceptionHandlerOptions
             return Task.CompletedTask;
         };
 
-    public Func<HttpContext, ILogger, Task> OnRequestAborted { get; set; } =
-        (context, logger) =>
-        {
-            logger.LogInformation($"Request aborted, requestId: {context.TraceIdentifier}");
-            return Task.CompletedTask;
-        };
+    public Func<HttpContext, ILogger, Task> OnRequestAborted { get; set; }
 }
 
 public sealed class CustomExceptionHandlerMiddleware

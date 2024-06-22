@@ -12,15 +12,10 @@ public interface IFeatureFlagFilterResponseFactory
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-public sealed class FeatureFlagFilterAttribute : Attribute, IAsyncResourceFilter
+public sealed class FeatureFlagFilterAttribute(string featureFlagName) : Attribute, IAsyncResourceFilter
 {
     public bool DefaultValue { get; set; }
-    public string FeatureFlagName { get; }
-
-    public FeatureFlagFilterAttribute(string featureFlagName)
-    {
-        FeatureFlagName = featureFlagName ?? throw new ArgumentNullException(nameof(featureFlagName));
-    }
+    public string FeatureFlagName { get; } = featureFlagName ?? throw new ArgumentNullException(nameof(featureFlagName));
 
     public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
     {

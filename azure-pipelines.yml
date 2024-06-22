@@ -24,7 +24,6 @@ steps:
   inputs:
     packageType: sdk
     version: 8.0.x
-    includePreviewVersions: true
 
 - task: UseDotNet@2
   displayName: 'Use .NET 9 sdk'
@@ -39,5 +38,5 @@ steps:
 - powershell: ./build.ps1
   displayName: 'Powershell Script'
   env:
-    Nuget__ApiKey: $(nugetApiKey)
-    Nuget__SourceUrl: $(nugetSourceUrl)
+    NuGet__ApiKey: $(nugetApiKey)
+    NuGet__SourceUrl: $(nugetSourceUrl)
