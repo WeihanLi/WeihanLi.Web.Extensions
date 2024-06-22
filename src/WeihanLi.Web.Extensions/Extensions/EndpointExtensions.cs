@@ -13,7 +13,7 @@ public static class EndpointExtensions
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
         return endpointRouteBuilder.MapGet(path, () => ApplicationHelper.RuntimeInfo);
     }
-    
+
     public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, string path = "/config-inspector",
          Action<ConfigInspectorOptions> optionsConfigure = null)
     {
@@ -21,7 +21,7 @@ public static class EndpointExtensions
         var app = endpointRouteBuilder.CreateApplicationBuilder();
         var pipeline = app.UseConfigInspector(Configure).Build();
         return endpointRouteBuilder.MapGet(path, pipeline);
-        
+
         void Configure(ConfigInspectorOptions options)
         {
             options.Path = path;
