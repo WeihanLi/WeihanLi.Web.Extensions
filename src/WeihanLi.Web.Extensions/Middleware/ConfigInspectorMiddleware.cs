@@ -38,7 +38,7 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
             throw new NotSupportedException(
                 "Support ConfigurationRoot configuration only, please use the default configuration or implement IConfigurationRoot");
         }
-        
+
         var inspectorOptionsValue = inspectorOptions.Value;
         var configs = GetConfig(configurationRoot, inspectorOptionsValue);
         if (inspectorOptionsValue.ConfigRenderer is null)
@@ -53,13 +53,13 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
             .ToDictionary(x => x.Key, _ => false);
         var providers = GetConfigProviders(configurationRoot);
         var config = new ConfigModel[providers.Count];
-        
+
         for (var i = providers.Count - 1; i >= 0; i--)
         {
             var provider = providers[i];
             config[i] = new ConfigModel
             {
-                Provider = provider.ToString() ?? provider.GetType().Name, 
+                Provider = provider.ToString() ?? provider.GetType().Name,
                 Items = GetConfig(provider, allKeys).ToArray()
             };
         }
@@ -75,7 +75,7 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
     private static List<IConfigurationProvider> GetConfigProviders(IConfigurationRoot configurationRoot)
     {
         var providers = new List<IConfigurationProvider>();
-        
+
         foreach (var provider in configurationRoot.Providers)
         {
             if (provider is not ChainedConfigurationProvider chainedConfigurationProvider)
@@ -96,7 +96,7 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 
         return providers;
     }
-    
+
     private static IEnumerable<ConfigItemModel> GetConfig(IConfigurationProvider provider,
         Dictionary<string, bool> keys)
     {

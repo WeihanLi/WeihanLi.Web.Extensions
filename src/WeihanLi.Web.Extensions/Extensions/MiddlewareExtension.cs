@@ -60,7 +60,7 @@ public static class MiddlewareExtension
         }
         return app;
     }
-    
+
     public static IApplicationBuilder UseIfFeatureEnabled<TMiddleware>(this IApplicationBuilder app, string featureFlagName, bool defaultValue = false)
     {
         var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
@@ -87,7 +87,7 @@ public static class MiddlewareExtension
     /// <summary>
     /// Use ConfigInspector to inspect config when necessary
     /// </summary>
-    public static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app, 
+    public static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app,
         Action<ConfigInspectorOptions> optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(app);
