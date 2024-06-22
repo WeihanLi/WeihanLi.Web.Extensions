@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using WeihanLi.Web.Middleware;
+
 namespace WeihanLi.Web.Extensions;
 
 public static class MiddlewareExtension
@@ -58,6 +60,16 @@ public static class MiddlewareExtension
         }
         return app;
     }
+    
+    public static IApplicationBuilder UseIfFeatureEnabled<TMiddleware>(this IApplicationBuilder app, string featureFlagName, bool defaultValue = false)
+    {
+        var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
+        if (configuration.IsFeatureEnabled(featureFlagName, defaultValue))
+        {
+            app.UseMiddleware<TMiddleware>();
+        }
+        return app;
+    }
 
     /// <summary>
     /// Use middleware when feature is enabled, based on UseWhen
@@ -70,5 +82,20 @@ public static class MiddlewareExtension
     {
         return app.UseWhen(context => context.RequestServices.GetRequiredService<IConfiguration>()
             .IsFeatureEnabled(featureFlagName, defaultValue), configure);
+    }
+
+    /// <summary>
+    /// Use ConfigInspector to inspect config when necessary
+    /// </summary>
+    public static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app, 
+        Action<ConfigInspectorOptions> optionsConfigure = null)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        if (optionsConfigure is not null)
+        {
+            var options = app.ApplicationServices.GetRequiredService<IOptions<ConfigInspectorOptions>>();
+            optionsConfigure(options.Value);
+        }
+        return app.UseMiddleware<ConfigInspectorMiddleware>();
     }
 }
