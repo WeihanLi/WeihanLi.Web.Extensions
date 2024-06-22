@@ -88,9 +88,11 @@ await new BuildProcessBuilder()
             }
 
             // push nuget packages
+            var source = Environment.GetEnvironmentVariable("NuGet__SourceUrl");
+            var sourceConfig = string.IsNullOrEmpty(source) ? "" : $"-s {source}";
             foreach (var file in Directory.GetFiles("./artifacts/packages/", "*.nupkg"))
             {
-                await ExecuteCommandAsync($"dotnet nuget push {file} -k {apiKey} --skip-duplicate", [new("$NuGet__ApiKey", apiKey)]);
+                await ExecuteCommandAsync($"dotnet nuget push {file} -k {apiKey} --skip-duplicate {sourceConfig}", [new("$NuGet__ApiKey", apiKey)]);
             }
         }))
     .WithTask("Default", b => b.WithDependency("hello").WithDependency("pack"))
