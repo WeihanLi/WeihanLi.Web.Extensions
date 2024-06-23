@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.IdentityModel.Tokens;
-using WeihanLi.Common;
 using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Authorization.Jwt;
