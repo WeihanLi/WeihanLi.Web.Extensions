@@ -14,13 +14,13 @@ public class JsonWebTokenService : ITokenService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
-    private readonly JwtTokenOptions _tokenOptions;
+    private readonly JsonWebTokenOptions _tokenOptions;
 
     private readonly Lazy<TokenValidationParameters>
         _lazyTokenValidationParameters,
         _lazyRefreshTokenValidationParameters;
 
-    public JsonWebTokenService(IHttpContextAccessor httpContextAccessor, IOptions<JwtTokenOptions> tokenOptions)
+    public JsonWebTokenService(IHttpContextAccessor httpContextAccessor, IOptions<JsonWebTokenOptions> tokenOptions)
     {
         _httpContextAccessor = httpContextAccessor;
         _tokenOptions = tokenOptions.Value;

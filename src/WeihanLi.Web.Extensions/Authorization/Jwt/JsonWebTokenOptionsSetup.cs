@@ -7,9 +7,9 @@ using WeihanLi.Extensions;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-internal sealed class JwtTokenOptionsSetup : IPostConfigureOptions<JwtTokenOptions>
+internal sealed class JsonWebTokenOptionsSetup : IPostConfigureOptions<JsonWebTokenOptions>
 {
-    public void PostConfigure(string name, JwtTokenOptions options)
+    public void PostConfigure(string name, JsonWebTokenOptions options)
     {
         if (options.SigningCredentialsFactory is null)
         {
@@ -18,8 +18,8 @@ internal sealed class JwtTokenOptionsSetup : IPostConfigureOptions<JwtTokenOptio
                 options.SigningCredentialsFactory = () => new SigningCredentials(new SymmetricSecurityKey(options.SecretKey.GetBytes()), SecurityAlgorithms.HmacSha256);
             }
         }
-        Guard.NotNull(options.SigningCredentialsFactory);
-        options.SigningCredentials = options.SigningCredentialsFactory();
+        ArgumentNullException.ThrowIfNull(options.SigningCredentialsFactory);
+        options.SigningCredentials = options.SigningCredentialsFactory.Invoke();
         options.RefreshTokenSigningCredentials = options.RefreshTokenSigningCredentials is null
             ? options.SigningCredentials
             : options.RefreshTokenSigningCredentialsFactory()

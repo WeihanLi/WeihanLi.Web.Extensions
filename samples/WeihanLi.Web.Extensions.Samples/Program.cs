@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
         options.KeyLocation = KeyLocation.HeaderOrQuery;
     })
     ;
-builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
+builder.Services.AddJsonWebTokenServiceWithJwtBearerAuth(options =>
 {
     options.SecretKey = Guid.NewGuid().ToString();
     options.Issuer = "https://id.weihanli.xyz";

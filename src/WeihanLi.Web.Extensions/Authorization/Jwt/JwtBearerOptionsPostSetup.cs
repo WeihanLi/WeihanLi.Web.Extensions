@@ -8,9 +8,9 @@ namespace WeihanLi.Web.Authorization.Jwt;
 internal sealed class JwtBearerOptionsPostSetup :
     IPostConfigureOptions<JwtBearerOptions>
 {
-    private readonly IOptions<JwtTokenOptions> _options;
+    private readonly IOptions<JsonWebTokenOptions> _options;
 
-    public JwtBearerOptionsPostSetup(IOptions<JwtTokenOptions> options)
+    public JwtBearerOptionsPostSetup(IOptions<JsonWebTokenOptions> options)
     {
         _options = options;
     }

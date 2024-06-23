@@ -10,17 +10,17 @@ namespace WeihanLi.Web.Authorization.Jwt;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddJwtTokenService(this IServiceCollection serviceCollection, Action<JwtTokenOptions> optionsAction)
+    public static IServiceCollection AddJsonWebTokenService(this IServiceCollection serviceCollection, Action<JsonWebTokenOptions> optionsAction)
     {
         Guard.NotNull(serviceCollection);
         Guard.NotNull(optionsAction);
         serviceCollection.Configure(optionsAction);
         serviceCollection.TryAddSingleton<ITokenService, JsonWebTokenService>();
-        serviceCollection.ConfigureOptions<JwtTokenOptionsSetup>();
+        serviceCollection.ConfigureOptions<JsonWebTokenOptionsSetup>();
         return serviceCollection;
     }
 
-    public static IServiceCollection AddJwtTokenServiceWithJwtBearerAuth(this IServiceCollection serviceCollection, Action<JwtTokenOptions> optionsAction, Action<JwtBearerOptions> jwtBearerOptionsSetup = null)
+    public static IServiceCollection AddJsonWebTokenServiceWithJwtBearerAuth(this IServiceCollection serviceCollection, Action<JsonWebTokenOptions> optionsAction, Action<JwtBearerOptions> jwtBearerOptionsSetup = null)
     {
         Guard.NotNull(serviceCollection);
         Guard.NotNull(optionsAction);
@@ -29,6 +29,6 @@ public static class DependencyInjectionExtensions
             serviceCollection.Configure(jwtBearerOptionsSetup);
         }
         serviceCollection.ConfigureOptions<JwtBearerOptionsPostSetup>();
-        return serviceCollection.AddJwtTokenService(optionsAction);
+        return serviceCollection.AddJsonWebTokenService(optionsAction);
     }
 }

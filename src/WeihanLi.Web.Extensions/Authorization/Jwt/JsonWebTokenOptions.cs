@@ -6,7 +6,7 @@ using WeihanLi.Common.Services;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-public sealed class JwtTokenOptions
+public sealed class JsonWebTokenOptions
 {
     /// <summary>
     /// "iss" (Issuer) Claim
