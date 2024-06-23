@@ -15,7 +15,7 @@ public static class DependencyInjectionExtensions
         Guard.NotNull(serviceCollection);
         Guard.NotNull(optionsAction);
         serviceCollection.Configure(optionsAction);
-        serviceCollection.TryAddSingleton<ITokenService, JwtTokenService>();
+        serviceCollection.TryAddSingleton<ITokenService, JsonWebTokenService>();
         serviceCollection.ConfigureOptions<JwtTokenOptionsSetup>();
         return serviceCollection;
     }
