@@ -87,7 +87,7 @@ public static class MiddlewareExtension
     /// <summary>
     /// Use ConfigInspector to inspect config when necessary
     /// </summary>
-    public static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app,
+    internal static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app,
         Action<ConfigInspectorOptions> optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(app);

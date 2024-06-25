@@ -27,11 +27,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 {
     public Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
     {
-        if (httpContext.Request.Path.ToString() != inspectorOptions.Value.Path)
-        {
-            return next(httpContext);
-        }
-
         var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
         if (configuration is not IConfigurationRoot configurationRoot)
         {
@@ -39,18 +34,29 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
                 "Support ConfigurationRoot configuration only, please use the default configuration or implement IConfigurationRoot");
         }
 
+        var configKey = string.Empty;
+        if (httpContext.Request.RouteValues.TryGetValue("configKey", out var configKeyObj) &&
+            configKeyObj is string { Length: > 0 } configKeyName)
+        {
+            configKey = configKeyName;
+        }
+
         var inspectorOptionsValue = inspectorOptions.Value;
-        var configs = GetConfig(configurationRoot, inspectorOptionsValue);
+        var configs = GetConfig(configurationRoot, inspectorOptionsValue, configKey);
         if (inspectorOptionsValue.ConfigRenderer is null)
             return httpContext.Response.WriteAsJsonAsync(configs);
 
         return inspectorOptionsValue.ConfigRenderer.Invoke(httpContext, configs);
     }
 
-    private static ConfigModel[] GetConfig(IConfigurationRoot configurationRoot, ConfigInspectorOptions options)
+    private static ConfigModel[] GetConfig(IConfigurationRoot configurationRoot, ConfigInspectorOptions options,
+        string configKey)
     {
-        var allKeys = configurationRoot.AsEnumerable()
-            .ToDictionary(x => x.Key, _ => false);
+        var hasConfigKeyFilter = string.IsNullOrEmpty(configKey);
+        var allKeys = hasConfigKeyFilter
+                ? configurationRoot.AsEnumerable()
+                    .ToDictionary(x => x.Key, _ => false)
+                : new() { { configKey, false } };
         var providers = GetConfigProviders(configurationRoot);
         var config = new ConfigModel[providers.Count];
 
