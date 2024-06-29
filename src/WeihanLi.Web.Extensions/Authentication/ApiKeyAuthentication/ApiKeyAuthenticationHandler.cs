@@ -41,7 +41,7 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
             var claims = new[]
             {
                 new Claim("issuer", ClaimsIssuer),
-            }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? Array.Empty<Claim>());
+            }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? []);
             return AuthenticateResult.Success(
                 new AuthenticationTicket(
                     new ClaimsPrincipal(new[]
