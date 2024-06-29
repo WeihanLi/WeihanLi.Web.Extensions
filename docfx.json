@@ -3,60 +3,43 @@
     {
       "src": [
         {
+          "src": "./src",
           "files": [
-            "src/**.csproj",
-            "src/WeihanLi.Web.Extensions/*.cs",
-            "src/**/*.cs"
-          ],
-          "exclude": [ "**/bin/**", "**/obj/**" ]
+            "**/*.csproj"
+          ]
         }
       ],
-      "dest": "docs/api",
-      "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "dest": "docs/api"
     }
   ],
   "build": {
-    "content": [    
+    "content": [
       {
         "files": [
-          "docs/api/**.md",
-          "docs/api/**.yml",
-          "docs/api/**/toc.yml",
-          "toc.yml",
-          "*.md"
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
         ]
       }
     ],
     "resource": [
       {
         "files": [
-          "docs/images"
+          "images/**"
         ]
       }
     ],
-    "overwrite": [
-      {
-        "files": [
-          "docs/api/**.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
-      }
-    ],
-    "dest": "_site",
-    "globalMetadataFiles": [],
-    "fileMetadataFiles": [],
+    "output": "_site",
     "template": [
-      "default"
+      "default",
+      "modern"
     ],
-    "postProcessors": [],
-    "markdownEngineName": "markdig",
-    "noLangKeyword": false,
-    "keepFileLink": false,
-    "cleanupCacheHistory": false,
-    "disableGitFeatures": false
+    "globalMetadata": {
+      "_appName": "WeihanLi.Web.Extensions",
+      "_appTitle": "WeihanLi.Web.Extensions",
+      "_enableSearch": true,
+      "pdf": false
+    }
   }
 }
