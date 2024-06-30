@@ -33,6 +33,8 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
                 "Support ConfigurationRoot configuration only, please use the default configuration or implement IConfigurationRoot");
         }
 
+        var inspectorOptionsValue = inspectorOptions.Value;
+
         var configKey = string.Empty;
         if (httpContext.Request.RouteValues.TryGetValue("configKey", out var configKeyObj) &&
             configKeyObj is string { Length: > 0 } configKeyName)
@@ -40,7 +42,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
             configKey = configKeyName;
         }
 
-        var inspectorOptionsValue = inspectorOptions.Value;
         var configs = GetConfig(configurationRoot, inspectorOptionsValue, configKey);
         if (inspectorOptionsValue.ConfigRenderer is null)
             return httpContext.Response.WriteAsJsonAsync(configs);

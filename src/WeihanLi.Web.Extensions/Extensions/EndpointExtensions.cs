@@ -14,8 +14,10 @@ public static class EndpointExtensions
         return endpointRouteBuilder.MapGet(path, () => ApplicationHelper.RuntimeInfo);
     }
 
-    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, string path = "/config-inspector",
-         Action<ConfigInspectorOptions>? optionsConfigure = null)
+    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, 
+        string path = "/config-inspector",
+        Action<ConfigInspectorOptions>? optionsConfigure = null
+        )
     {
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
         var app = endpointRouteBuilder.CreateApplicationBuilder();
