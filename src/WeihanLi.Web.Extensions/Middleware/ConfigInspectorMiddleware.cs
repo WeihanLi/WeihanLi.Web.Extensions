@@ -5,7 +5,6 @@ namespace WeihanLi.Web.Middleware;
 
 public sealed class ConfigInspectorOptions
 {
-    public string Path { get; set; } = "/config-inspector";
     public bool IncludeEmptyProviders { get; set; }
     public Func<HttpContext, ConfigModel[], Task>? ConfigRenderer { get; set; }
 }

@@ -19,13 +19,7 @@ public static class EndpointExtensions
     {
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
         var app = endpointRouteBuilder.CreateApplicationBuilder();
-        var pipeline = app.UseConfigInspector(Configure).Build();
+        var pipeline = app.UseConfigInspector(optionsConfigure).Build();
         return endpointRouteBuilder.MapGet($"{path}/{{configKey?}}", pipeline);
-
-        void Configure(ConfigInspectorOptions options)
-        {
-            options.Path = path;
-            optionsConfigure?.Invoke(options);
-        }
     }
 }
