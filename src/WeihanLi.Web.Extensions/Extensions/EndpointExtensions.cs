@@ -15,7 +15,7 @@ public static class EndpointExtensions
     }
 
     public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, string path = "/config-inspector",
-         Action<ConfigInspectorOptions> optionsConfigure = null)
+         Action<ConfigInspectorOptions>? optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
         var app = endpointRouteBuilder.CreateApplicationBuilder();

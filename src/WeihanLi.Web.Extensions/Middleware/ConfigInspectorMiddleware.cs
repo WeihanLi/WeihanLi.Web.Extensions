@@ -7,19 +7,19 @@ public sealed class ConfigInspectorOptions
 {
     public string Path { get; set; } = "/config-inspector";
     public bool IncludeEmptyProviders { get; set; }
-    public Func<HttpContext, ConfigModel[], Task> ConfigRenderer { get; set; }
+    public Func<HttpContext, ConfigModel[], Task>? ConfigRenderer { get; set; }
 }
 
 public sealed class ConfigModel
 {
-    public string Provider { get; set; }
-    public ConfigItemModel[] Items { get; set; }
+    public string Provider { get; set; } = default!;
+    public ConfigItemModel[] Items { get; set; } = [];
 }
 
 public sealed class ConfigItemModel
 {
-    public string Key { get; set; }
-    public string Value { get; set; }
+    public string Key { get; set; } = default!;
+    public string? Value { get; set; }
     public bool Active { get; set; }
 }
 
@@ -80,27 +80,30 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 
     private static List<IConfigurationProvider> GetConfigProviders(IConfigurationRoot configurationRoot)
     {
+#if NET7_0_OR_GREATER
         var providers = new List<IConfigurationProvider>();
 
         foreach (var provider in configurationRoot.Providers)
         {
+
             if (provider is not ChainedConfigurationProvider chainedConfigurationProvider)
             {
                 providers.Add(provider);
                 continue;
             }
 
-#if NET7_0_OR_GREATER
             if (chainedConfigurationProvider.Configuration is not IConfigurationRoot chainsConfigurationRoot)
             {
                 continue;
             }
 
             providers.AddRange(GetConfigProviders(chainsConfigurationRoot));
-#endif
         }
 
         return providers;
+#else
+        return configurationRoot.Providers.ToList();
+#endif
     }
 
     private static IEnumerable<ConfigItemModel> GetConfig(IConfigurationProvider provider,

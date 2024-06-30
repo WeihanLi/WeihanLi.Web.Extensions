@@ -14,7 +14,7 @@ public static class MiddlewareExtension
     /// <returns></returns>
     public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder applicationBuilder)
     {
-        applicationBuilder.UseMiddleware<Middleware.CustomExceptionHandlerMiddleware>();
+        applicationBuilder.UseMiddleware<CustomExceptionHandlerMiddleware>();
         return applicationBuilder;
     }
 
@@ -88,7 +88,7 @@ public static class MiddlewareExtension
     /// Use ConfigInspector to inspect config when necessary
     /// </summary>
     internal static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app,
-        Action<ConfigInspectorOptions> optionsConfigure = null)
+        Action<ConfigInspectorOptions>? optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(app);
         if (optionsConfigure is not null)
