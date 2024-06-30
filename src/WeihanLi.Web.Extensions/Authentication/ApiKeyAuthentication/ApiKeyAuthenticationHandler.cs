@@ -38,7 +38,7 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
         var validator = Options.ApiKeyValidator ?? ((_, keyValue) => Task.FromResult(string.Equals(Options.ApiKey, keyValue)));
         if (!await validator.Invoke(Context, keyValues.ToString()))
             return AuthenticateResult.Fail("Invalid ApiKey");
-        
+
         var claims = new[]
         {
             new Claim("issuer", ClaimsIssuer),
