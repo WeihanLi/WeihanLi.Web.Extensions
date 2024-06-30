@@ -14,7 +14,7 @@ public static class EndpointExtensions
         return endpointRouteBuilder.MapGet(path, () => ApplicationHelper.RuntimeInfo);
     }
 
-    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, 
+    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder,
         string path = "/config-inspector",
         Action<ConfigInspectorOptions>? optionsConfigure = null
         )

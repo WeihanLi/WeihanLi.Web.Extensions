@@ -54,7 +54,7 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
     {
         var allKeys = configurationRoot.AsEnumerable()
             .ToDictionary(x => x.Key, _ => false);
-        
+
         var hasConfigKeyFilter = !string.IsNullOrEmpty(configKey);
         if (hasConfigKeyFilter)
         {
@@ -70,7 +70,7 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
                 return [];
             }
         }
-        
+
         var providers = GetConfigProviders(configurationRoot);
         var config = new ConfigModel[providers.Count];
 
