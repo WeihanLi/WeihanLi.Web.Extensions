@@ -52,11 +52,25 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
     private static ConfigModel[] GetConfig(IConfigurationRoot configurationRoot, ConfigInspectorOptions options,
         string configKey)
     {
-        var hasConfigKeyFilter = string.IsNullOrEmpty(configKey);
-        var allKeys = hasConfigKeyFilter
-                ? configurationRoot.AsEnumerable()
-                    .ToDictionary(x => x.Key, _ => false)
-                : new() { { configKey, false } };
+        var allKeys = configurationRoot.AsEnumerable()
+            .ToDictionary(x => x.Key, _ => false);
+        
+        var hasConfigKeyFilter = !string.IsNullOrEmpty(configKey);
+        if (hasConfigKeyFilter)
+        {
+            if (allKeys.TryGetValue(configKey, out _))
+            {
+                allKeys = new()
+                {
+                    { configKey, false }
+                };
+            }
+            else
+            {
+                return [];
+            }
+        }
+        
         var providers = GetConfigProviders(configurationRoot);
         var config = new ConfigModel[providers.Count];
 
