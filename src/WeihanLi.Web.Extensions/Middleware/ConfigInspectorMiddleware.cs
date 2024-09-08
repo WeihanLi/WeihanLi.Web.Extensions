@@ -5,21 +5,20 @@ namespace WeihanLi.Web.Middleware;
 
 public sealed class ConfigInspectorOptions
 {
-    public string Path { get; set; } = "/config-inspector";
     public bool IncludeEmptyProviders { get; set; }
-    public Func<HttpContext, ConfigModel[], Task> ConfigRenderer { get; set; }
+    public Func<HttpContext, ConfigModel[], Task>? ConfigRenderer { get; set; }
 }
 
 public sealed class ConfigModel
 {
-    public string Provider { get; set; }
-    public ConfigItemModel[] Items { get; set; }
+    public string Provider { get; set; } = default!;
+    public ConfigItemModel[] Items { get; set; } = [];
 }
 
 public sealed class ConfigItemModel
 {
-    public string Key { get; set; }
-    public string Value { get; set; }
+    public string Key { get; set; } = default!;
+    public string? Value { get; set; }
     public bool Active { get; set; }
 }
 
@@ -27,11 +26,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 {
     public Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
     {
-        if (httpContext.Request.Path.ToString() != inspectorOptions.Value.Path)
-        {
-            return next(httpContext);
-        }
-
         var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
         if (configuration is not IConfigurationRoot configurationRoot)
         {
@@ -40,17 +34,43 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
         }
 
         var inspectorOptionsValue = inspectorOptions.Value;
-        var configs = GetConfig(configurationRoot, inspectorOptionsValue);
+
+        var configKey = string.Empty;
+        if (httpContext.Request.RouteValues.TryGetValue("configKey", out var configKeyObj) &&
+            configKeyObj is string { Length: > 0 } configKeyName)
+        {
+            configKey = configKeyName;
+        }
+
+        var configs = GetConfig(configurationRoot, inspectorOptionsValue, configKey);
         if (inspectorOptionsValue.ConfigRenderer is null)
             return httpContext.Response.WriteAsJsonAsync(configs);
 
         return inspectorOptionsValue.ConfigRenderer.Invoke(httpContext, configs);
     }
 
-    private static ConfigModel[] GetConfig(IConfigurationRoot configurationRoot, ConfigInspectorOptions options)
+    private static ConfigModel[] GetConfig(IConfigurationRoot configurationRoot, ConfigInspectorOptions options,
+        string configKey)
     {
         var allKeys = configurationRoot.AsEnumerable()
             .ToDictionary(x => x.Key, _ => false);
+
+        var hasConfigKeyFilter = !string.IsNullOrEmpty(configKey);
+        if (hasConfigKeyFilter)
+        {
+            if (allKeys.TryGetValue(configKey, out _))
+            {
+                allKeys = new()
+                {
+                    { configKey, false }
+                };
+            }
+            else
+            {
+                return [];
+            }
+        }
+
         var providers = GetConfigProviders(configurationRoot);
         var config = new ConfigModel[providers.Count];
 
@@ -74,27 +94,30 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 
     private static List<IConfigurationProvider> GetConfigProviders(IConfigurationRoot configurationRoot)
     {
+#if NET7_0_OR_GREATER
         var providers = new List<IConfigurationProvider>();
 
         foreach (var provider in configurationRoot.Providers)
         {
+
             if (provider is not ChainedConfigurationProvider chainedConfigurationProvider)
             {
                 providers.Add(provider);
                 continue;
             }
 
-#if NET7_0_OR_GREATER
             if (chainedConfigurationProvider.Configuration is not IConfigurationRoot chainsConfigurationRoot)
             {
                 continue;
             }
 
             providers.AddRange(GetConfigProviders(chainsConfigurationRoot));
-#endif
         }
 
         return providers;
+#else
+        return configurationRoot.Providers.ToList();
+#endif
     }
 
     private static IEnumerable<ConfigItemModel> GetConfig(IConfigurationProvider provider,

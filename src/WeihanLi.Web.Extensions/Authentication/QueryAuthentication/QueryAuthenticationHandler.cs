@@ -38,7 +38,7 @@ public sealed class QueryAuthenticationHandler : AuthenticationHandler<QueryAuth
             if (Request.Query.TryGetValue(Options.UserRolesQueryKey, out var userRolesValues))
             {
                 var userRoles = userRolesValues.ToString()
-                    .Split(new[] { Options.Delimiter }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split([Options.Delimiter], StringSplitOptions.RemoveEmptyEntries);
                 claims.AddRange(userRoles.Select(r => new Claim(ClaimTypes.Role, r)));
             }
             if (Options.AdditionalQueryToClaims.Count > 0)
@@ -47,7 +47,7 @@ public sealed class QueryAuthenticationHandler : AuthenticationHandler<QueryAuth
                 {
                     if (Request.Query.TryGetValue(queryToClaim.Key, out var queryValues))
                     {
-                        foreach (var val in queryValues.ToString().Split(new[] { Options.Delimiter }, StringSplitOptions.RemoveEmptyEntries))
+                        foreach (var val in queryValues.ToString().Split([Options.Delimiter], StringSplitOptions.RemoveEmptyEntries))
                         {
                             claims.Add(new Claim(queryToClaim.Value, val));
                         }

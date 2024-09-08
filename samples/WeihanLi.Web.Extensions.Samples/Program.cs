@@ -4,6 +4,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
@@ -41,7 +42,7 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
         options.KeyLocation = KeyLocation.HeaderOrQuery;
     })
     ;
-builder.Services.AddJwtTokenServiceWithJwtBearerAuth(options =>
+builder.Services.AddJwtServiceWithJwtBearerAuth(options =>
 {
     options.SecretKey = Guid.NewGuid().ToString();
     options.Issuer = "https://id.weihanli.xyz";
@@ -137,10 +138,55 @@ app.UseSwagger().UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
 });
 
-app.MapConfigInspector().ShortCircuit();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+// app.MapConfigInspector(optionsConfigure: options =>
+// {
+//     options.ConfigRenderer = async (context, configs) =>
+//     {
+//         var htmlStart = """
+//                         <html>
+//                           <head>
+//                             <title>Config Inspector</title>
+//                           </head>
+//                           <body>
+//                             <table style="font-size:1.2em;line-height:1.6em">
+//                               <thead>
+//                               <tr>
+//                                 <th>Provider</th>
+//                                 <th>Key</th>
+//                                 <th>Value</th>
+//                                 <th>Active</th>
+//                               </tr>
+//                               </thead>
+//                               <tbody>
+//                         """;
+//         var htmlEnd = "</tbody></table></body></html>";
+//         var tbody = new StringBuilder();
+//         foreach (var config in configs)
+//         {
+//             tbody.Append($"<tr><td>{config.Provider}</td>");
+//             foreach (var item in config.Items)
+//             {
+//                 tbody.Append(
+//                     $$"""<td>{{item.Key}}</td><td>{{item.Value}}</td><td><input type="checkbox" {{(item.Active ? "checked" : "")}} /></td>""");
+//             }
+//
+//             tbody.AppendLine("</tr>");
+//         }
+//
+//         var responseText = $"{htmlStart}{tbody}{htmlEnd}";
+//         await context.Response.WriteAsync(responseText);
+//     };
+// });
+
+app.MapConfigInspector()
+    // .RequireAuthorization(x => x
+    //     .AddAuthenticationSchemes("ApiKey")
+    //     .RequireAuthenticatedUser()
+    // )
+    ;
 app.MapControllers();
 
 await app.RunAsync();

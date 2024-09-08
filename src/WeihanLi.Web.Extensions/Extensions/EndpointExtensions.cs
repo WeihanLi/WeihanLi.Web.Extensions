@@ -14,18 +14,14 @@ public static class EndpointExtensions
         return endpointRouteBuilder.MapGet(path, () => ApplicationHelper.RuntimeInfo);
     }
 
-    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder, string path = "/config-inspector",
-         Action<ConfigInspectorOptions> optionsConfigure = null)
+    public static IEndpointConventionBuilder MapConfigInspector(this IEndpointRouteBuilder endpointRouteBuilder,
+        string path = "/config-inspector",
+        Action<ConfigInspectorOptions>? optionsConfigure = null
+        )
     {
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
         var app = endpointRouteBuilder.CreateApplicationBuilder();
-        var pipeline = app.UseConfigInspector(Configure).Build();
-        return endpointRouteBuilder.MapGet(path, pipeline);
-
-        void Configure(ConfigInspectorOptions options)
-        {
-            options.Path = path;
-            optionsConfigure?.Invoke(options);
-        }
+        var pipeline = app.UseConfigInspector(optionsConfigure).Build();
+        return endpointRouteBuilder.MapGet($"{path}/{{configKey?}}", pipeline);
     }
 }

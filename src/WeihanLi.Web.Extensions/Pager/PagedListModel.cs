@@ -19,7 +19,7 @@ internal sealed class PagedListModel<T> : IPagedListModel<T>
 
     public PagedListModel(IEnumerable<T> data, IPagerModel pager)
     {
-        Data = data?.ToArray() ?? Array.Empty<T>();
+        Data = data?.ToArray() ?? [];
         Pager = pager;
     }
 

@@ -37,7 +37,7 @@ public sealed class HeaderAuthenticationHandler : AuthenticationHandler<HeaderAu
             if (Request.Headers.TryGetValue(Options.UserRolesHeaderName, out var userRolesValues))
             {
                 var userRoles = userRolesValues.ToString()
-                    .Split(new[] { Options.Delimiter }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split([Options.Delimiter], StringSplitOptions.RemoveEmptyEntries);
                 claims.AddRange(userRoles.Select(r => new Claim(ClaimTypes.Role, r)));
             }
 
@@ -47,7 +47,7 @@ public sealed class HeaderAuthenticationHandler : AuthenticationHandler<HeaderAu
                 {
                     if (Request.Headers.TryGetValue(headerToClaim.Key, out var headerValues))
                     {
-                        foreach (var val in headerValues.ToString().Split(new[] { Options.Delimiter }, StringSplitOptions.RemoveEmptyEntries))
+                        foreach (var val in headerValues.ToString().Split([Options.Delimiter], StringSplitOptions.RemoveEmptyEntries))
                         {
                             claims.Add(new Claim(headerToClaim.Value, val));
                         }

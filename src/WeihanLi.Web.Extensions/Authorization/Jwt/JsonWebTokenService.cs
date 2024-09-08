@@ -10,17 +10,17 @@ using WeihanLi.Web.Authorization.Token;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
-public class JwtTokenService : ITokenService
+public class JsonWebTokenService : ITokenService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
-    private readonly JwtTokenOptions _tokenOptions;
+    private readonly JsonWebTokenOptions _tokenOptions;
 
     private readonly Lazy<TokenValidationParameters>
         _lazyTokenValidationParameters,
         _lazyRefreshTokenValidationParameters;
 
-    public JwtTokenService(IHttpContextAccessor httpContextAccessor, IOptions<JwtTokenOptions> tokenOptions)
+    public JsonWebTokenService(IHttpContextAccessor httpContextAccessor, IOptions<JsonWebTokenOptions> tokenOptions)
     {
         _httpContextAccessor = httpContextAccessor;
         _tokenOptions = tokenOptions.Value;
@@ -60,7 +60,7 @@ public class JwtTokenService : ITokenService
 
     protected virtual Task<string> GetRefreshToken(Claim[] claims, string jti)
     {
-        var claimList = new List<Claim>((claims ?? Array.Empty<Claim>())
+        var claimList = new List<Claim>((claims ?? [])
             .Where(c => c.Type != _tokenOptions.RefreshTokenOwnerClaimType)
             .Union(new[] { new Claim(_tokenOptions.RefreshTokenOwnerClaimType, jti) })
         );
@@ -83,14 +83,14 @@ public class JwtTokenService : ITokenService
         return encodedJwt.WrapTask();
     }
 
-    private static readonly HashSet<string> JwtInternalClaimTypes = new()
-    {
+    private static readonly HashSet<string> JwtInternalClaimTypes =
+    [
         "iss",
         "exp",
         "aud",
         "nbf",
         "iat"
-    };
+    ];
 
     private async Task<TokenEntity> GenerateTokenInternal(bool refreshToken, Claim[] claims)
     {

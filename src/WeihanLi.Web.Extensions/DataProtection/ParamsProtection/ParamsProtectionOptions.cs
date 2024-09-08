@@ -9,7 +9,7 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
 public sealed class ParamsProtectionOptions
 {
-    private string[] _protectParams = Array.Empty<string>();
+    private string[] _protectParams = [];
 
     /// <summary>
     /// ProtectorPurpose
