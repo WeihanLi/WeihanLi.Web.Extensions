@@ -9,7 +9,7 @@
     <PackageVersion Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageVersion Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0-*" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.7.2" />
-    <PackageVersion Include="WeihanLi.Common" Version="1.0.69" />
+    <PackageVersion Include="WeihanLi.Common" Version="1.0.70" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
