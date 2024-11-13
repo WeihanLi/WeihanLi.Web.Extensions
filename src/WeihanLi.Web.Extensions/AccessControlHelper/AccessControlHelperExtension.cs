@@ -52,7 +52,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(configAction);
-            
+
             services.Configure(configAction);
             return services.AddAccessControlHelper<TResourceAccessStrategy, TControlStrategy>();
         }
@@ -110,7 +110,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(configAction);
-            
+
             var option = new AccessControlOptions();
             configAction.Invoke(option);
             services.Configure(configAction);

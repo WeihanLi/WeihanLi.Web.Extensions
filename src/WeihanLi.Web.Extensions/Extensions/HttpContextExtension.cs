@@ -52,7 +52,7 @@ public static class HttpContextExtension
     /// <param name="principal">principal</param>
     /// <returns></returns>
     public static T GetUserId<T>(this ClaimsPrincipal principal) => GetUserId(principal).ToOrDefault<T>()!;
-    
+
     public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
         => GetUserId(principal, claimType).ToOrDefault<T>()!;
 

@@ -20,13 +20,13 @@ public static class EndpointExtensions
         )
     {
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
-        
+
         if (optionsConfigure is not null)
         {
             var options = endpointRouteBuilder.ServiceProvider.GetRequiredService<IOptions<ConfigInspectorOptions>>();
             optionsConfigure(options.Value);
         }
-        
+
         return endpointRouteBuilder.MapGet($"{path}/{{configKey?}}", async (context) =>
         {
             var options = context.RequestServices.GetRequiredService<IOptions<ConfigInspectorOptions>>();

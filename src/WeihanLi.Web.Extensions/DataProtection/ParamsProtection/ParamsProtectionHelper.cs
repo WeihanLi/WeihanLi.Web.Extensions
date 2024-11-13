@@ -72,12 +72,12 @@ internal static class ParamsProtectionHelper
     }
 
     public static bool TryGetUnprotectedValue(this IDataProtector protector, ParamsProtectionOptions option,
-        string? value, [MaybeNullWhen(false)]out string unprotectedValue)
+        string? value, [MaybeNullWhen(false)] out string unprotectedValue)
     {
         unprotectedValue = value;
         if (string.IsNullOrEmpty(value))
             return false;
-        
+
         if (option is { AllowUnprotectedParams: true, ParamValueProtectFuncEnabled: true } && option.ParamValueNeedProtectFunc(value)
             )
         {

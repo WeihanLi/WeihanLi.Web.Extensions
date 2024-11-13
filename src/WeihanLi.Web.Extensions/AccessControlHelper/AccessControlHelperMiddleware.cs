@@ -39,7 +39,7 @@ internal sealed class AccessControlHelperMiddleware
         {
             return _next(context);
         }
-        
+
         context.Response.StatusCode = context.User is { Identity.IsAuthenticated: true } ? 403 : 401;
         return _option.DefaultUnauthorizedOperation?.Invoke(context) ?? Task.CompletedTask;
     }

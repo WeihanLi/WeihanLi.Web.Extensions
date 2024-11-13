@@ -34,7 +34,7 @@ public static class AuthenticationBuilderExtension
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(configureOptions);
-        
+
         builder.Services.Configure(configureOptions);
         return builder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(schema,
             configureOptions);
@@ -98,7 +98,7 @@ public static class AuthenticationBuilderExtension
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(configureOptions);
-        
+
         builder.Services.Configure(configureOptions);
         return builder.AddScheme<HeaderAuthenticationOptions, HeaderAuthenticationHandler>(schema,
             configureOptions);
@@ -130,7 +130,7 @@ public static class AuthenticationBuilderExtension
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(configureOptions);
-        
+
         builder.Services.Configure(configureOptions);
         return builder.AddScheme<QueryAuthenticationOptions, QueryAuthenticationHandler>(schema,
             configureOptions);

@@ -13,7 +13,7 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
         ArgumentNullException.ThrowIfNull(optionsAction);
-        
+
         serviceCollection.Configure(optionsAction);
         serviceCollection.TryAddSingleton<ITokenService, JsonWebTokenService>();
         serviceCollection.ConfigureOptions<JsonWebTokenOptionsSetup>();
@@ -29,7 +29,7 @@ public static class DependencyInjectionExtensions
         {
             serviceCollection.Configure(jwtBearerOptionsSetup);
         }
-        
+
         serviceCollection.ConfigureOptions<JwtBearerOptionsPostSetup>();
         return serviceCollection.AddJwtService(optionsAction);
     }
