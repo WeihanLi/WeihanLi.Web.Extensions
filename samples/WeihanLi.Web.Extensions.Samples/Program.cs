@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
-using System.Reflection;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
