@@ -10,9 +10,7 @@ namespace WeihanLi.Web.Filters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public sealed class ApiResultFilter : Attribute
     , IResultFilter, IExceptionFilter
-#if NET7_0_OR_GREATER
     , IEndpointFilter
-#endif
 
 {
     public void OnResultExecuting(ResultExecutingContext context)
@@ -37,7 +35,6 @@ public sealed class ApiResultFilter : Attribute
         var result = Result.Fail(context.Exception.ToString(), ResultStatus.InternalError);
         context.Result = new ObjectResult(result) { StatusCode = 500 };
     }
-#if NET7_0_OR_GREATER
 
     public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
@@ -77,7 +74,6 @@ public sealed class ApiResultFilter : Attribute
             return Result.Fail(ex.ToString(), ResultStatus.InternalError);
         }
     }
-#endif
 
     private static ResultStatus HttpStatusCode2ResultStatus(int? statusCode)
     {

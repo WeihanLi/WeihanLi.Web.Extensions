@@ -9,16 +9,8 @@ namespace WeihanLi.Web.Authentication.QueryAuthentication;
 
 public sealed class QueryAuthenticationHandler : AuthenticationHandler<QueryAuthenticationOptions>
 {
-#if NET8_0_OR_GREATER
     public QueryAuthenticationHandler(IOptionsMonitor<QueryAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
         : base(options, logger, encoder)
-    {
-    }
-
-    [Obsolete("ISystemClock is obsolete, use TimeProvider on AuthenticationSchemeOptions instead.")]
-#endif
-    public QueryAuthenticationHandler(IOptionsMonitor<QueryAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-        : base(options, logger, encoder, clock)
     {
     }
 

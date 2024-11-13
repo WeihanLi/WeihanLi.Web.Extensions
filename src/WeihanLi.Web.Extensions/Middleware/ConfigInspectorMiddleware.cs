@@ -94,7 +94,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 
     private static List<IConfigurationProvider> GetConfigProviders(IConfigurationRoot configurationRoot)
     {
-#if NET7_0_OR_GREATER
         var providers = new List<IConfigurationProvider>();
 
         foreach (var provider in configurationRoot.Providers)
@@ -115,9 +114,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
         }
 
         return providers;
-#else
-        return configurationRoot.Providers.ToList();
-#endif
     }
 
     private static IEnumerable<ConfigItemModel> GetConfig(IConfigurationProvider provider,

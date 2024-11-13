@@ -7,21 +7,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace WeihanLi.Web.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
-public class ConditionalFilter : Attribute, IAsyncResourceFilter
-#if NET7_0_OR_GREATER
-    , IEndpointFilter
-#endif
+public class ConditionalFilter : Attribute, IAsyncResourceFilter, IEndpointFilter
 
 {
     public Func<HttpContext, bool> ConditionFunc { get; init; } = _ => true;
 
-    public Func<HttpContext, object> ResultFactory { get; init; } = _ =>
-#if NET7_0_OR_GREATER
-       Results.NotFound()
-#else
-            new NotFoundResult()
-#endif
-        ;
+    public Func<HttpContext, object> ResultFactory { get; init; } = _ => Results.NotFound();
 
     public virtual async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
     {
@@ -41,7 +32,7 @@ public class ConditionalFilter : Attribute, IAsyncResourceFilter
             };
         }
     }
-#if NET7_0_OR_GREATER
+
     public virtual async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var result = ConditionFunc.Invoke(context.HttpContext);
@@ -51,7 +42,6 @@ public class ConditionalFilter : Attribute, IAsyncResourceFilter
         }
         return ResultFactory.Invoke(context.HttpContext);
     }
-#endif
 }
 
 internal sealed class HttpResultActionResultAdapter : IActionResult
