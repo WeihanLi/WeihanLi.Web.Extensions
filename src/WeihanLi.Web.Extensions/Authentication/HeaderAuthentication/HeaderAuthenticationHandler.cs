@@ -10,11 +10,11 @@ namespace WeihanLi.Web.Authentication.HeaderAuthentication;
 public sealed class HeaderAuthenticationHandler : AuthenticationHandler<HeaderAuthenticationOptions>
 {
 #if NET8_0_OR_GREATER
-    public HeaderAuthenticationHandler(IOptionsMonitor<HeaderAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder) 
+    public HeaderAuthenticationHandler(IOptionsMonitor<HeaderAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
         : base(options, logger, encoder)
     {
     }
-    
+
     [Obsolete("ISystemClock is obsolete, use TimeProvider on AuthenticationSchemeOptions instead.")]
 #endif
     public HeaderAuthenticationHandler(IOptionsMonitor<HeaderAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)

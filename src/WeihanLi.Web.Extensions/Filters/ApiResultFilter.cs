@@ -53,7 +53,8 @@ public sealed class ApiResultFilter : Attribute
             {
                 return new Result<object>()
                 {
-                    Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                    Data = objectResult.Value,
+                    Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
                 };
             }
 
