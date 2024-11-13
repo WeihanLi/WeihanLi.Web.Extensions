@@ -39,22 +39,23 @@ public static class HealthCheckExtensions
         return UseHealthCheck(applicationBuilder, new PathString(path), checkFunc);
     }
 
-    public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path, Func<IServiceProvider, bool> checkFunc)
+    public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path, Func<IServiceProvider, bool>? checkFunc)
     {
         if (checkFunc == null)
         {
-            checkFunc = serviceProvider => true;
+            checkFunc = _ => true;
         }
         return UseHealthCheck(applicationBuilder, path, serviceProvider => Task.FromResult(checkFunc(serviceProvider)));
     }
 
-    public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path, Func<IServiceProvider, Task<bool>> checkFunc)
+    public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder applicationBuilder, PathString path, Func<IServiceProvider, Task<bool>>? checkFunc)
     {
         if (checkFunc == null)
         {
-            checkFunc = serviceProvider => Task.FromResult(true);
+            checkFunc = _ => Task.FromResult(true);
         }
-        async Task func(HttpContext context, Func<Task> next)
+        
+        async Task CheckFunc(HttpContext context, Func<Task> next)
         {
             try
             {
@@ -78,7 +79,7 @@ public static class HealthCheckExtensions
                 await context.Response.WriteAsync("unhealthy");
             }
         }
-        applicationBuilder.Map(path, builder => builder.Use(func));
+        applicationBuilder.Map(path, builder => builder.Use(CheckFunc));
         return applicationBuilder;
     }
 }

@@ -33,7 +33,7 @@ public class ConditionalFilter : Attribute, IAsyncResourceFilter, IEndpointFilte
         }
     }
 
-    public virtual async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public virtual async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var result = ConditionFunc.Invoke(context.HttpContext);
         if (result)

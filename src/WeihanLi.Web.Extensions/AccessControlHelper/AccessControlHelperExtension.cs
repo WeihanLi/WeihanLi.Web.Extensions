@@ -11,10 +11,7 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseAccessControlHelper(this IApplicationBuilder app)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
             return app.UseMiddleware<AccessControlHelperMiddleware>();
         }
     }
@@ -28,10 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TResourceAccessStrategy : class, IResourceAccessStrategy
             where TControlStrategy : class, IControlAccessStrategy
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
+            ArgumentNullException.ThrowIfNull(services);
 
             services.TryAddSingleton<IResourceAccessStrategy, TResourceAccessStrategy>();
             services.TryAddSingleton<IControlAccessStrategy, TControlStrategy>();
@@ -43,10 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TResourceAccessStrategy : class, IResourceAccessStrategy
             where TControlStrategy : class, IControlAccessStrategy
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
+            ArgumentNullException.ThrowIfNull(services);
 
             services.TryAdd(new ServiceDescriptor(typeof(IResourceAccessStrategy), typeof(TResourceAccessStrategy), resourceAccessStrategyLifetime));
             services.TryAdd(new ServiceDescriptor(typeof(IControlAccessStrategy), typeof(TControlStrategy), controlAccessStrategyLifetime));
@@ -54,18 +45,15 @@ namespace Microsoft.Extensions.DependencyInjection
             return services.AddAccessControlHelper();
         }
 
-        public static IAccessControlHelperBuilder AddAccessControlHelper<TResourceAccessStrategy, TControlStrategy>(this IServiceCollection services, Action<AccessControlOptions> configAction)
+        public static IAccessControlHelperBuilder AddAccessControlHelper<TResourceAccessStrategy, TControlStrategy>(
+            this IServiceCollection services, Action<AccessControlOptions> configAction)
             where TResourceAccessStrategy : class, IResourceAccessStrategy
             where TControlStrategy : class, IControlAccessStrategy
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-            if (configAction != null)
-            {
-                services.Configure(configAction);
-            }
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configAction);
+            
+            services.Configure(configAction);
             return services.AddAccessControlHelper<TResourceAccessStrategy, TControlStrategy>();
         }
 
@@ -73,23 +61,16 @@ namespace Microsoft.Extensions.DependencyInjection
             where TResourceAccessStrategy : class, IResourceAccessStrategy
             where TControlStrategy : class, IControlAccessStrategy
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-            if (configAction != null)
-            {
-                services.Configure(configAction);
-            }
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configAction);
+
+            services.Configure(configAction);
             return services.AddAccessControlHelper<TResourceAccessStrategy, TControlStrategy>(resourceAccessStrategyLifetime, controlAccessStrategyLifetime);
         }
 
         public static IAccessControlHelperBuilder AddAccessControlHelper(this IServiceCollection services, bool useAsDefaultPolicy)
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
+            ArgumentNullException.ThrowIfNull(services);
 
             if (useAsDefaultPolicy)
             {
@@ -127,21 +108,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IAccessControlHelperBuilder AddAccessControlHelper(this IServiceCollection services, Action<AccessControlOptions> configAction)
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            var useAsDefaultPolicy = false;
-            if (configAction != null)
-            {
-                var option = new AccessControlOptions();
-                configAction.Invoke(option);
-                useAsDefaultPolicy = option.UseAsDefaultPolicy;
-
-                services.Configure(configAction);
-            }
-            return services.AddAccessControlHelper(useAsDefaultPolicy);
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configAction);
+            
+            var option = new AccessControlOptions();
+            configAction.Invoke(option);
+            services.Configure(configAction);
+            return services.AddAccessControlHelper(option.UseAsDefaultPolicy);
         }
 
         public static IAccessControlHelperBuilder AddResourceAccessStrategy<TResourceAccessStrategy>(this IAccessControlHelperBuilder builder) where TResourceAccessStrategy : IResourceAccessStrategy

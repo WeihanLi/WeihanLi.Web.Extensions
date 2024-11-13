@@ -15,7 +15,7 @@ public sealed class JsonWebTokenOptions
     ///   JWT.  The processing of this claim is generally application specific.
     ///   The "iss" value is a case-sensitive string containing a StringOrURI
     ///   value.  Use of this claim is OPTIONAL.</remarks>
-    public string Issuer { get; set; }
+    public string? Issuer { get; set; }
 
     /// <summary>
     /// "aud" (Audience) Claim
@@ -25,18 +25,17 @@ public sealed class JsonWebTokenOptions
     ///   identify itself with a value in the audience claim.  If the principal
     ///   processing the claim does not identify itself with a value in the
     ///   "aud" claim when this claim is present, then the JWT MUST be
-    ///   rejected.  In the general case, the "aud" value is an array of case-
-    ///   sensitive strings, each containing a StringOrURI value.  In the
-    ///   special case when the JWT has one audience, the "aud" value MAY be a
+    ///   rejected.  In the general case, the "aud" value is an array of case-sensitive strings, each containing a StringOrURI value.
+    ///   In the special case when the JWT has one audience, the "aud" value MAY be a
     ///   single case-sensitive string containing a StringOrURI value.  The
     ///   interpretation of audience values is generally application specific.
     ///   Use of this claim is OPTIONAL.</remarks>
-    public string Audience { get; set; }
+    public string? Audience { get; set; }
 
     /// <summary>
     /// SecretKey used for generate and validate token
     /// </summary>
-    public string SecretKey { get; set; }
+    public string? SecretKey { get; set; }
 
     /// <summary>
     /// Set the timespan the token will be valid for (default is 1 hour/3600 seconds)
@@ -60,37 +59,37 @@ public sealed class JsonWebTokenOptions
     ///   produced by different issuers as well.  The "jti" claim can be used
     ///   to prevent the JWT from being replayed.
     /// </remarks>
-    public Func<string> JtiGenerator => () => GuidIdGenerator.Instance.NewId();
+    public Func<string>? JtiGenerator { get; set; } = () => GuidIdGenerator.Instance.NewId();
 
-    public Func<SigningCredentials> SigningCredentialsFactory { get; set; }
+    public Func<SigningCredentials>? SigningCredentialsFactory { get; set; }
 
     public bool EnableRefreshToken { get; set; }
 
-    public Func<TokenValidationResult, bool> RenewRefreshTokenPredicate { get; set; }
+    public Func<TokenValidationResult, bool>? RenewRefreshTokenPredicate { get; set; }
 
     public TimeSpan RefreshTokenValidFor { get; set; } = TimeSpan.FromHours(8);
 
-    public Func<SigningCredentials> RefreshTokenSigningCredentialsFactory { get; set; }
+    public Func<SigningCredentials>? RefreshTokenSigningCredentialsFactory { get; set; }
 
-    public string NameClaimType { get; set; }
-    public string RoleClaimType { get; set; }
+    public string? NameClaimType { get; set; }
+    public string? RoleClaimType { get; set; }
 
     public string RefreshTokenOwnerClaimType { get; set; } = "x-rt-owner";
 
-    public Func<TokenValidationResult, HttpContext, bool> RefreshTokenValidator { get; set; }
+    public Func<TokenValidationResult, HttpContext, bool>? RefreshTokenValidator { get; set; }
 
-    public Action<TokenValidationParameters> TokenValidationConfigure { get; set; }
+    public Action<TokenValidationParameters>? TokenValidationConfigure { get; set; }
 
-    internal SigningCredentials SigningCredentials { get; set; }
-    internal SigningCredentials RefreshTokenSigningCredentials { get; set; }
+    internal SigningCredentials? SigningCredentials { get; set; }
+    internal SigningCredentials? RefreshTokenSigningCredentials { get; set; }
 
-    internal TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters> parametersAction = null)
+    internal TokenValidationParameters GetTokenValidationParameters(Action<TokenValidationParameters>? parametersAction = null)
     {
         var parameters = new TokenValidationParameters
         {
             // The signing key must match!
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = SigningCredentials.Key,
+            IssuerSigningKey = SigningCredentials?.Key,
             // Validate the JWT Issuer (iss) claim
             ValidateIssuer = true,
             ValidIssuer = Issuer,

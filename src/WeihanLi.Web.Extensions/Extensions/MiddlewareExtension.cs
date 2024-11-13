@@ -87,11 +87,7 @@ public static class MiddlewareExtension
         Action<ConfigInspectorOptions>? optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(app);
-        if (optionsConfigure is not null)
-        {
-            var options = app.ApplicationServices.GetRequiredService<IOptions<ConfigInspectorOptions>>();
-            optionsConfigure(options.Value);
-        }
+
         return app.UseMiddleware<ConfigInspectorMiddleware>();
     }
 }

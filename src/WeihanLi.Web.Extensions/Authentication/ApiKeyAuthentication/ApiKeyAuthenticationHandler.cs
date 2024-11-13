@@ -38,10 +38,9 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
         }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? []);
         return AuthenticateResult.Success(
             new AuthenticationTicket(
-                new ClaimsPrincipal(new[]
-                {
+                new ClaimsPrincipal([
                     new ClaimsIdentity(claims, Scheme.Name)
-                }), Scheme.Name)
+                ]), Scheme.Name)
         );
     }
 }

@@ -36,7 +36,7 @@ public sealed class ApiResultFilter : Attribute
         context.Result = new ObjectResult(result) { StatusCode = 500 };
     }
 
-    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         try
         {

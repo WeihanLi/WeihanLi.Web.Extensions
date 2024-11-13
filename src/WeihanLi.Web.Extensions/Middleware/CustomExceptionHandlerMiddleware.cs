@@ -7,32 +7,27 @@ namespace WeihanLi.Web.Middleware;
 
 public sealed class CustomExceptionHandlerOptions
 {
-    public Func<HttpContext, ILogger, Exception, Task> OnException { get; set; } =
+    public Func<HttpContext, ILogger, Exception, Task>? OnException { get; set; } =
         (context, logger, exception) =>
         {
             logger.LogError(exception, $"Request exception, requestId: {context.TraceIdentifier}");
             return Task.CompletedTask;
         };
 
-    public Func<HttpContext, ILogger, Task> OnRequestAborted { get; set; }
+    public Func<HttpContext, ILogger, Task>? OnRequestAborted { get; set; }
 }
 
-public sealed class CustomExceptionHandlerMiddleware
+public sealed class CustomExceptionHandlerMiddleware(
+    RequestDelegate next,
+    IOptions<CustomExceptionHandlerOptions> options)
 {
-    private readonly RequestDelegate _next;
-    private readonly CustomExceptionHandlerOptions _options;
-
-    public CustomExceptionHandlerMiddleware(RequestDelegate next, IOptions<CustomExceptionHandlerOptions> options)
-    {
-        _next = next;
-        _options = options.Value;
-    }
+    private readonly CustomExceptionHandlerOptions _options = options.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {

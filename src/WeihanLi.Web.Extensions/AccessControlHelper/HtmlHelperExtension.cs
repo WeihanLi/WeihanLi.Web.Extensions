@@ -20,7 +20,9 @@ public static class HtmlHelperExtension
     /// <param name="htmlAttributes">htmlAttributes</param>
     /// <param name="accessKey">accessKey</param>
     /// <returns></returns>
-    public static IHtmlContent SparkActionLink(this IHtmlHelper helper, string linkText, string actionName, string controllerName = "", object routeValues = null, object htmlAttributes = null, string accessKey = "")
+    public static IHtmlContent SparkActionLink(
+        this IHtmlHelper helper, string linkText, string actionName, string? controllerName = null, 
+        object? routeValues = null, object? htmlAttributes = null, string? accessKey = null)
     {
         if (helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IControlAccessStrategy>()
                         .IsControlCanAccess(accessKey))
@@ -45,18 +47,22 @@ public static class HtmlHelperExtension
     /// <param name="attributes">htmlAttributes</param>
     /// <param name="accessKey">accessKey</param>
     /// <returns></returns>
-    public static SparkContainer SparkContainer(this IHtmlHelper helper, string tagName, object attributes = null, string accessKey = null)
+    public static SparkContainer SparkContainer(this IHtmlHelper helper, string tagName, object? attributes = null, string? accessKey = null)
     => SparkContainerHelper(helper, tagName, HtmlHelper.AnonymousObjectToHtmlAttributes(attributes), accessKey);
 
     private static SparkContainer SparkContainerHelper(IHtmlHelper helper, string tagName,
-        IDictionary<string, object> attributes = null, string accessKey = null)
+        IDictionary<string, object?>? attributes = null, string? accessKey = null)
     {
         var tagBuilder = new TagBuilder(tagName);
         var canAccess = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IControlAccessStrategy>()
                         .IsControlCanAccess(accessKey);
         if (canAccess)
         {
-            tagBuilder.MergeAttributes(attributes);
+            if (attributes is not null)
+            {
+                tagBuilder.MergeAttributes(attributes);
+            }
+
             tagBuilder.TagRenderMode = TagRenderMode.StartTag;
             helper.ViewContext.Writer.Write(tagBuilder);
         }

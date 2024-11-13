@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
-using Microsoft.Extensions.Logging;
-
 namespace WeihanLi.Web.AccessControlHelper;
 
 /// <summary>
@@ -11,7 +9,6 @@ namespace WeihanLi.Web.AccessControlHelper;
 internal sealed class AccessControlHelperMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger _logger;
     private readonly AccessControlOptions _option;
 
     /// <summary>
@@ -19,14 +16,13 @@ internal sealed class AccessControlHelperMiddleware
     /// </summary>
     /// <param name="next">The delegate representing the next middleware in the request pipeline.</param>
     /// <param name="options"></param>
-    /// <param name="logger">The Logger Factory.</param>
     public AccessControlHelperMiddleware(
         RequestDelegate next,
-        IOptions<AccessControlOptions> options,
-        ILogger<AccessControlHelperMiddleware> logger)
+        IOptions<AccessControlOptions> options
+        )
     {
-        _next = next ?? throw new ArgumentNullException(nameof(next));
-        _logger = logger;
+        ArgumentNullException.ThrowIfNull(next);
+        _next = next;
         _option = options.Value;
     }
 
@@ -37,17 +33,14 @@ internal sealed class AccessControlHelperMiddleware
     /// <returns>A task that represents the execution of this middleware.</returns>
     public Task Invoke(HttpContext context)
     {
-        var accessKey = _option.AccessKeyResolver?.Invoke(context);
-
-        var accessStrategy = context.RequestServices.GetService<IResourceAccessStrategy>();
+        var accessKey = _option.AccessKeyResolver.Invoke(context);
+        var accessStrategy = context.RequestServices.GetRequiredService<IResourceAccessStrategy>();
         if (accessStrategy.IsCanAccess(accessKey))
         {
             return _next(context);
         }
-
-        _logger.LogDebug($"Request {context.TraceIdentifier} was unauthorized, Request path:{context.Request.Path}");
-        context.Response.StatusCode = context.User.Identity.IsAuthenticated ? 403 : 401;
-
+        
+        context.Response.StatusCode = context.User is { Identity.IsAuthenticated: true } ? 403 : 401;
         return _option.DefaultUnauthorizedOperation?.Invoke(context) ?? Task.CompletedTask;
     }
 }

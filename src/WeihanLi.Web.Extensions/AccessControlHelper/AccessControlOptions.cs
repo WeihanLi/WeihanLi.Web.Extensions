@@ -5,10 +5,15 @@ namespace WeihanLi.Web.AccessControlHelper;
 
 public sealed class AccessControlOptions
 {
+    private Func<HttpContext, string?> _accessKeyResolver = context =>
+        context.Request.Headers.TryGetValue("X-Access-Key", out var val) ? val.ToString() : null;
     public bool UseAsDefaultPolicy { get; set; }
 
-    public Func<HttpContext, string> AccessKeyResolver { get; set; } = context =>
-        context.Request.Headers.TryGetValue("X-Access-Key", out var val) ? val.ToString() : null;
+    public Func<HttpContext, string?> AccessKeyResolver
+    {
+        get => _accessKeyResolver;
+        set => _accessKeyResolver = value ?? throw new ArgumentNullException(nameof(AccessKeyResolver));
+    }
 
-    public Func<HttpContext, Task> DefaultUnauthorizedOperation { get; set; }
+    public Func<HttpContext, Task>? DefaultUnauthorizedOperation { get; set; }
 }

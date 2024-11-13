@@ -8,17 +8,15 @@ namespace WeihanLi.Web.Services;
 
 public sealed class HttpContextUserIdProviderOptions
 {
-    private Func<HttpContext, string> _userIdFactory = context => context?.User?.GetUserId();
+    private Func<HttpContext, string?> _userIdFactory = context => context.User.GetUserId();
 
-    public Func<HttpContext, string> UserIdFactory
+    public Func<HttpContext, string?> UserIdFactory
     {
         get => _userIdFactory;
         set
         {
-            if (value != null)
-            {
-                _userIdFactory = value;
-            }
+            ArgumentNullException.ThrowIfNull(value, nameof(UserIdFactory));
+            _userIdFactory = value;
         }
     }
 }
@@ -26,7 +24,7 @@ public sealed class HttpContextUserIdProviderOptions
 public sealed class HttpContextUserIdProvider : IUserIdProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly Func<HttpContext, string> _userIdFactory;
+    private readonly Func<HttpContext, string?> _userIdFactory;
 
     public HttpContextUserIdProvider(
         IHttpContextAccessor httpContextAccessor,
@@ -38,8 +36,9 @@ public sealed class HttpContextUserIdProvider : IUserIdProvider
         _userIdFactory = options.Value.UserIdFactory;
     }
 
-    public string GetUserId()
+    public string? GetUserId()
     {
+        ArgumentNullException.ThrowIfNull(_httpContextAccessor.HttpContext);
         return _userIdFactory.Invoke(_httpContextAccessor.HttpContext);
     }
 }

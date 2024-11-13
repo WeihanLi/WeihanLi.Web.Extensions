@@ -15,14 +15,14 @@ public class HttpContextLoggingEnricher : ILogHelperLoggingEnricher
     {
     }
 
-    public HttpContextLoggingEnricher(IHttpContextAccessor contextAccessor, Action<LogHelperLoggingEvent, HttpContext> enrichAction)
+    public HttpContextLoggingEnricher(IHttpContextAccessor contextAccessor, Action<LogHelperLoggingEvent, HttpContext>? enrichAction)
     {
         _contextAccessor = contextAccessor;
         if (enrichAction == null)
         {
             _enrichAction = (logEvent, httpContext) =>
             {
-                logEvent.AddProperty("RequestIP", httpContext.GetUserIP());
+                logEvent.AddProperty("RequestIP", httpContext.GetUserIP() ?? string.Empty);
                 logEvent.AddProperty("RequestPath", httpContext.Request.Path);
                 logEvent.AddProperty("RequestMethod", httpContext.Request.Method);
 
@@ -38,7 +38,7 @@ public class HttpContextLoggingEnricher : ILogHelperLoggingEnricher
 
     public virtual void Enrich(LogHelperLoggingEvent loggingEvent)
     {
-        if (null != _contextAccessor?.HttpContext)
+        if (_contextAccessor.HttpContext is not null)
         {
             _enrichAction.Invoke(loggingEvent, _contextAccessor.HttpContext);
         }

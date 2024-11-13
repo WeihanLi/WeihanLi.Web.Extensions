@@ -58,10 +58,9 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
                     new Claim("issuer", ClaimsIssuer),
                 };
                 return AuthenticateResult.Success(new AuthenticationTicket(
-                    new ClaimsPrincipal(new[]
-                    {
+                    new ClaimsPrincipal([
                         new ClaimsIdentity(claims, Scheme.Name)
-                    }), Scheme.Name));
+                    ]), Scheme.Name));
             }
             return AuthenticateResult.Fail("Invalid user credential");
         }

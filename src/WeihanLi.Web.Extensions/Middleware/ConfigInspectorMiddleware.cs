@@ -22,9 +22,9 @@ public sealed class ConfigItemModel
     public bool Active { get; set; }
 }
 
-internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
+internal sealed class ConfigInspectorMiddleware
 {
-    public Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
+    public static Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
     {
         var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
         if (configuration is not IConfigurationRoot configurationRoot)
