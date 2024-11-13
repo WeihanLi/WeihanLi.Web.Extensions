@@ -8,7 +8,7 @@ namespace WeihanLi.Web.Extensions.Samples.Filters;
 
 public class TestAuthFilter : AuthorizationFilterAttribute
 {
-    public string Role { get; set; }
+    public required string Role { get; set; }
 
     public override void OnAuthorization(AuthorizationFilterContext context)
     {

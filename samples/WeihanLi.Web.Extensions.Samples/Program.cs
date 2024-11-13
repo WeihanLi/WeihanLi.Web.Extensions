@@ -4,7 +4,6 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
@@ -90,7 +89,7 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
         options.InterceptAll()
             .With<EventPublishLogInterceptor>();
     }, ignoreTypesPredict: t => t.HasNamespace() && (
-        t.Namespace.StartsWith("Microsoft.")
+        t.Namespace!.StartsWith("Microsoft.")
         || t.Namespace.StartsWith("System.")
         || t.Namespace.StartsWith("Swashbuckle.")
         )

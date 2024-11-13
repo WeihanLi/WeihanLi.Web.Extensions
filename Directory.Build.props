@@ -10,6 +10,7 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions</RepositoryUrl>    
     <Authors>WeihanLi</Authors>
