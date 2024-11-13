@@ -21,7 +21,7 @@ public static class HtmlHelperExtension
     /// <param name="accessKey">accessKey</param>
     /// <returns></returns>
     public static IHtmlContent SparkActionLink(
-        this IHtmlHelper helper, string linkText, string actionName, string? controllerName = null, 
+        this IHtmlHelper helper, string linkText, string actionName, string? controllerName = null,
         object? routeValues = null, object? htmlAttributes = null, string? accessKey = null)
     {
         if (helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IControlAccessStrategy>()

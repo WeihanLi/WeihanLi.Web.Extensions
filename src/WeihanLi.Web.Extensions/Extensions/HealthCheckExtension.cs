@@ -54,7 +54,7 @@ public static class HealthCheckExtensions
         {
             checkFunc = _ => Task.FromResult(true);
         }
-        
+
         async Task CheckFunc(HttpContext context, Func<Task> next)
         {
             try

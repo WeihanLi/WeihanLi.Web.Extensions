@@ -20,7 +20,7 @@ public sealed class AccessControlAttribute : AuthorizationFilterAttribute
         var isDefinedNoControl = filterContext.ActionDescriptor.IsDefined(typeof(NoAccessControlAttribute), true);
 
         if (isDefinedNoControl) return;
-        
+
         var accessStrategy = filterContext.HttpContext.RequestServices.GetService<IResourceAccessStrategy>();
         if (accessStrategy is null)
             throw new InvalidOperationException("IResourceAccessStrategy not initialized，please register your ResourceAccessStrategy");
