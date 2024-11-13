@@ -7,11 +7,11 @@ namespace WeihanLi.Web.Authentication.ApiKeyAuthentication;
 
 public sealed class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
 {
-    public string ApiKey { get; set; }
+    public string ApiKey { get; set; } = default!;
     public string ApiKeyName { get; set; } = "X-ApiKey";
     public KeyLocation KeyLocation { get; set; }
-    public Func<HttpContext, string, Task<bool>> ApiKeyValidator { get; set; }
-    public Func<HttpContext, ApiKeyAuthenticationOptions, Claim[]> ClaimsGenerator { get; set; }
+    public Func<HttpContext, string, Task<bool>>? ApiKeyValidator { get; set; }
+    public Func<HttpContext, ApiKeyAuthenticationOptions, Claim[]>? ClaimsGenerator { get; set; }
 
     public override void Validate()
     {

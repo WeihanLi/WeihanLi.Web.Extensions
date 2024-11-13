@@ -8,7 +8,7 @@ namespace WeihanLi.Web.Authorization.Jwt;
 
 internal sealed class JsonWebTokenOptionsSetup : IPostConfigureOptions<JsonWebTokenOptions>
 {
-    public void PostConfigure(string name, JsonWebTokenOptions options)
+    public void PostConfigure(string? name, JsonWebTokenOptions options)
     {
         if (options.SigningCredentialsFactory is null)
         {
@@ -21,7 +21,6 @@ internal sealed class JsonWebTokenOptionsSetup : IPostConfigureOptions<JsonWebTo
         options.SigningCredentials = options.SigningCredentialsFactory.Invoke();
         options.RefreshTokenSigningCredentials = options.RefreshTokenSigningCredentials is null
             ? options.SigningCredentials
-            : options.RefreshTokenSigningCredentialsFactory()
-            ;
+            : options.RefreshTokenSigningCredentialsFactory?.Invoke();
     }
 }

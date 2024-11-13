@@ -30,7 +30,7 @@ public static class ResultModelExtensions
                 StatusCode = (int)HttpStatusCode.MethodNotAllowed
             },
             ResultStatus.Unauthorized => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Unauthorized },
-            ResultStatus.NoPermission or ResultStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
+            ResultStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             _ => new OkObjectResult(result)
         };
     }

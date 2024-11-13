@@ -12,7 +12,7 @@ public interface IResourceAccessStrategy
     /// </summary>
     /// <param name="accessKey">accessKey</param>
     /// <returns></returns>
-    bool IsCanAccess(string accessKey);
+    bool IsCanAccess(string? accessKey);
 
     /// <summary>
     /// AccessStrategyName

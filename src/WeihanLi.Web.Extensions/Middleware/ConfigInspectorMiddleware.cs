@@ -22,9 +22,9 @@ public sealed class ConfigItemModel
     public bool Active { get; set; }
 }
 
-internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
+internal sealed class ConfigInspectorMiddleware
 {
-    public Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
+    public static Task InvokeAsync(HttpContext httpContext, IOptions<ConfigInspectorOptions> inspectorOptions)
     {
         var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
         if (configuration is not IConfigurationRoot configurationRoot)
@@ -94,7 +94,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
 
     private static List<IConfigurationProvider> GetConfigProviders(IConfigurationRoot configurationRoot)
     {
-#if NET7_0_OR_GREATER
         var providers = new List<IConfigurationProvider>();
 
         foreach (var provider in configurationRoot.Providers)
@@ -115,9 +114,6 @@ internal sealed class ConfigInspectorMiddleware(RequestDelegate next)
         }
 
         return providers;
-#else
-        return configurationRoot.Providers.ToList();
-#endif
     }
 
     private static IEnumerable<ConfigItemModel> GetConfig(IConfigurationProvider provider,

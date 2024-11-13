@@ -30,7 +30,7 @@ public class JsonWebTokenService : ITokenService
             _tokenOptions.GetTokenValidationParameters(parameters =>
             {
                 parameters.ValidAudience = GetRefreshTokenAudience();
-                parameters.IssuerSigningKey = _tokenOptions.RefreshTokenSigningCredentials.Key;
+                parameters.IssuerSigningKey = _tokenOptions.RefreshTokenSigningCredentials?.Key;
             })
         );
     }
@@ -45,6 +45,7 @@ public class JsonWebTokenService : ITokenService
 
     public virtual async Task<TokenEntity> RefreshToken(string refreshToken)
     {
+        ArgumentNullException.ThrowIfNull(_httpContextAccessor.HttpContext);
         var refreshTokenValidateResult = await _tokenHandler.ValidateTokenAsync(refreshToken, _lazyRefreshTokenValidationParameters.Value);
         if (!refreshTokenValidateResult.IsValid || _tokenOptions.RefreshTokenValidator?.Invoke(refreshTokenValidateResult, _httpContextAccessor.HttpContext) == false)
         {
@@ -60,9 +61,9 @@ public class JsonWebTokenService : ITokenService
 
     protected virtual Task<string> GetRefreshToken(Claim[] claims, string jti)
     {
-        var claimList = new List<Claim>((claims ?? [])
+        var claimList = new List<Claim>((claims)
             .Where(c => c.Type != _tokenOptions.RefreshTokenOwnerClaimType)
-            .Union(new[] { new Claim(_tokenOptions.RefreshTokenOwnerClaimType, jti) })
+            .Union([new Claim(_tokenOptions.RefreshTokenOwnerClaimType, jti)])
         );
 
         claimList.RemoveAll(c =>
@@ -92,14 +93,14 @@ public class JsonWebTokenService : ITokenService
         "iat"
     ];
 
-    private async Task<TokenEntity> GenerateTokenInternal(bool refreshToken, Claim[] claims)
+    private async Task<TokenEntity> GenerateTokenInternal(bool refreshToken, Claim[]? claims)
     {
         var now = DateTimeOffset.UtcNow;
         var claimList = new List<Claim>()
         {
             new (JwtRegisteredClaimNames.Iat, now.ToUnixTimeMilliseconds().ToString(), ClaimValueTypes.Integer64)
         };
-        if (claims != null)
+        if (claims is { Length: > 0 })
         {
             claimList.AddRange(
                 claims.Where(x => !JwtInternalClaimTypes.Contains(x.Type))
@@ -124,7 +125,7 @@ public class JsonWebTokenService : ITokenService
         {
             AccessToken = encodedJwt,
             ExpiresIn = (int)_tokenOptions.ValidFor.TotalSeconds,
-            RefreshToken = await GetRefreshToken(claims, jti)
+            RefreshToken = await GetRefreshToken(claims ?? [], jti)
         } : new TokenEntity()
         {
             AccessToken = encodedJwt,

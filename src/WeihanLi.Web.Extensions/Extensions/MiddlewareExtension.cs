@@ -31,8 +31,6 @@ public static class MiddlewareExtension
         return app;
     }
 
-#if NET6_0_OR_GREATER
-
     /// <summary>
     /// Use middleware if feature is enabled
     /// </summary>
@@ -45,8 +43,6 @@ public static class MiddlewareExtension
         }
         return app;
     }
-
-#endif
 
     /// <summary>
     /// Use middleware if feature is enabled
@@ -91,11 +87,7 @@ public static class MiddlewareExtension
         Action<ConfigInspectorOptions>? optionsConfigure = null)
     {
         ArgumentNullException.ThrowIfNull(app);
-        if (optionsConfigure is not null)
-        {
-            var options = app.ApplicationServices.GetRequiredService<IOptions<ConfigInspectorOptions>>();
-            optionsConfigure(options.Value);
-        }
+
         return app.UseMiddleware<ConfigInspectorMiddleware>();
     }
 }

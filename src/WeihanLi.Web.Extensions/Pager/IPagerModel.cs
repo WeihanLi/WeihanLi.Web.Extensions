@@ -77,7 +77,7 @@ public interface IPagerModel
     /// <summary>
     /// 翻页路径或翻页处理事件
     /// </summary>
-    Func<int, string> OnPageChange { get; set; }
+    Func<int, string>? OnPageChange { get; set; }
 }
 
 /// <summary>

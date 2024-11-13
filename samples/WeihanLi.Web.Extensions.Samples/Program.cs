@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using System.Text;
+using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
@@ -72,25 +70,17 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddHttpContextUserIdProvider(options =>
 {
-    options.UserIdFactory = context => $"{context.GetUserIP()}";
+    options.UserIdFactory = static context => $"{context.GetUserIP()}";
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "v1 API docs"
-    });
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"), true);
-});
+builder.Services.AddOpenApi();
 
 builder.Host.UseFluentAspectsServiceProviderFactory(options =>
     {
         options.InterceptAll()
             .With<EventPublishLogInterceptor>();
     }, ignoreTypesPredict: t => t.HasNamespace() && (
-        t.Namespace.StartsWith("Microsoft.")
+        t.Namespace!.StartsWith("Microsoft.")
         || t.Namespace.StartsWith("System.")
         || t.Namespace.StartsWith("Swashbuckle.")
         )
@@ -132,11 +122,9 @@ envGroup.Map("/prod", () => "env-test")
 // envGroup.Map("/stage", [EnvironmentFilter("Staging")]() => "env-test");
 
 app.UseHealthCheck();
-app.UseSwagger().UseSwaggerUI(options =>
-{
-    options.RoutePrefix = string.Empty;
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-});
+
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -192,6 +180,6 @@ app.MapControllers();
 await app.RunAsync();
 
 
-string Hello() => "Hello Minimal API!";
+static string Hello() => "Hello Minimal API!";
 
-IResult BadRequest() => Results.BadRequest();
+static IResult BadRequest() => Results.BadRequest();

@@ -31,7 +31,7 @@ public sealed class ParamsProtectionResultFilter : IResultFilter
 
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (_option.Enabled && _option.ProtectParams.Length > 0)
+        if (_option is { Enabled: true, ProtectParams.Length: > 0 })
         {
             foreach (var pair in _option.NeedProtectResponseValues)
             {
@@ -39,13 +39,13 @@ public sealed class ParamsProtectionResultFilter : IResultFilter
                 {
                     var prop = CacheUtil.GetTypeProperties(pair.Key).FirstOrDefault(p => p.Name == pair.Value);
                     var val = prop?.GetValueGetter()?.Invoke(context.Result);
-                    if (val != null)
+                    if (val is not null)
                     {
                         _logger.LogDebug($"ParamsProtector is protecting {pair.Key.FullName} Value");
 
                         var obj = JToken.FromObject(val);
                         ParamsProtectionHelper.ProtectParams(obj, _protector, _option);
-                        prop.GetValueSetter()?.Invoke(context.Result, obj);
+                        prop!.GetValueSetter()?.Invoke(context.Result, obj);
                     }
                 }
             }

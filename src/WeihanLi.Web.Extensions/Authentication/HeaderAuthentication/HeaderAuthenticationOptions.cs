@@ -51,7 +51,7 @@ public sealed class HeaderAuthenticationOptions : AuthenticationSchemeOptions
     /// key: headerName
     /// value: claimType
     /// </summary>
-    public Dictionary<string, string> AdditionalHeaderToClaims { get; } = new Dictionary<string, string>();
+    public Dictionary<string, string> AdditionalHeaderToClaims { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     private Func<HttpContext, Task<bool>> _authenticationValidator = context =>
     {

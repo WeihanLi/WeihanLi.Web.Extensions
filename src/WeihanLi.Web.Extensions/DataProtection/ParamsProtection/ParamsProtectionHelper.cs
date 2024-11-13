@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace WeihanLi.Web.DataProtection.ParamsProtection;
@@ -12,7 +13,7 @@ internal static class ParamsProtectionHelper
 {
     public const string DefaultPurpose = "ParamsProtector";
 
-    private static bool IsParamNeedProtect(this ParamsProtectionOptions option, string propName, string value)
+    private static bool IsParamNeedProtect(this ParamsProtectionOptions option, string propName, string? value)
     {
         if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
         {
@@ -21,7 +22,7 @@ internal static class ParamsProtectionHelper
         return false;
     }
 
-    private static bool IsParamNeedUnprotect(this ParamsProtectionOptions option, string propName, string value)
+    private static bool IsParamNeedUnprotect(this ParamsProtectionOptions option, string propName, string? value)
     {
         if (option.ProtectParams.Any(p => p.Equals(propName, StringComparison.OrdinalIgnoreCase)))
         {
@@ -38,10 +39,10 @@ internal static class ParamsProtectionHelper
             {
                 if (array.Parent is JProperty property && j is JValue val)
                 {
-                    var strJ = val.Value.ToString();
+                    var strJ = val.Value?.ToString();
                     if (option.IsParamNeedProtect(property.Name, strJ))
                     {
-                        val.Value = protector.Protect(strJ, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
+                        val.Value = protector.Protect(strJ!, TimeSpan.FromMinutes(option.ExpiresIn.GetValueOrDefault(10)));
                     }
                 }
                 else
@@ -71,10 +72,13 @@ internal static class ParamsProtectionHelper
     }
 
     public static bool TryGetUnprotectedValue(this IDataProtector protector, ParamsProtectionOptions option,
-        string value, out string unprotectedValue)
+        string? value, [MaybeNullWhen(false)] out string unprotectedValue)
     {
-        if (option.AllowUnprotectedParams &&
-            (option.ParamValueProtectFuncEnabled && option.ParamValueNeedProtectFunc(value))
+        unprotectedValue = value;
+        if (string.IsNullOrEmpty(value))
+            return false;
+
+        if (option is { AllowUnprotectedParams: true, ParamValueProtectFuncEnabled: true } && option.ParamValueNeedProtectFunc(value)
             )
         {
             unprotectedValue = value;
@@ -101,7 +105,7 @@ internal static class ParamsProtectionHelper
 
     public static void ProtectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
     {
-        if (option.Enabled && option.ProtectParams?.Length > 0)
+        if (option is { Enabled: true, ProtectParams.Length: > 0 })
         {
             if (protector is ITimeLimitedDataProtector timeLimitedDataProtector)
             {
@@ -114,10 +118,10 @@ internal static class ParamsProtectionHelper
                 {
                     if (array.Parent is JProperty property && j is JValue val)
                     {
-                        var strJ = val.Value.ToString();
+                        var strJ = val.Value?.ToString();
                         if (option.IsParamNeedProtect(property.Name, strJ))
                         {
-                            val.Value = protector.Protect(strJ);
+                            val.Value = protector.Protect(strJ!);
                         }
                     }
                     else
@@ -149,7 +153,7 @@ internal static class ParamsProtectionHelper
 
     public static void UnProtectParams(JToken token, IDataProtector protector, ParamsProtectionOptions option)
     {
-        if (option.Enabled && option.ProtectParams?.Length > 0)
+        if (option is { Enabled: true, ProtectParams.Length: > 0 })
         {
             if (token is JArray array)
             {
@@ -157,12 +161,12 @@ internal static class ParamsProtectionHelper
                 {
                     if (j is JValue val)
                     {
-                        var strJ = val.Value.ToString();
+                        var strJ = val.Value?.ToString();
                         if (array.Parent is JProperty property && option.IsParamNeedUnprotect(property.Name, strJ))
                         {
                             try
                             {
-                                val.Value = protector.Unprotect(strJ);
+                                val.Value = protector.Unprotect(strJ!);
                             }
                             catch (Exception e)
                             {
