@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PackageId>WeihanLi.Web.Extensions</PackageId>
     <Title>WeihanLi.Web.Extensions</Title>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <Description>WeihanLi.Web.Extensions</Description>
     <PackageTags>weihanli;web;aspnet;aspnetcore;mvc;authentication;authorization;auth;token</PackageTags>
     <PackageSummary>WeihanLi.Web.Extensions, aspnetcore extensions</PackageSummary>
