@@ -1,12 +1,5 @@
 <Project>
-  <PropertyGroup>
-    <VersionMajor>2</VersionMajor>
-    <VersionMinor>0</VersionMinor>
-    <VersionPatch>0</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
-    <VersionSuffix Condition="'$(Configuration)'=='DEBUG'">develop</VersionSuffix>
-    <InformationalVersion>$(PackageVersion)</InformationalVersion>
-	</PropertyGroup>
+  <Import Project="./build/version.props"/>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
