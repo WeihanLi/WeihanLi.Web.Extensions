@@ -10,7 +10,8 @@ using AuthenticateResult = Microsoft.AspNetCore.Authentication.AuthenticateResul
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticationOptions>
 {
-    public BasicAuthenticationHandler(IOptionsMonitor<BasicAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+    public BasicAuthenticationHandler(IOptionsMonitor<BasicAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
+        : base(options, logger, encoder)
     {
     }
 
@@ -22,9 +23,9 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
         }
 
         var authHeader = authHeaderValues.ToString();
-        if (authHeader.StartsWith("Basic", StringComparison.OrdinalIgnoreCase))
+        if (authHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
         {
-            var token = authHeader[("Basic".Length + 1)..];
+            var token = authHeader[("Basic ".Length)..];
             if (string.IsNullOrEmpty(token))
             {
                 return AuthenticateResult.Fail("Invalid Authorization header");
@@ -57,10 +58,9 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
                     new Claim("issuer", ClaimsIssuer),
                 };
                 return AuthenticateResult.Success(new AuthenticationTicket(
-                    new ClaimsPrincipal(new[]
-                    {
+                    new ClaimsPrincipal([
                         new ClaimsIdentity(claims, Scheme.Name)
-                    }), Scheme.Name));
+                    ]), Scheme.Name));
             }
             return AuthenticateResult.Fail("Invalid user credential");
         }

@@ -3,7 +3,6 @@
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using WeihanLi.Common;
 using WeihanLi.Web.DataProtection.ParamsProtection;
 
 namespace WeihanLi.Web.DataProtection;
@@ -17,7 +16,7 @@ public static class DataProtectionBuilderExtensions
     /// <returns></returns>
     public static IDataProtectionBuilder AddParamsProtection(this IDataProtectionBuilder builder)
     {
-        Guard.NotNull(builder);
+        ArgumentNullException.ThrowIfNull(builder);
 
         builder.Services.Configure<MvcOptions>(action =>
             {
@@ -36,14 +35,8 @@ public static class DataProtectionBuilderExtensions
     /// <returns></returns>
     public static IDataProtectionBuilder AddParamsProtection(this IDataProtectionBuilder builder, Action<ParamsProtectionOptions> optionsAction)
     {
-        if (null == builder)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-        if (null == optionsAction)
-        {
-            throw new ArgumentNullException(nameof(optionsAction));
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(optionsAction);
 
         builder.Services.Configure(optionsAction);
         builder.AddParamsProtection();

@@ -23,14 +23,14 @@ public static class ResultModelExtensions
 
         return status switch
         {
-            ResultStatus.RequestError => new BadRequestObjectResult(result),
-            ResultStatus.ResourceNotFound => new NotFoundObjectResult(result),
+            ResultStatus.BadRequest => new BadRequestObjectResult(result),
+            ResultStatus.NotFound => new NotFoundObjectResult(result),
             ResultStatus.MethodNotAllowed => new ObjectResult(result)
             {
                 StatusCode = (int)HttpStatusCode.MethodNotAllowed
             },
             ResultStatus.Unauthorized => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Unauthorized },
-            ResultStatus.NoPermission => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
+            ResultStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             _ => new OkObjectResult(result)
         };
     }

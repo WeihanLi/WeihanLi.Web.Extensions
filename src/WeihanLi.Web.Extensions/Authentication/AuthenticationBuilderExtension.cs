@@ -32,10 +32,10 @@ public static class AuthenticationBuilderExtension
     public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder builder, string schema,
         Action<ApiKeyAuthenticationOptions> configureOptions)
     {
-        if (null != configureOptions)
-        {
-            builder.Services.Configure(configureOptions);
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configureOptions);
+
+        builder.Services.Configure(configureOptions);
         return builder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(schema,
             configureOptions);
     }
@@ -64,10 +64,10 @@ public static class AuthenticationBuilderExtension
     public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder, string schema,
         Action<BasicAuthenticationOptions> configureOptions)
     {
-        if (null != configureOptions)
-        {
-            builder.Services.Configure(configureOptions);
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configureOptions);
+
+        builder.Services.Configure(configureOptions);
         return builder.AddScheme<BasicAuthenticationOptions, BasicAuthenticationHandler>(schema,
             configureOptions);
     }
@@ -96,10 +96,10 @@ public static class AuthenticationBuilderExtension
     public static AuthenticationBuilder AddHeader(this AuthenticationBuilder builder, string schema,
         Action<HeaderAuthenticationOptions> configureOptions)
     {
-        if (null != configureOptions)
-        {
-            builder.Services.Configure(configureOptions);
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configureOptions);
+
+        builder.Services.Configure(configureOptions);
         return builder.AddScheme<HeaderAuthenticationOptions, HeaderAuthenticationHandler>(schema,
             configureOptions);
     }
@@ -128,10 +128,10 @@ public static class AuthenticationBuilderExtension
     public static AuthenticationBuilder AddQuery(this AuthenticationBuilder builder, string schema,
         Action<QueryAuthenticationOptions> configureOptions)
     {
-        if (null != configureOptions)
-        {
-            builder.Services.Configure(configureOptions);
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configureOptions);
+
+        builder.Services.Configure(configureOptions);
         return builder.AddScheme<QueryAuthenticationOptions, QueryAuthenticationHandler>(schema,
             configureOptions);
     }

@@ -125,8 +125,36 @@ public class ValuesController : ControllerBase
     }
 
     [HttpGet("[action]")]
+    public IActionResult Test()
+    {
+        return Ok(new { Name = "Amazing .NET" });
+    }
+
+    [HttpGet("[action]")]
     public IActionResult ExceptionTest()
     {
-        throw new Exception();
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("EnvironmentFilterTest/Dev")]
+    [EnvironmentFilter("Development")]
+    //[EnvironmentFilter("Production")]
+    public IActionResult EnvironmentFilterDevTest()
+    {
+        return Ok(new { Title = ".NET is amazing!" });
+    }
+
+    [HttpGet("EnvironmentFilterTest/Prod")]
+    [EnvironmentFilter("Production")]
+    public IActionResult EnvironmentFilterProdTest()
+    {
+        return Ok(new { Title = ".NET is amazing!" });
+    }
+
+    [HttpPost("RawTextFormatterTest")]
+    [Consumes("text/plain")]
+    public Result RawTextFormatterTest([FromBody] string input)
+    {
+        return Result.Success<string>(input);
     }
 }

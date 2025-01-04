@@ -1,5 +1,14 @@
 # Release Notes
 
+see pull requests: https://github.com/WeihanLi/WeihanLi.Web.Extensions/pulls?q=is%3Apr+is%3Aclosed+is%3Amerged
+
+## 1.4.0
+
+- Add Basic auth support
+- Add `net7.0` target
+- Support `IEndpointFilter` for `ApiResultFilter`
+- Add `ConditionalFilter`/`EnvironmentFilter`/`NonProductionEnvironmentFilter`
+
 ## 1.3.0
 
 - Add `ApiResultFilter`

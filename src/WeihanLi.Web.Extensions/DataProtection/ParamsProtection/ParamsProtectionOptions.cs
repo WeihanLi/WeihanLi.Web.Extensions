@@ -9,12 +9,12 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
 public sealed class ParamsProtectionOptions
 {
-    private string[] _protectParams = Array.Empty<string>();
+    private string[] _protectParams = [];
 
     /// <summary>
     /// ProtectorPurpose
     /// </summary>
-    public string ProtectorPurpose { get; set; } = "ParamsProtection";
+    public string? ProtectorPurpose { get; set; } = "ParamsProtection";
 
     /// <summary>
     /// ExpiresIn, minutes
@@ -45,7 +45,8 @@ public sealed class ParamsProtectionOptions
         get => _protectParams;
         set
         {
-            if (value != null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (value is not null)
             {
                 _protectParams = value;
             }
@@ -60,7 +61,7 @@ public sealed class ParamsProtectionOptions
     /// <summary>
     /// the parameter whether should be protected condition
     /// </summary>
-    public Func<string, bool> ParamValueNeedProtectFunc { get; set; } = str => long.TryParse(str, out _);
+    public Func<string?, bool> ParamValueNeedProtectFunc { get; set; } = str => long.TryParse(str, out _);
 
     /// <summary>
     /// whether the response should be protected

@@ -15,7 +15,7 @@ namespace WeihanLi.Web.DataProtection.ParamsProtection;
 
 public sealed class ParamsProtectionResourceFilter : IResourceFilter
 {
-    private static readonly Lazy<XmlDataSerializer> XmlDataSerializer = new Lazy<XmlDataSerializer>(() => new XmlDataSerializer());
+    private static readonly Lazy<XmlDataSerializer> XmlDataSerializer = new(() => new XmlDataSerializer());
     private readonly IDataProtector _protector;
     private readonly ParamsProtectionOptions _option;
 
@@ -35,7 +35,7 @@ public sealed class ParamsProtectionResourceFilter : IResourceFilter
 
     public void OnResourceExecuting(ResourceExecutingContext context)
     {
-        if (_option.Enabled && _option.ProtectParams.Length > 0)
+        if (_option is { Enabled: true, ProtectParams.Length: > 0 })
         {
             var request = context.HttpContext.Request;
 
@@ -50,7 +50,7 @@ public sealed class ParamsProtectionResourceFilter : IResourceFilter
                         var values = new List<string>(queryDic[param].Count);
                         for (var i = 0; i < queryDic[param].Count; i++)
                         {
-                            if (_protector.TryGetUnprotectedValue(_option, queryDic[param][i], out var val))
+                            if (_protector.TryGetUnprotectedValue(_option, queryDic[param][i]!, out var val))
                             {
                                 values.Add(val);
                             }
@@ -133,9 +133,9 @@ public sealed class ParamsProtectionResourceFilter : IResourceFilter
                 } // xml body
 
                 // form data
-                if (request.HasFormContentType && request.Form.Count > 0)
+                if (request is { HasFormContentType: true, Form.Count: > 0 })
                 {
-                    var formDic = request.Form.ToDictionary(_ => _.Key, _ => _.Value);
+                    var formDic = request.Form.ToDictionary(p => p.Key, p => p.Value);
                     foreach (var param in _option.ProtectParams)
                     {
                         if (formDic.TryGetValue(param, out var values))

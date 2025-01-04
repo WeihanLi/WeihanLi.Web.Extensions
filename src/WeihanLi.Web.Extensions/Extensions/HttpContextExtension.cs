@@ -16,12 +16,9 @@ public static class HttpContextExtension
     /// <param name="realIPHeader">realIPHeader, default `X-Forwarded-For`</param>
     /// <returns>user ip</returns>
     // ReSharper disable InconsistentNaming
-    public static string GetUserIP(this HttpContext httpContext, string realIPHeader = "X-Forwarded-For")
+    public static string? GetUserIP(this HttpContext httpContext, string realIPHeader = "X-Forwarded-For")
     {
-        if (httpContext is null)
-        {
-            return null;
-        }
+        ArgumentNullException.ThrowIfNull(httpContext);
 
         return httpContext.Request.Headers.TryGetValue(realIPHeader, out var ip)
             ? ip.ToString()
@@ -33,7 +30,7 @@ public static class HttpContextExtension
     /// </summary>
     /// <param name="principal">principal</param>
     /// <returns></returns>
-    public static string GetUserId(this ClaimsPrincipal principal)
+    public static string? GetUserId(this ClaimsPrincipal principal)
     {
         var userId = GetUserId(principal, ClaimTypes.NameIdentifier);
         if (!string.IsNullOrEmpty(userId))
@@ -54,11 +51,11 @@ public static class HttpContextExtension
     /// <typeparam name="T">userId type</typeparam>
     /// <param name="principal">principal</param>
     /// <returns></returns>
-    public static T GetUserId<T>(this ClaimsPrincipal principal) => GetUserId(principal).ToOrDefault<T>();
+    public static T GetUserId<T>(this ClaimsPrincipal principal) => GetUserId(principal).ToOrDefault<T>()!;
 
     public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
-        => GetUserId(principal, claimType).ToOrDefault<T>();
+        => GetUserId(principal, claimType).ToOrDefault<T>()!;
 
-    public static string GetUserId(this ClaimsPrincipal principal, string claimType)
+    public static string? GetUserId(this ClaimsPrincipal principal, string claimType)
         => principal.FindFirst(claimType)?.Value;
 }

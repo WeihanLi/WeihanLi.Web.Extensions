@@ -10,7 +10,8 @@ namespace WeihanLi.Web.Authentication.ApiKeyAuthentication;
 
 public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
 {
-    public ApiKeyAuthenticationHandler(IOptionsMonitor<ApiKeyAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+    public ApiKeyAuthenticationHandler(IOptionsMonitor<ApiKeyAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
+        : base(options, logger, encoder)
     {
     }
 
@@ -28,20 +29,18 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
             return AuthenticateResult.NoResult();
 
         var validator = Options.ApiKeyValidator ?? ((_, keyValue) => Task.FromResult(string.Equals(Options.ApiKey, keyValue)));
-        if (await validator.Invoke(Context, keyValues.ToString()))
+        if (!await validator.Invoke(Context, keyValues.ToString()))
+            return AuthenticateResult.Fail("Invalid ApiKey");
+
+        var claims = new[]
         {
-            var claims = new[]
-            {
-                new Claim("issuer", ClaimsIssuer),
-            }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? Array.Empty<Claim>());
-            return AuthenticateResult.Success(
-                new AuthenticationTicket(
-                    new ClaimsPrincipal(new[]
-                    {
-                        new ClaimsIdentity(claims, Scheme.Name)
-                    }), Scheme.Name)
-            );
-        }
-        return AuthenticateResult.Fail("Invalid ApiKey");
+            new Claim("issuer", ClaimsIssuer),
+        }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? []);
+        return AuthenticateResult.Success(
+            new AuthenticationTicket(
+                new ClaimsPrincipal([
+                    new ClaimsIdentity(claims, Scheme.Name)
+                ]), Scheme.Name)
+        );
     }
 }

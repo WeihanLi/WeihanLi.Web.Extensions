@@ -6,21 +6,18 @@ using WeihanLi.Common;
 
 namespace WeihanLi.Web.AccessControlHelper;
 
-internal sealed class AccessControlAuthorizationHandler : AuthorizationHandler<AccessControlRequirement>
+internal sealed class AccessControlAuthorizationHandler(
+    IHttpContextAccessor contextAccessor,
+    IOptions<AccessControlOptions> options)
+    : AuthorizationHandler<AccessControlRequirement>
 {
-    private readonly AccessControlOptions _options;
-    private readonly IHttpContextAccessor _contextAccessor;
-
-    public AccessControlAuthorizationHandler(IHttpContextAccessor contextAccessor, IOptions<AccessControlOptions> options)
-    {
-        _contextAccessor = contextAccessor;
-        _options = options.Value;
-    }
+    private readonly AccessControlOptions _options = options.Value;
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AccessControlRequirement requirement)
     {
-        var httpContext = _contextAccessor.HttpContext;
-        var accessKey = _options.AccessKeyResolver?.Invoke(httpContext);
+        var httpContext = contextAccessor.HttpContext;
+        ArgumentNullException.ThrowIfNull(httpContext);
+        var accessKey = _options.AccessKeyResolver.Invoke(httpContext);
         var resourceAccessStrategy = Guard.NotNull(httpContext).RequestServices.GetRequiredService<IResourceAccessStrategy>();
         if (resourceAccessStrategy.IsCanAccess(accessKey))
         {

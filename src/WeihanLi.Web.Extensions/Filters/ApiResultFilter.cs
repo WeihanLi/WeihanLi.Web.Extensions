@@ -10,9 +10,7 @@ namespace WeihanLi.Web.Filters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public sealed class ApiResultFilter : Attribute
     , IResultFilter, IExceptionFilter
-#if NET7_0
     , IEndpointFilter
-#endif
 
 {
     public void OnResultExecuting(ResultExecutingContext context)
@@ -34,12 +32,11 @@ public sealed class ApiResultFilter : Attribute
 
     public void OnException(ExceptionContext context)
     {
-        var result = Result.Fail(context.Exception.ToString(), ResultStatus.ProcessFail);
+        var result = Result.Fail(context.Exception.ToString(), ResultStatus.InternalError);
         context.Result = new ObjectResult(result) { StatusCode = 500 };
     }
-#if NET7_0
 
-    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         try
         {
@@ -53,13 +50,14 @@ public sealed class ApiResultFilter : Attribute
             {
                 return new Result<object>()
                 {
-                    Data = objectResult.Value, Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
+                    Data = objectResult.Value,
+                    Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
                 };
             }
 
             if (result is IValueHttpResult { Value: not Result } valueHttpResult)
             {
-                var status = valueHttpResult is IStatusCodeHttpResult statusCodeHttpResult
+                var status = result is IStatusCodeHttpResult statusCodeHttpResult
                     ? HttpStatusCode2ResultStatus(statusCodeHttpResult.StatusCode)
                     : HttpStatusCode2ResultStatus(200);
                 return new Result<object>() { Data = valueHttpResult.Value, Status = status };
@@ -67,15 +65,15 @@ public sealed class ApiResultFilter : Attribute
 
             return new Result<object>()
             {
-                Data = result, Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
+                Data = result,
+                Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)
             };
         }
         catch (Exception ex)
         {
-            return Result.Fail(ex.ToString(), ResultStatus.ProcessFail);
+            return Result.Fail(ex.ToString(), ResultStatus.InternalError);
         }
     }
-#endif
 
     private static ResultStatus HttpStatusCode2ResultStatus(int? statusCode)
     {

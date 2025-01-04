@@ -51,7 +51,7 @@ public sealed class QueryAuthenticationOptions : AuthenticationSchemeOptions
     /// key: QueryKey
     /// value: claimType
     /// </summary>
-    public Dictionary<string, string> AdditionalQueryToClaims { get; } = new Dictionary<string, string>();
+    public Dictionary<string, string> AdditionalQueryToClaims { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     public string Delimiter
     {

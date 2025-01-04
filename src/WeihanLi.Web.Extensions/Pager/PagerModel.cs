@@ -48,7 +48,7 @@ internal sealed class PagerModel : IPagerModel
         }
     }
 
-    public Func<int, string> OnPageChange { get; set; }
+    public Func<int, string>? OnPageChange { get; set; }
 
     private int _groupSize = 12;
 

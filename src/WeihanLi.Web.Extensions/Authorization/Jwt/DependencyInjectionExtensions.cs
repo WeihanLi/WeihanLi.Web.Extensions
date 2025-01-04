@@ -3,32 +3,34 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using WeihanLi.Common;
 using WeihanLi.Web.Authorization.Token;
 
 namespace WeihanLi.Web.Authorization.Jwt;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddJwtTokenService(this IServiceCollection serviceCollection, Action<JwtTokenOptions> optionsAction)
+    public static IServiceCollection AddJwtService(this IServiceCollection serviceCollection, Action<JsonWebTokenOptions> optionsAction)
     {
-        Guard.NotNull(serviceCollection);
-        Guard.NotNull(optionsAction);
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(optionsAction);
+
         serviceCollection.Configure(optionsAction);
-        serviceCollection.TryAddSingleton<ITokenService, JwtTokenService>();
-        serviceCollection.ConfigureOptions<JwtTokenOptionsSetup>();
+        serviceCollection.TryAddSingleton<ITokenService, JsonWebTokenService>();
+        serviceCollection.ConfigureOptions<JsonWebTokenOptionsSetup>();
         return serviceCollection;
     }
 
-    public static IServiceCollection AddJwtTokenServiceWithJwtBearerAuth(this IServiceCollection serviceCollection, Action<JwtTokenOptions> optionsAction, Action<JwtBearerOptions> jwtBearerOptionsSetup = null)
+    public static IServiceCollection AddJwtServiceWithJwtBearerAuth(this IServiceCollection serviceCollection, Action<JsonWebTokenOptions> optionsAction, Action<JwtBearerOptions>? jwtBearerOptionsSetup = null)
     {
-        Guard.NotNull(serviceCollection);
-        Guard.NotNull(optionsAction);
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(optionsAction);
+
         if (jwtBearerOptionsSetup is not null)
         {
             serviceCollection.Configure(jwtBearerOptionsSetup);
         }
+
         serviceCollection.ConfigureOptions<JwtBearerOptionsPostSetup>();
-        return serviceCollection.AddJwtTokenService(optionsAction);
+        return serviceCollection.AddJwtService(optionsAction);
     }
 }

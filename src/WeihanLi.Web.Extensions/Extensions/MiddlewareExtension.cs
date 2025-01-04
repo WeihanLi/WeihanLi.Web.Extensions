@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using WeihanLi.Web.Middleware;
+
 namespace WeihanLi.Web.Extensions;
 
 public static class MiddlewareExtension
@@ -12,7 +14,7 @@ public static class MiddlewareExtension
     /// <returns></returns>
     public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder applicationBuilder)
     {
-        applicationBuilder.UseMiddleware<Middleware.CustomExceptionHandlerMiddleware>();
+        applicationBuilder.UseMiddleware<CustomExceptionHandlerMiddleware>();
         return applicationBuilder;
     }
 
@@ -29,8 +31,6 @@ public static class MiddlewareExtension
         return app;
     }
 
-#if NET6_0_OR_GREATER
-
     /// <summary>
     /// Use middleware if feature is enabled
     /// </summary>
@@ -44,8 +44,6 @@ public static class MiddlewareExtension
         return app;
     }
 
-#endif
-
     /// <summary>
     /// Use middleware if feature is enabled
     /// </summary>
@@ -55,6 +53,16 @@ public static class MiddlewareExtension
         if (configuration.IsFeatureEnabled(featureFlagName, defaultValue))
         {
             app.Use(middleware);
+        }
+        return app;
+    }
+
+    public static IApplicationBuilder UseIfFeatureEnabled<TMiddleware>(this IApplicationBuilder app, string featureFlagName, bool defaultValue = false)
+    {
+        var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
+        if (configuration.IsFeatureEnabled(featureFlagName, defaultValue))
+        {
+            app.UseMiddleware<TMiddleware>();
         }
         return app;
     }
@@ -70,5 +78,16 @@ public static class MiddlewareExtension
     {
         return app.UseWhen(context => context.RequestServices.GetRequiredService<IConfiguration>()
             .IsFeatureEnabled(featureFlagName, defaultValue), configure);
+    }
+
+    /// <summary>
+    /// Use ConfigInspector to inspect config when necessary
+    /// </summary>
+    internal static IApplicationBuilder UseConfigInspector(this IApplicationBuilder app,
+        Action<ConfigInspectorOptions>? optionsConfigure = null)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+
+        return app.UseMiddleware<ConfigInspectorMiddleware>();
     }
 }
