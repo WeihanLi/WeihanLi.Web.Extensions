@@ -17,7 +17,7 @@ public sealed class DelegateAuthenticationHandler(
     {
         var authenticated = await Options.Validator.Invoke(Context);
         if (!authenticated)
-            return AuthenticateResult.Fail($"Delegate authentication({Scheme}) failed.");
+            return AuthenticateResult.Fail($"Delegate authentication({Scheme.DisplayName ?? Scheme.Name}) failed.");
         
         List<Claim> claims = 
         [
