@@ -138,7 +138,7 @@ public static class AuthenticationBuilderExtension
     }
 
     #endregion AddQuery
-    
+
     #region AddDelegate
 
     public static AuthenticationBuilder AddDelegate(this AuthenticationBuilder builder,

@@ -18,21 +18,21 @@ public sealed class DelegateAuthenticationHandler(
         var authenticated = await Options.Validator.Invoke(Context);
         if (!authenticated)
             return AuthenticateResult.Fail($"Delegate authentication({Scheme.DisplayName ?? Scheme.Name}) failed.");
-        
-        List<Claim> claims = 
+
+        List<Claim> claims =
         [
             new("issuer", ClaimsIssuer)
         ];
-        
+
         if (Options.ClaimsGenerator != null)
         {
             var generatedClaims = await Options.ClaimsGenerator.Invoke(Context);
             if (generatedClaims is { Count: > 0 })
             {
-                claims = [..generatedClaims, ..claims];
+                claims = [.. generatedClaims, .. claims];
             }
         }
-        
+
         return AuthenticateResult.Success(
             new AuthenticationTicket(
                 new ClaimsPrincipal([

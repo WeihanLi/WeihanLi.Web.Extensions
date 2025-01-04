@@ -17,13 +17,13 @@ internal sealed class PagedListModel<T> : IPagedListModel<T>
 
     public int Count => Data.Count;
 
-    #nullable disable
+#nullable disable
     public PagedListModel(IEnumerable<T> data, IPagerModel pager)
     {
         Data = data?.ToArray() ?? [];
         Pager = pager;
     }
-    #nullable restore
+#nullable restore
 
     public IEnumerator<T> GetEnumerator()
     {
