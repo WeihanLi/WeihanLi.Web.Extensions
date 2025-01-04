@@ -59,7 +59,7 @@ public sealed class ParamsProtectionOptions
     public bool ParamValueProtectFuncEnabled { get; set; }
 
     /// <summary>
-    /// the parameter whether should be protected condition
+    /// whether the parameter should be protected
     /// </summary>
     public Func<string?, bool> ParamValueNeedProtectFunc { get; set; } = str => long.TryParse(str, out _);
 

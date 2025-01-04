@@ -9,6 +9,6 @@ public class HttpContextCancellationTokenProvider(IHttpContextAccessor httpConte
 {
     public virtual CancellationToken GetCancellationToken()
     {
-        return httpContextAccessor.HttpContext?.RequestAborted ?? default;
+        return httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
     }
 }
