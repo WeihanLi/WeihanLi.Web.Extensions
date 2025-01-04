@@ -8,7 +8,7 @@
     <PackageVersion Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="1.2.36" />
-    <PackageVersion Include="WeihanLi.Common" Version="1.0.73" />
+    <PackageVersion Include="WeihanLi.Common" Version="1.0.74-preview-20250104-034503" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
