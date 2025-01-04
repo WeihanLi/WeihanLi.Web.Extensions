@@ -34,7 +34,7 @@ public static class ResultModelExtensions
             _ => new OkObjectResult(result)
         };
     }
-    
+
     public static IActionResult GetRestResult(this ResultStatus status)
     {
         return status switch

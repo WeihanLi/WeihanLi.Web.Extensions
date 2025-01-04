@@ -6,7 +6,7 @@ public sealed class BasicAuthenticationOptions : AuthenticationSchemeOptions
 {
     public string? UserName { get; set; }
     public string? Password { get; set; }
-    
+
     public Func<HttpContext, string, string, Task<bool>> UserCredentialValidator { get; set; }
         = (context, user, pass) =>
         {
