@@ -3,6 +3,7 @@
 
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using WeihanLi.Common.Aspect;
 using WeihanLi.Common.Models;
@@ -18,7 +19,7 @@ using WeihanLi.Web.Formatters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSchema)
+builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationScheme)
     .AddJwtBearer()
     .AddBasic(options =>
     {
@@ -38,6 +39,19 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
         options.ApiKey = "123456";
         options.ApiKeyName = "X-ApiKey";
         options.KeyLocation = KeyLocation.HeaderOrQuery;
+    })
+    .AddDelegate(options =>
+    {
+        options.Validator = c => (c.Request.Headers.TryGetValue("x-delegate-key", out var values) && values.ToString().Equals("test"))
+            .WrapTask();
+        options.ClaimsGenerator = c =>
+        {
+            Claim[] claims =
+            [
+                new (ClaimTypes.Name, "test")
+            ];
+            return Task.FromResult<IReadOnlyCollection<Claim>>(claims);
+        };
     })
     ;
 builder.Services.AddJwtServiceWithJwtBearerAuth(options =>

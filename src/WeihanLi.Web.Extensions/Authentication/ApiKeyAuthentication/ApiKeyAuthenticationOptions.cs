@@ -11,14 +11,11 @@ public sealed class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
     public string ApiKeyName { get; set; } = "X-ApiKey";
     public KeyLocation KeyLocation { get; set; }
     public Func<HttpContext, string, Task<bool>>? ApiKeyValidator { get; set; }
-    public Func<HttpContext, ApiKeyAuthenticationOptions, Claim[]>? ClaimsGenerator { get; set; }
+    public Func<HttpContext, ApiKeyAuthenticationOptions, Task<IReadOnlyCollection<Claim>>>? ClaimsGenerator { get; set; }
 
     public override void Validate()
     {
-        if (string.IsNullOrWhiteSpace(ApiKey))
-        {
-            throw new ArgumentException("Invalid ApiKey configured");
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(ApiKey);
     }
 }
 
