@@ -35,13 +35,27 @@ public static class ResultModelExtensions
         };
     }
 
+    public static IActionResult GetRestResult(this ResultStatus status)
+    {
+        return status switch
+        {
+            ResultStatus.BadRequest => new BadRequestResult(),
+            ResultStatus.NotFound => new NotFoundResult(),
+            ResultStatus.MethodNotAllowed => new StatusCodeResult((int)HttpStatusCode.MethodNotAllowed),
+            ResultStatus.Unauthorized => new StatusCodeResult((int)HttpStatusCode.Unauthorized),
+            ResultStatus.Forbidden => new StatusCodeResult((int)HttpStatusCode.Forbidden),
+            ResultStatus.Success => new OkResult(),
+            _ => new StatusCodeResult((int)status)
+        };
+    }
+
     public static IActionResult GetRestResult(this Result result)
     {
-        return result.GetRestResult(result.Status);
+        return GetRestResult(result, result.Status);
     }
 
     public static IActionResult GetRestResult<T>(this Result<T> result)
     {
-        return result.GetRestResult(result.Status);
+        return GetRestResult(result, result.Status);
     }
 }

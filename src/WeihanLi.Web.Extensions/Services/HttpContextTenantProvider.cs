@@ -58,17 +58,24 @@ public sealed class HttpContextTenantProvider : ITenantProvider
         _httpContextAccessor = httpContextAccessor;
         _options = options;
     }
-#nullable disable
-    public string GetTenantId()
+
+    public string? GetTenantId()
     {
-        ArgumentNullException.ThrowIfNull(_httpContextAccessor.HttpContext);
+        if (_httpContextAccessor.HttpContext is null)
+        {
+            return null;
+        }
+
         return _options.Value.TenantIdFactory.Invoke(_httpContextAccessor.HttpContext);
     }
 
-    public TenantInfo GetTenantInfo()
+    public TenantInfo? GetTenantInfo()
     {
-        ArgumentNullException.ThrowIfNull(_httpContextAccessor.HttpContext);
+        if (_httpContextAccessor.HttpContext is null)
+        {
+            return null;
+        }
+
         return _options.Value.TenantInfoFactory.Invoke(_httpContextAccessor.HttpContext);
     }
-#nullable restore
 }

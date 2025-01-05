@@ -34,8 +34,18 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAu
 
         var claims = new[]
         {
-            new Claim("issuer", ClaimsIssuer),
-        }.Union(Options.ClaimsGenerator?.Invoke(Context, Options) ?? []);
+            new Claim("issuer", ClaimsIssuer)
+        };
+
+        if (Options.ClaimsGenerator != null)
+        {
+            var generatedClaims = await Options.ClaimsGenerator.Invoke(Context, Options);
+            if (generatedClaims is { Count: > 0 })
+            {
+                claims = claims.Union(generatedClaims).ToArray();
+            }
+        }
+
         return AuthenticateResult.Success(
             new AuthenticationTicket(
                 new ClaimsPrincipal([

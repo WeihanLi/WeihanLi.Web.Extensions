@@ -11,13 +11,13 @@ public sealed class ConfigInspectorOptions
 
 public sealed class ConfigModel
 {
-    public string Provider { get; set; } = default!;
+    public required string Provider { get; set; }
     public ConfigItemModel[] Items { get; set; } = [];
 }
 
 public sealed class ConfigItemModel
 {
-    public string Key { get; set; } = default!;
+    public required string Key { get; set; }
     public string? Value { get; set; }
     public bool Active { get; set; }
 }

@@ -4,5 +4,5 @@
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
 public static class BasicAuthenticationDefaults
 {
-    public const string AuthenticationSchema = "Basic";
+    public const string AuthenticationScheme = "Basic";
 }

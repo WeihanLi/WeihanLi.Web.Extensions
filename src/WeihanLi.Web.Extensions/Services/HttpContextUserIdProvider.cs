@@ -32,13 +32,16 @@ public sealed class HttpContextUserIdProvider : IUserIdProvider
         )
     {
         _httpContextAccessor = httpContextAccessor;
-
         _userIdFactory = options.Value.UserIdFactory;
     }
 
     public string? GetUserId()
     {
-        ArgumentNullException.ThrowIfNull(_httpContextAccessor.HttpContext);
+        if (_httpContextAccessor.HttpContext is null)
+        {
+            return null;
+        }
+
         return _userIdFactory.Invoke(_httpContextAccessor.HttpContext);
     }
 }
