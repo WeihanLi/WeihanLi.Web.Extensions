@@ -16,7 +16,7 @@ public sealed class DelegateAuthenticationHandler(
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         ArgumentNullException.ThrowIfNull(Options.Validator);
-        
+
         var authenticated = await Options.Validator.Invoke(Context);
         if (!authenticated)
             return AuthenticateResult.Fail($"Delegate authentication({Scheme.DisplayName ?? Scheme.Name}) failed.");
