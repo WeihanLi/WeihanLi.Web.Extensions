@@ -18,7 +18,8 @@ ASP.NET Core Web extensions
 - Authentication
   - Query
   - Header
-  - Api-Key
+  - ApiKey
   - Basic
+  - Delegate
 - Feature Flag
 - `HttpContext` extensions
