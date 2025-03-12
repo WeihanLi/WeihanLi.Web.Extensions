@@ -7,8 +7,8 @@
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu1901-nu1904 -->
     <WarningsAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
-    <AspNetPackageVersion Condition="'$(TargetFramework)'=='net8.0'">8.0.13</AspNetPackageVersion>
-    <AspNetPackageVersion Condition="'$(TargetFramework)'=='net9.0'">9.0.2</AspNetPackageVersion>
+    <AspNetPackageVersion Condition="'$(TargetFramework)'=='net8.0'">8.0.14</AspNetPackageVersion>
+    <AspNetPackageVersion Condition="'$(TargetFramework)'=='net9.0'">9.0.3</AspNetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNetPackageVersion)" />
@@ -17,7 +17,7 @@
     <PackageVersion Include="WeihanLi.Common" Version="1.0.75" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
