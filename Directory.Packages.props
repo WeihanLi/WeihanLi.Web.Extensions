@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNetPackageVersion)" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
     <PackageVersion Include="Scalar.AspNetCore" Version="1.2.76" />
     <PackageVersion Include="WeihanLi.Common" Version="1.0.75" />
   </ItemGroup>
