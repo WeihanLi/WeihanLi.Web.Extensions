@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/sample/">
+    <Project Path="samples/WeihanLi.Web.Extensions.Samples/WeihanLi.Web.Extensions.Samples.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/WeihanLi.Web.Extensions/WeihanLi.Web.Extensions.csproj" />
+  </Folder>
+</Solution>
