@@ -32,7 +32,6 @@ public sealed class HttpContextUserIdProvider : IUserIdProvider
         )
     {
         _httpContextAccessor = httpContextAccessor;
-
         _userIdFactory = options.Value.UserIdFactory;
     }
 

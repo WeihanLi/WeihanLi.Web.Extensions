@@ -44,17 +44,10 @@ public class ConditionalFilter : Attribute, IAsyncResourceFilter, IEndpointFilte
     }
 }
 
-internal sealed class HttpResultActionResultAdapter : IActionResult
+internal sealed class HttpResultActionResultAdapter(IResult result) : IActionResult
 {
-    private readonly IResult _result;
-
-    public HttpResultActionResultAdapter(IResult result)
-    {
-        _result = result;
-    }
-
     public Task ExecuteResultAsync(ActionContext context)
     {
-        return _result.ExecuteAsync(context.HttpContext);
+        return result.ExecuteAsync(context.HttpContext);
     }
 }
