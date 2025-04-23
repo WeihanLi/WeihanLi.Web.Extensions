@@ -4,7 +4,7 @@ var stable = CommandLineParser.BooleanVal("stable", args);
 var noPush = CommandLineParser.BooleanVal("noPush", args);
 var branchName = EnvHelper.Val("BUILD_SOURCEBRANCHNAME", "local");
 
-var solutionPath = "./WeihanLi.Web.Extensions.sln";
+var solutionPath = "./WeihanLi.Web.Extensions.slnx";
 string[] srcProjects = [ 
     "./src/WeihanLi.Web.Extensions/WeihanLi.Web.Extensions.csproj"
 ];
