@@ -87,7 +87,7 @@ builder.Services.AddHttpContextUserIdProvider(options =>
     options.UserIdFactory = static context => $"{context.GetUserIP()}";
 });
 
-// builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 builder.Host.UseFluentAspectsServiceProviderFactory(options =>
