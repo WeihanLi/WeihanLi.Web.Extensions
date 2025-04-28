@@ -204,7 +204,7 @@ app.MapControllers();
 app.MapGet("/mcp-tools", (EndpointDataSource endpointDataSource) =>
 {
     var tools = endpointDataSource.Endpoints.Where(x => x.Metadata.Any(m => m is McpToolEndpointMetadata))
-        .Select(x=>x.Metadata.OfType<McpToolEndpointMetadata>().First())
+        .Select(x => x.Metadata.OfType<McpToolEndpointMetadata>().First())
         .ToArray();
     return tools;
 });
