@@ -16,7 +16,7 @@
     <PackageVersion Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet9PackageVersion)" />
     <PackageVersion Condition="'$(TargetFramework)'=='net10.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet10PackageVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNet10PackageVersion)" />
-    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.1.0-preview.10" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.1.0-preview.11" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.1.17" />
     <PackageVersion Include="WeihanLi.Common" Version="1.0.77" />
   </ItemGroup>

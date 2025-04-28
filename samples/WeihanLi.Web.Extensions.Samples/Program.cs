@@ -101,6 +101,11 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
         )
     );
 
+builder.Services.AddMcpServer()
+    .WithToolsFromAssembly()
+    .WithHttpTransport()
+    ;
+
 var app = builder.Build();
 
 app.MapRuntimeInfo().ShortCircuit();
@@ -185,12 +190,24 @@ app.UseAuthorization();
 // });
 
 app.MapConfigInspector()
+    .AsMcpTool(tool =>
+    {
+        tool.Description = "Get configurations";
+    })
     // .RequireAuthorization(x => x
     //     .AddAuthenticationSchemes("ApiKey")
     //     .RequireAuthenticatedUser()
     // )
     ;
 app.MapControllers();
+
+app.MapGet("/mcp-tools", (EndpointDataSource endpointDataSource) =>
+{
+    var tools = endpointDataSource.Endpoints.Where(x => x.Metadata.Any(m => m is McpToolEndpointMetadata))
+        .Select(x=>x.Metadata.OfType<McpToolEndpointMetadata>().First())
+        .ToArray();
+    return tools;
+});
 
 await app.RunAsync();
 
