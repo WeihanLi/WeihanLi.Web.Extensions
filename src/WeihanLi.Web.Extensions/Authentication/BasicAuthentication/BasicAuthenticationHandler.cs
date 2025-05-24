@@ -8,6 +8,7 @@ using WeihanLi.Extensions;
 using AuthenticateResult = Microsoft.AspNetCore.Authentication.AuthenticateResult;
 
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
+
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticationOptions>
 {
     public BasicAuthenticationHandler(IOptionsMonitor<BasicAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
