@@ -102,6 +102,7 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
     );
 
 builder.Services.AddMcpServer()
+    .WithEndpointTools()
     .WithToolsFromAssembly()
     .WithHttpTransport()
     ;
@@ -201,13 +202,18 @@ app.MapConfigInspector()
     ;
 app.MapControllers();
 
-app.MapGet("/mcp-tools", (EndpointDataSource endpointDataSource) =>
+app.MapGet("/endpoints", (EndpointDataSource endpointDataSource) =>
 {
     var tools = endpointDataSource.Endpoints.Where(x => x.Metadata.Any(m => m is McpToolEndpointMetadata))
-        .Select(x=>x.Metadata.OfType<McpToolEndpointMetadata>().First())
+        .Select(x => x.Metadata.OfType<McpToolEndpointMetadata>().First().Name)
         .ToArray();
-    return tools;
+    return new
+    {
+        endpoints = endpointDataSource.Endpoints.Select(x => x.DisplayName),
+        tools
+    };
 });
+app.MapMcp();
 
 await app.RunAsync();
 
