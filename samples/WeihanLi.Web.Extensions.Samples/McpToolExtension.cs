@@ -24,15 +24,15 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
     public void Configure(McpServerOptions options)
     {
         options.Capabilities ??= new();
-        options.Capabilities.Tools.ToolCollection ??= new ();
+        options.Capabilities.Tools.ToolCollection ??= new();
 
         foreach (var endpoint in endpointDataSource.Endpoints)
         {
             if (!endpoint.Metadata.Any(m => m is IMcpToolEndpointMetadata))
                 continue;
-            
+
             Debug.Assert(endpoint.RequestDelegate is not null);
-            
+
             var tool = McpServerTool.Create(endpoint.RequestDelegate.Method, typeof(HttpContext), new McpServerToolCreateOptions
             {
                 Services = services
@@ -47,11 +47,11 @@ public static class McpToolExtension
     public static IMcpServerBuilder WithEndpointTools(this IMcpServerBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        
+
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<McpServerOptions>, McpServerEndpointConfigureOptions>());
         return builder;
     }
-    
+
     public static IEndpointConventionBuilder AsMcpTool<TBuilder>(this TBuilder builder, Action<McpToolEndpointMetadata>? toolConfigure = null)
         where TBuilder : IEndpointConventionBuilder
     {
@@ -76,5 +76,5 @@ public static class McpToolExtension
 
 internal sealed class McpInvocation(IHttpContextAccessor contextAccessor)
 {
-    
+
 }
