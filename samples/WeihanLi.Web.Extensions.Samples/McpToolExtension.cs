@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
 using System.Diagnostics;
 
@@ -25,7 +24,6 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
     public void Configure(McpServerOptions options)
     {
         options.Capabilities ??= new();
-        options.Capabilities.Tools ??= new ToolsCapability();
         options.Capabilities.Tools.ToolCollection ??= new ();
 
         foreach (var endpoint in endpointDataSource.Endpoints)
