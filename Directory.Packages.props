@@ -7,17 +7,17 @@
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu1901-nu1904 -->
     <WarningsAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
-    <AspNet8PackageVersion>8.0.16</AspNet8PackageVersion>
-    <AspNet9PackageVersion>9.0.5</AspNet9PackageVersion>
-    <AspNet10PackageVersion>10.0.0-preview.4.25258.110</AspNet10PackageVersion>
+    <AspNet8PackageVersion>8.0.20</AspNet8PackageVersion>
+    <AspNet9PackageVersion>9.0.9</AspNet9PackageVersion>
+    <AspNet10PackageVersion>10.0.0-rc.1.25451.107</AspNet10PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet8PackageVersion)" />
     <PackageVersion Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet9PackageVersion)" />
     <PackageVersion Condition="'$(TargetFramework)'=='net10.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet10PackageVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNet10PackageVersion)" />
-    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.2.0-preview.2" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.4.3" />
-    <PackageVersion Include="WeihanLi.Common" Version="1.0.78" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.4" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.8.3" />
+    <PackageVersion Include="WeihanLi.Common" Version="1.0.82" />
   </ItemGroup>
 </Project>
