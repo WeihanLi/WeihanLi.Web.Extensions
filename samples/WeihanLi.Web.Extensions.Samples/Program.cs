@@ -86,6 +86,7 @@ builder.Services.AddHttpContextUserIdProvider(options =>
 {
     options.UserIdFactory = static context => $"{context.GetUserIP()}";
 });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
@@ -100,9 +101,20 @@ builder.Host.UseFluentAspectsServiceProviderFactory(options =>
         )
     );
 
+builder.Services.AddMcpServer()
+    .WithEndpointTools()
+    .WithToolsFromAssembly()
+    .WithHttpTransport()
+    ;
+
 var app = builder.Build();
 
-app.MapRuntimeInfo().ShortCircuit();
+app.MapRuntimeInfo().ShortCircuit().DisableHttpMetrics();
+
+var probes = app.MapProbes("/probes");
+probes.MapGet("/live", () => Results.Ok());
+probes.MapGet("/ready", () => Results.Ok());
+
 app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
@@ -184,12 +196,29 @@ app.UseAuthorization();
 // });
 
 app.MapConfigInspector()
+    .AsMcpTool(tool =>
+    {
+        tool.Description = "Get configurations";
+    })
     // .RequireAuthorization(x => x
     //     .AddAuthenticationSchemes("ApiKey")
     //     .RequireAuthenticatedUser()
     // )
     ;
 app.MapControllers();
+
+app.MapGet("/endpoints", (EndpointDataSource endpointDataSource) =>
+{
+    var tools = endpointDataSource.Endpoints.Where(x => x.Metadata.Any(m => m is McpToolEndpointMetadata))
+        .Select(x => x.Metadata.OfType<McpToolEndpointMetadata>().First().Name)
+        .ToArray();
+    return new
+    {
+        endpoints = endpointDataSource.Endpoints.Select(x => x.DisplayName),
+        tools
+    };
+});
+app.MapMcp();
 
 await app.RunAsync();
 

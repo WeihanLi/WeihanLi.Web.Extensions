@@ -8,7 +8,8 @@
     <RepositoryUrl>https://github.com/WeihanLi/WeihanLi.Web.Extensions</RepositoryUrl>    
     <Authors>WeihanLi</Authors>
     <Copyright>Copyright 2016-$([System.DateTime]::Now.Year) (c) WeihanLi</Copyright>
-    <NoWarn>$(NoWarn);NU5048;</NoWarn>
+    <NoWarn>$(NoWarn);NU5048;CS1591</NoWarn>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="Microsoft.AspNetCore.Authentication" />

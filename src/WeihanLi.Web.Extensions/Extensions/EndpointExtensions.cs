@@ -33,4 +33,19 @@ public static class EndpointExtensions
             await ConfigInspectorMiddleware.InvokeAsync(context, options);
         });
     }
+
+    public static RouteGroupBuilder MapProbes(this IEndpointRouteBuilder endpointRouteBuilder, string prefix)
+    {
+        ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
+
+        var routeGroupBuilder = endpointRouteBuilder.MapGroup(prefix);
+
+        routeGroupBuilder.ShortCircuit()
+#if NET9_0_OR_GREATER
+            .DisableHttpMetrics()
+#endif
+            ;
+
+        return routeGroupBuilder;
+    }
 }

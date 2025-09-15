@@ -18,6 +18,12 @@ steps:
   inputs:
     packageType: sdk
     version: 9.0.x
+
+- task: UseDotNet@2
+  displayName: 'Use .NET 10 sdk'
+  inputs:
+    packageType: sdk
+    version: 10.0.x
     includePreviewVersions: true
 
 - script: dotnet --info

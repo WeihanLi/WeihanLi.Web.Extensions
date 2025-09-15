@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace WeihanLi.Web.Authentication.BasicAuthentication;
+
 public sealed class BasicAuthenticationOptions : AuthenticationSchemeOptions
 {
     public string? UserName { get; set; }

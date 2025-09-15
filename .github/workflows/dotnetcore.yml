@@ -14,7 +14,8 @@ jobs:
         dotnet-version: |
           8.0.x
           9.0.x
+          10.0.x
     - name: dotnet info
       run: dotnet --info
     - name: build
-      run: dotnet build
+      run: bash ./build.sh
