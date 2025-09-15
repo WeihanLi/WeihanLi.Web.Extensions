@@ -39,13 +39,13 @@ public static class EndpointExtensions
         ArgumentNullException.ThrowIfNull(endpointRouteBuilder);
 
         var routeGroupBuilder = endpointRouteBuilder.MapGroup(prefix);
-        
+
         routeGroupBuilder.ShortCircuit()
-            #if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER
             .DisableHttpMetrics()
-            #endif
+#endif
             ;
-        
+
         return routeGroupBuilder;
     }
 }
