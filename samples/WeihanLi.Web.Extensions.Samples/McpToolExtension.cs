@@ -23,7 +23,10 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
 {
     public void Configure(McpServerOptions options)
     {
+        var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
+        
         options.Capabilities ??= new();
+        options.Capabilities.Tools ??= new();
         options.Capabilities.Tools.ToolCollection ??= new ();
 
         foreach (var endpoint in endpointDataSource.Endpoints)
@@ -33,12 +36,29 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
             
             Debug.Assert(endpoint.RequestDelegate is not null);
             
-            var tool = McpServerTool.Create(endpoint.RequestDelegate.Method, typeof(HttpContext), new McpServerToolCreateOptions
+            var invoker = new RequestInvoker(httpContextAccessor, endpoint.RequestDelegate);
+            
+            var tool = McpServerTool.Create(typeof(RequestInvoker).GetMethod(nameof(RequestInvoker.InvokeAsync))!, invoker, new McpServerToolCreateOptions
             {
                 Services = services
             });
             options.Capabilities.Tools.ToolCollection.Add(tool);
         }
+    }
+
+    private static Task InvokeEndpointAsync(HttpContext httpContext, RequestDelegate pipeline)
+    {
+        return pipeline.Invoke(httpContext);
+    }
+}
+
+file sealed class RequestInvoker(IHttpContextAccessor httpContextAccessor, RequestDelegate pipeline)
+{
+    public Task InvokeAsync()
+    {
+        var httpContext = httpContextAccessor.HttpContext;
+        ArgumentNullException.ThrowIfNull(httpContext);
+        return pipeline.Invoke(httpContext);
     }
 }
 
