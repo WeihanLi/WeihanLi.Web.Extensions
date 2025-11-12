@@ -25,9 +25,7 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
     {
         var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
 
-        options.Capabilities ??= new();
-        options.Capabilities.Tools ??= new();
-        options.Capabilities.Tools.ToolCollection ??= new();
+        options.ToolCollection ??= new();
 
         foreach (var endpoint in endpointDataSource.Endpoints)
         {
@@ -42,7 +40,7 @@ public class McpServerEndpointConfigureOptions(EndpointDataSource endpointDataSo
             {
                 Services = services
             });
-            options.Capabilities.Tools.ToolCollection.Add(tool);
+            options.ToolCollection.Add(tool);
         }
     }
 
@@ -94,7 +92,7 @@ public static class McpToolExtension
     }
 }
 
-internal sealed class McpInvocation(IHttpContextAccessor contextAccessor)
+internal sealed class McpInvocation
 {
 
 }

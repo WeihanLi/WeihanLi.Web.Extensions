@@ -10,6 +10,7 @@
     <Copyright>Copyright 2016-$([System.DateTime]::Now.Year) (c) WeihanLi</Copyright>
     <NoWarn>$(NoWarn);NU5048;CS1591</NoWarn>
     <TargetFramework>net10.0</TargetFramework>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="Microsoft.AspNetCore.Authentication" />
