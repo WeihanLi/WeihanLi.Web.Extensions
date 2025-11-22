@@ -1,8 +1,9 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
   <PropertyGroup>
+    <!-- <IsAotCompatible>true</IsAotCompatible> -->
     <NuGetAuditMode>direct</NuGetAuditMode>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>    
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>    
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.jpg</PackageIcon>
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
