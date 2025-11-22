@@ -109,7 +109,12 @@ builder.Services.AddMcpServer()
 
 var app = builder.Build();
 
-app.MapRuntimeInfo().ShortCircuit();
+app.MapRuntimeInfo().ShortCircuit().DisableHttpMetrics();
+
+var probes = app.MapProbes("/probes");
+probes.MapGet("/live", () => Results.Ok());
+probes.MapGet("/ready", () => Results.Ok());
+
 app.Map("/Hello", () => "Hello Minimal API!").AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
