@@ -218,7 +218,7 @@ app.MapGet("/endpoints", (EndpointDataSource endpointDataSource) =>
         tools
     };
 });
-app.MapMcp();
+app.MapMcp("/mcp");
 
 await app.RunAsync();
 
