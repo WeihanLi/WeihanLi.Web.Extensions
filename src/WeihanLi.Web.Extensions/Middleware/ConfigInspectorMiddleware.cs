@@ -46,7 +46,7 @@ internal sealed class ConfigInspectorMiddleware
 
         var configs = GetConfig(configurationRoot, inspectorOptionsValue, configKey);
         if (inspectorOptionsValue.ConfigRenderer is null)
-            return httpContext.Response.WriteAsJsonAsync(configs, CustomJsonContext.Default.ConfigItemModelArray);
+            return httpContext.Response.WriteAsJsonAsync(configs, CustomJsonContext.Default.ConfigModelArray);
 
         return inspectorOptionsValue.ConfigRenderer.Invoke(httpContext, configs);
     }
