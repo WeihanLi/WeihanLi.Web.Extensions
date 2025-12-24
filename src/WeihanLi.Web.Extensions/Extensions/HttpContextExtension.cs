@@ -44,7 +44,7 @@ public static class HttpContextExtension
         }
         return GetUserId(principal, JwtRegisteredClaimNames.Sub);
     }
-    
+
     /// <summary>
     /// Get claim value for specific claimType as userId
     /// </summary>
@@ -60,7 +60,7 @@ public static class HttpContextExtension
     /// <typeparam name="T">userId type</typeparam>
     /// <param name="principal">principal</param>
     /// <returns></returns>
-    public static T GetUserId<T>(this ClaimsPrincipal principal) where T: ISpanParsable<T> 
+    public static T GetUserId<T>(this ClaimsPrincipal principal) where T : ISpanParsable<T>
         => GetUserId(principal).ToOrDefault<T>()!;
 
     /// <summary>
@@ -70,6 +70,6 @@ public static class HttpContextExtension
     /// <param name="claimType">claimType to get claim value</param>
     /// <typeparam name="T">ClaimValue type</typeparam>
     /// <returns></returns>
-    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType) where T: ISpanParsable<T> 
+    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType) where T : ISpanParsable<T>
         => GetUserId(principal, claimType).ToOrDefault<T>()!;
 }
