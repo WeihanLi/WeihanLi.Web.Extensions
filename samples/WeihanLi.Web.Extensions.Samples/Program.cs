@@ -17,6 +17,8 @@ using WeihanLi.Web.Extensions.Samples;
 using WeihanLi.Web.Filters;
 using WeihanLi.Web.Formatters;
 
+// var slimBuilder = WebApplication.CreateSlimBuilder(args);
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationScheme)

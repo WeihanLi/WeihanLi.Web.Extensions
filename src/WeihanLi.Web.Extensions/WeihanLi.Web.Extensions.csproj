@@ -5,6 +5,7 @@
     <!-- Override TargetFramework in root build props -->
     <TargetFramework></TargetFramework>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+<!--    <IsAotCompatible>true</IsAotCompatible>-->
     <Description>WeihanLi.Web.Extensions, extensions for ASP.NET Core</Description>
     <PackageTags>weihanli;web;aspnet;aspnetcore;mvc;authentication;authorization;auth;token</PackageTags>
     <PackageSummary>WeihanLi.Web.Extensions, aspnetcore extensions</PackageSummary>

@@ -44,6 +44,15 @@ public static class HttpContextExtension
         }
         return GetUserId(principal, JwtRegisteredClaimNames.Sub);
     }
+    
+    /// <summary>
+    /// Get claim value for specific claimType as userId
+    /// </summary>
+    /// <param name="principal">principal</param>
+    /// <param name="claimType">claimType to get claim value</param>
+    /// <returns>the claim value for specific claimType</returns>
+    public static string? GetUserId(this ClaimsPrincipal principal, string claimType)
+        => principal.FindFirst(claimType)?.Value;
 
     /// <summary>
     /// GetUserId from claims, get from ClaimTypes.NameIdentifier/`nameid`/`sub` by default
@@ -51,11 +60,16 @@ public static class HttpContextExtension
     /// <typeparam name="T">userId type</typeparam>
     /// <param name="principal">principal</param>
     /// <returns></returns>
-    public static T GetUserId<T>(this ClaimsPrincipal principal) => GetUserId(principal).ToOrDefault<T>()!;
+    public static T GetUserId<T>(this ClaimsPrincipal principal) where T: ISpanParsable<T> 
+        => GetUserId(principal).ToOrDefault<T>()!;
 
-    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType)
+    /// <summary>
+    /// GetUserId from claims, get from specific claimType
+    /// </summary>
+    /// <param name="principal">principle</param>
+    /// <param name="claimType">claimType to get claim value</param>
+    /// <typeparam name="T">ClaimValue type</typeparam>
+    /// <returns></returns>
+    public static T GetUserId<T>(this ClaimsPrincipal principal, string claimType) where T: ISpanParsable<T> 
         => GetUserId(principal, claimType).ToOrDefault<T>()!;
-
-    public static string? GetUserId(this ClaimsPrincipal principal, string claimType)
-        => principal.FindFirst(claimType)?.Value;
 }
