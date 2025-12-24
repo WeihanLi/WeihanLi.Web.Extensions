@@ -9,15 +9,15 @@
     <WarningsAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
     <AspNet8PackageVersion>8.0.22</AspNet8PackageVersion>
     <AspNet9PackageVersion>9.0.11</AspNet9PackageVersion>
-    <AspNet10PackageVersion>10.0.0</AspNet10PackageVersion>
+    <AspNet10PackageVersion>10.0.1</AspNet10PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet8PackageVersion)" />
     <PackageVersion Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet9PackageVersion)" />
     <PackageVersion Condition="'$(TargetFramework)'=='net10.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet10PackageVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNet10PackageVersion)" />
-    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.3" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.10.3" />
-    <PackageVersion Include="WeihanLi.Common" Version="1.0.84" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.5.0-preview.1" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.11.10" />
+    <PackageVersion Include="WeihanLi.Common" Version="1.0.85-preview-20251221-091341" />
   </ItemGroup>
 </Project>
