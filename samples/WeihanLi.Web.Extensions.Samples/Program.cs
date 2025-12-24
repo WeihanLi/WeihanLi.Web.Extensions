@@ -17,9 +17,9 @@ using WeihanLi.Web.Extensions.Samples;
 using WeihanLi.Web.Filters;
 using WeihanLi.Web.Formatters;
 
-// var slimBuilder = WebApplication.CreateSlimBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationScheme)
     .AddJwtBearer()
@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(HeaderAuthenticationDefaults.AuthenticationSc
     {
         options.Validator = c => (c.Request.Headers.TryGetValue("x-delegate-key", out var values) && values.ToString().Equals("test"))
             .WrapTask();
-        options.ClaimsGenerator = c =>
+        options.ClaimsGenerator = _ =>
         {
             Claim[] claims =
             [
