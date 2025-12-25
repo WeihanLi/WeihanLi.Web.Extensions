@@ -66,7 +66,7 @@ public static class HttpContextExtension
     /// <summary>
     /// GetUserId from claims, get from specific claimType
     /// </summary>
-    /// <param name="principal">principle</param>
+    /// <param name="principal">principal</param>
     /// <param name="claimType">claimType to get claim value</param>
     /// <typeparam name="T">ClaimValue type</typeparam>
     /// <returns></returns>
