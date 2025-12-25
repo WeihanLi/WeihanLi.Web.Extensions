@@ -58,6 +58,14 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<BasicAuth
                     new Claim(ClaimTypes.Name, userName),
                     new Claim("issuer", ClaimsIssuer),
                 };
+                if (Options.ClaimsGenerator != null)
+                {
+                    var generatedClaims = await Options.ClaimsGenerator.Invoke(Context, Options);
+                    if (generatedClaims is { Count: > 0 })
+                    {
+                        claims = claims.Union(generatedClaims).ToArray();
+                    }
+                }
                 return AuthenticateResult.Success(new AuthenticationTicket(
                     new ClaimsPrincipal([
                         new ClaimsIdentity(claims, Scheme.Name)

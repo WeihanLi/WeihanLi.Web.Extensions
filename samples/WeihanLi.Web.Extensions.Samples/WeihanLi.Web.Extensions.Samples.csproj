@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <!-- <PublishAot>true</PublishAot>-->
     <!-- bug with xml doc generator https://github.com/dotnet/aspnetcore/issues/61035 -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>

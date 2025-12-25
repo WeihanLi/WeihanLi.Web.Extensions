@@ -1,0 +1,22 @@
+@BaseUrl=http://localhost:5000
+
+# @name probe-test
+GET {{BaseUrl}}/probes/live
+
+###
+# @name auth-test-unauthorized
+GET {{BaseUrl}}/basic-auth-test
+
+###
+# @name auth-test-success
+GET {{BaseUrl}}/basic-auth-test
+Authorization: Basic dGVzdDp0ZXN0
+
+###
+# @name runtime-info-test
+GET {{BaseUrl}}/runtime-info
+
+
+###
+# @name config-inspector-test
+GET {{BaseUrl}}/config-inspector

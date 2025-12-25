@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
+using WeihanLi.Web.Internals;
+
 namespace WeihanLi.Web.Middleware;
 
 public sealed class ConfigInspectorOptions
@@ -44,7 +46,7 @@ internal sealed class ConfigInspectorMiddleware
 
         var configs = GetConfig(configurationRoot, inspectorOptionsValue, configKey);
         if (inspectorOptionsValue.ConfigRenderer is null)
-            return httpContext.Response.WriteAsJsonAsync(configs);
+            return httpContext.Response.WriteAsJsonAsync(configs, CustomJsonContext.Default.ConfigModelArray);
 
         return inspectorOptionsValue.ConfigRenderer.Invoke(httpContext, configs);
     }
