@@ -7,6 +7,7 @@
 #:package Scalar.AspNetCore
 
 using Scalar.AspNetCore;
+using System.Security.Claims;
 using WeihanLi.Web.Authentication;
 using WeihanLi.Web.Authentication.BasicAuthentication;
 using WeihanLi.Web.Extensions;
@@ -18,6 +19,14 @@ builder.Services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationSch
     {
         options.UserName = "test";
         options.Password = "test";
+        options.ClaimsGenerator = (context, opts) =>
+        {
+            var claims = new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1")
+            };
+            return Task.FromResult<IReadOnlyCollection<Claim>>(claims);
+        };
     })
     .AddQuery(options => { options.UserIdQueryKey = "uid"; })
     .AddHeader(options =>
@@ -41,12 +50,13 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 app.MapRuntimeInfo().ShortCircuit().DisableHttpMetrics();
+app.MapConfigInspector();
 
 var probes = app.MapProbes("/probes");
 probes.MapGet("/live", () => Results.Ok());
 probes.MapGet("/ready", () => Results.Ok());
 
-app.Map("/basic-auth-test", () => "Hello").RequireAuthorization();
+app.Map("/basic-auth-test", (HttpContext httpContext) => $"Hello {httpContext.User.Identity?.Name}({httpContext.User.GetUserId<int>()})").RequireAuthorization();
 
 app.MapOpenApi();
 app.MapScalarApiReference();

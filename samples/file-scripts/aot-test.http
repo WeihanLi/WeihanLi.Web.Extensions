@@ -15,3 +15,8 @@ Authorization: Basic dGVzdDp0ZXN0
 ###
 # @name runtime-info-test
 GET {{BaseUrl}}/runtime-info
+
+
+###
+# @name config-inspector-test
+GET {{BaseUrl}}/config-inspector
