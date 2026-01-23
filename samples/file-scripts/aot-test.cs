@@ -56,7 +56,7 @@ var probes = app.MapProbes("/probes");
 probes.MapGet("/live", () => Results.Ok());
 probes.MapGet("/ready", () => Results.Ok());
 
-app.Map("/basic-auth-test", (HttpContext httpContext) => $"Hello {httpContext.User.Identity?.Name}({httpContext.User.GetUserId<int>()})").RequireAuthorization();
+app.MapGet("/basic-auth-test", (HttpContext httpContext) => $"Hello {httpContext.User.Identity?.Name}({httpContext.User.GetUserId<int>()})").RequireAuthorization();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
