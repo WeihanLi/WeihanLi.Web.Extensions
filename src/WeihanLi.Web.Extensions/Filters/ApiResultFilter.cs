@@ -7,7 +7,7 @@ using WeihanLi.Common.Models;
 
 namespace WeihanLi.Web.Filters;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class ApiResultFilter : Attribute
     , IResultFilter, IExceptionFilter
     , IEndpointFilter
@@ -17,7 +17,7 @@ public sealed class ApiResultFilter : Attribute
     {
         if (context.Result is ObjectResult { Value: not Result } objectResult)
         {
-            var result = new Result<object>()
+            var result = new Result<object>
             {
                 Data = objectResult.Value,
                 Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
@@ -48,7 +48,7 @@ public sealed class ApiResultFilter : Attribute
 
             if (result is ObjectResult { Value: not Result } objectResult)
             {
-                return new Result<object>()
+                return new Result<object>
                 {
                     Data = objectResult.Value,
                     Status = HttpStatusCode2ResultStatus(objectResult.StatusCode)
@@ -60,10 +60,10 @@ public sealed class ApiResultFilter : Attribute
                 var status = result is IStatusCodeHttpResult statusCodeHttpResult
                     ? HttpStatusCode2ResultStatus(statusCodeHttpResult.StatusCode)
                     : HttpStatusCode2ResultStatus(200);
-                return new Result<object>() { Data = valueHttpResult.Value, Status = status };
+                return new Result<object> { Data = valueHttpResult.Value, Status = status };
             }
 
-            return new Result<object>()
+            return new Result<object>
             {
                 Data = result,
                 Status = HttpStatusCode2ResultStatus(context.HttpContext.Response.StatusCode)

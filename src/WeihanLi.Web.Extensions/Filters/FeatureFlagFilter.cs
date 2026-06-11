@@ -11,7 +11,7 @@ public interface IFeatureFlagFilterResponseFactory
     public Task<IActionResult> GetResponse(ResourceExecutingContext resourceExecutingContext);
 }
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class FeatureFlagFilterAttribute(string featureFlagName) : Attribute, IAsyncResourceFilter
 {
     public bool DefaultValue { get; set; }
