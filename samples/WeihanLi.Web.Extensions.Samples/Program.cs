@@ -98,7 +98,7 @@ builder.Services.AddOpenApi(options =>
         {
             return false;
         }
-        
+
         return true;
     };
 });
@@ -254,9 +254,9 @@ public class CentralClusterOnlyFilter : IEndpointFilter
 
     public static bool Enabled { get; } = Environment.GetEnvironmentVariable("AppSettings__Cluster")
         ?.Contains("central") == true;
-    
+
     private CentralClusterOnlyFilter() { }
-    
+
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         if (Enabled)
