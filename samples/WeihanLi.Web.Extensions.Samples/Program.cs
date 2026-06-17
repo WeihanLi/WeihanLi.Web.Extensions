@@ -90,7 +90,18 @@ builder.Services.AddHttpContextUserIdProvider(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.ShouldInclude = d =>
+    {
+        if (d.ActionDescriptor.EndpointMetadata.Any(f => f is CentralClusterOnlyFilter))
+        {
+            return false;
+        }
+        
+        return true;
+    };
+});
 
 builder.Host.UseFluentAspectsServiceProviderFactory(options =>
     {
@@ -122,6 +133,10 @@ app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV4", () => Results.Ok(Result.Success(new { Name = "test" }))).AddEndpointFilter<ApiResultFilter>();
 app.Map("/BadRequest", BadRequest).AddEndpointFilter<ApiResultFilter>();
+app.MapGet("/mcp-echo/{id:int}", (int id, string? name) => Results.Ok(new { id, name }))
+    .WithName("mcp_echo")
+    .WithDescription("Echoes route and query parameters for MCP endpoint tool testing.")
+    .AsMcpTool();
 app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
 
 // conditional filter
@@ -153,6 +168,10 @@ app.UseHealthCheck();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
+
+app.MapGet("/central-endpoint", () => Results.Ok())
+    .AddEndpointFilter<CentralClusterOnlyFilter>()
+    ;
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -228,3 +247,22 @@ await app.RunAsync();
 static string Hello() => "Hello Minimal API!";
 
 static IResult BadRequest() => Results.BadRequest();
+
+public class CentralClusterOnlyFilter : IEndpointFilter
+{
+    public static readonly CentralClusterOnlyFilter Instance = new();
+
+    public static bool Enabled { get; } = Environment.GetEnvironmentVariable("AppSettings__Cluster")
+        ?.Contains("central") == true;
+    
+    private CentralClusterOnlyFilter() { }
+    
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        if (Enabled)
+        {
+            return Results.NotFound();
+        }
+        return await next(context);
+    }
+}
