@@ -1,4 +1,4 @@
-// Copyright (c) Weihan Li. All rights reserved.
+﻿// Copyright (c) Weihan Li. All rights reserved.
 // Licensed under the MIT license.
 
 using Microsoft.AspNetCore.Http.Metadata;
@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using System.IO.Pipelines;
+using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using System.Reflection;
-using System.IO.Pipelines;
-using System.Security.Claims;
 
 namespace WeihanLi.Web.Extensions.Samples;
 
