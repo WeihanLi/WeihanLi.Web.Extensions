@@ -259,8 +259,8 @@ public class CentralClusterOnlyFilter : IEndpointFilter
 
     public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        return Enabled 
-            ? next(context) 
+        return Enabled
+            ? next(context)
             : ValueTask.FromResult<object?>(Results.NotFound());
     }
 }
