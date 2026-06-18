@@ -94,12 +94,13 @@ builder.Services.AddOpenApi(options =>
 {
     options.ShouldInclude = d =>
     {
-        if (d.ActionDescriptor.EndpointMetadata.Any(f => f is CentralClusterOnlyFilter))
+        var filter = d.ActionDescriptor.EndpointMetadata.OfType<CentralClusterOnlyFilter>().FirstOrDefault();
+        if (filter is null)
         {
-            return false;
+            return true;
         }
         
-        return true;
+        return CentralClusterOnlyFilter.Enabled;
     };
 });
 
@@ -170,7 +171,7 @@ app.MapOpenApi();
 app.MapScalarApiReference();
 
 app.MapGet("/central-endpoint", () => Results.Ok())
-    .AddEndpointFilter<CentralClusterOnlyFilter>()
+    .CentralClusterOnly()
     ;
 
 app.UseAuthentication();
@@ -257,12 +258,25 @@ public class CentralClusterOnlyFilter : IEndpointFilter
     
     private CentralClusterOnlyFilter() { }
     
-    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        if (Enabled)
+        return Enabled 
+            ? next(context) 
+            : ValueTask.FromResult<object?>(Results.NotFound());
+    }
+}
+
+public static class EndpointExtension
+{
+    extension<TBuilder>(TBuilder endpoints) where TBuilder : IEndpointConventionBuilder
+    {
+        public TBuilder CentralClusterOnly()
         {
-            return Results.NotFound();
+            endpoints
+                .AddEndpointFilter(CentralClusterOnlyFilter.Instance)
+                .WithMetadata(CentralClusterOnlyFilter.Instance)
+                ;
+            return endpoints;
         }
-        return await next(context);
     }
 }
