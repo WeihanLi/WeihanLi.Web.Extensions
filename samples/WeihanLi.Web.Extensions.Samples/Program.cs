@@ -122,6 +122,7 @@ builder.Services.AddMcpServer()
 
 var app = builder.Build();
 
+app.UseHealthCheck();
 app.MapRuntimeInfo().ShortCircuit().DisableHttpMetrics();
 
 var probes = app.MapProbes("/probes");
@@ -164,14 +165,12 @@ envGroup.Map("/prod", () => "env-test")
 // attribute endpoint filter not supported for now, https://github.com/dotnet/aspnetcore/issues/43421
 // envGroup.Map("/stage", [EnvironmentFilter("Staging")]() => "env-test");
 
-app.UseHealthCheck();
-
-app.MapOpenApi();
-app.MapScalarApiReference();
-
 app.MapGet("/central-endpoint", () => Results.Ok())
     .CentralClusterOnly()
     ;
+
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.UseAuthentication();
 app.UseAuthorization();
