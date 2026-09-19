@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AspNet8PackageVersion>8.0.30</AspNet8PackageVersion>
-    <AspNet9PackageVersion>9.0.19</AspNet9PackageVersion>
-    <AspNet10PackageVersion>10.0.11</AspNet10PackageVersion>
+    <AspNet8PackageVersion>8.0.31</AspNet8PackageVersion>
+    <AspNet9PackageVersion>9.0.20</AspNet9PackageVersion>
+    <AspNet10PackageVersion>10.0.12</AspNet10PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspNet8PackageVersion)" />
@@ -12,6 +12,6 @@
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNet10PackageVersion)" />
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.17.1" />
-    <PackageVersion Include="WeihanLi.Common" Version="1.0.92" />
+    <PackageVersion Include="WeihanLi.Common" Version="1.0.93" />
   </ItemGroup>
 </Project>
