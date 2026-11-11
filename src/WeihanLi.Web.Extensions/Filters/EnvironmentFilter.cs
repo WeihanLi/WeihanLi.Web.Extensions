@@ -9,7 +9,7 @@ namespace WeihanLi.Web.Filters;
 /// <summary>
 /// Environment filter with allowed environment name
 /// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class EnvironmentFilter : ConditionalFilter
 {
     public EnvironmentFilter(params string[] environmentNames)
@@ -27,12 +27,12 @@ public sealed class EnvironmentFilter : ConditionalFilter
 /// <summary>
 /// Should work only for non-production
 /// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class NonProductionEnvironmentFilter : ConditionalFilter
 {
     public NonProductionEnvironmentFilter()
     {
-        ConditionFunc = c => c.RequestServices.GetRequiredService<IWebHostEnvironment>()
-            .IsProduction() == false;
+        ConditionFunc = c => !c.RequestServices.GetRequiredService<IWebHostEnvironment>()
+            .IsProduction();
     }
 }

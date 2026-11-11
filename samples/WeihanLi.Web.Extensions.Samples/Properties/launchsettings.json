@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5200",
+      "environmentVariables": { 
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AppSettings__Cluster": "central-0"
+      }
+    }
+  }
+}

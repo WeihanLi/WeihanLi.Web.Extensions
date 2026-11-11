@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WeihanLi.Web.Filters;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ConditionalFilter : Attribute, IAsyncResourceFilter, IEndpointFilter
 
 {

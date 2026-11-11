@@ -90,7 +90,18 @@ builder.Services.AddHttpContextUserIdProvider(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.ShouldInclude = d =>
+    {
+        var filter = d.ActionDescriptor.EndpointMetadata.OfType<CentralClusterOnlyFilter>().FirstOrDefault();
+        if (filter is null)
+        {
+            return true;
+        }
+        return CentralClusterOnlyFilter.Enabled;
+    };
+});
 
 builder.Host.UseFluentAspectsServiceProviderFactory(options =>
     {
@@ -111,6 +122,7 @@ builder.Services.AddMcpServer()
 
 var app = builder.Build();
 
+app.UseHealthCheck();
 app.MapRuntimeInfo().ShortCircuit().DisableHttpMetrics();
 
 var probes = app.MapProbes("/probes");
@@ -122,6 +134,10 @@ app.Map("/HelloV2", Hello).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV3", () => Results.Ok(new { Name = "test" })).AddEndpointFilter<ApiResultFilter>();
 app.Map("/HelloV4", () => Results.Ok(Result.Success(new { Name = "test" }))).AddEndpointFilter<ApiResultFilter>();
 app.Map("/BadRequest", BadRequest).AddEndpointFilter<ApiResultFilter>();
+app.MapGet("/mcp-echo/{id:int}", (int id, string? name) => Results.Ok(new { id, name }))
+    .WithName("mcp_echo")
+    .WithDescription("Echoes route and query parameters for MCP endpoint tool testing.")
+    .AsMcpTool();
 app.Map("/basic-auth-test", () => "Hello").RequireAuthorization("Basic");
 
 // conditional filter
@@ -149,7 +165,9 @@ envGroup.Map("/prod", () => "env-test")
 // attribute endpoint filter not supported for now, https://github.com/dotnet/aspnetcore/issues/43421
 // envGroup.Map("/stage", [EnvironmentFilter("Staging")]() => "env-test");
 
-app.UseHealthCheck();
+app.MapGet("/central-endpoint", () => Results.Ok())
+    .CentralClusterOnly()
+    ;
 
 app.MapOpenApi();
 app.MapScalarApiReference();
@@ -228,3 +246,35 @@ await app.RunAsync();
 static string Hello() => "Hello Minimal API!";
 
 static IResult BadRequest() => Results.BadRequest();
+
+public class CentralClusterOnlyFilter : IEndpointFilter
+{
+    public static readonly CentralClusterOnlyFilter Instance = new();
+
+    public static bool Enabled { get; } = Environment.GetEnvironmentVariable("AppSettings__Cluster")
+        ?.Contains("central") == true;
+
+    private CentralClusterOnlyFilter() { }
+
+    public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        return Enabled
+            ? next(context)
+            : ValueTask.FromResult<object?>(Results.NotFound());
+    }
+}
+
+public static class EndpointExtension
+{
+    extension<TBuilder>(TBuilder endpoints) where TBuilder : IEndpointConventionBuilder
+    {
+        public TBuilder CentralClusterOnly()
+        {
+            endpoints
+                .AddEndpointFilter(CentralClusterOnlyFilter.Instance)
+                .WithMetadata(CentralClusterOnlyFilter.Instance)
+                ;
+            return endpoints;
+        }
+    }
+}
