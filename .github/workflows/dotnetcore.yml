@@ -1,4 +1,4 @@
-name: dotnetcore
+name: dotnet
 
 on: [push]
 
