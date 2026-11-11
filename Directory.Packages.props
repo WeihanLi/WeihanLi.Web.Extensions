@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AspNet11PackageVersion>11.0.0</AspNet9PackageVersion>
+    <AspNet11PackageVersion>11.0.0</AspNet11PackageVersion>
     <AspNet10PackageVersion>10.0.15</AspNet10PackageVersion>
   </PropertyGroup>
   <ItemGroup>
